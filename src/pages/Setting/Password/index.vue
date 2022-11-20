@@ -1,0 +1,118 @@
+<template>
+  <div class="passwordContainer">
+    <div CLASS="topTitle">
+      <span>
+        更改你的密码
+      </span>
+    </div>
+    <el-form class="form" :model="updateparams" :rules="rules" ref="form">
+      <el-from-item prop="oldPassword">
+        <input v-model="updateparams.oldPassword"
+               placeholder="旧密码"
+               type="password"
+               name="" id=""
+               prop="oldPassword"
+        >
+      </el-from-item>
+      <el-from-item prop="newPassword">
+        <input v-model="updateparams.newPassword" placeholder="新密码" type="password" name="" id="">
+      </el-from-item>
+      <el-from-item newPassword="confirmPassword">
+        <input v-model="updateparams.confirmPassword" placeholder="确认密码" type="password" name="" id="">
+      </el-from-item>
+    </el-form>
+    <p>{{ updateMessage }}</p>
+    <button type="submit" @click="getUpdate(updateparams)">提 交</button>
+  </div>
+</template>
+<script>
+import {updatePasswordApi} from "@/api";
+
+export default {
+  name: "password",
+  data() {
+    return {
+      updateMessage: '',
+      updateparams: {
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      },
+      rule: {
+        oldPassword: [
+          {require: true, message: '请填写所有的信息(前端)', trigger: 'blur'},
+          {min: 2, max: 10, message: '用户名长度必须在2-9个字符(前端)'}
+        ],
+        newPassword:[
+          {},
+          {}
+        ]
+      }
+    }
+  },
+  methods: {
+    getUpdate(params) {
+      this.$refs.form.validate(async(valid)=>{
+        if (valid){
+          let results = await updatePasswordApi(params)
+          this.updateMessage = results.message
+          console.log(results)
+        }else{
+          console.log(message)
+        }
+      })
+    }
+  }
+}
+</script>
+
+<style scoped lang="scss">
+.passwordContainer {
+  width: 500px;
+  padding: 0 20px;
+
+  .topTitle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 60px;
+    width: 100%;
+    padding-left: 20px;
+    margin-bottom: 10px;
+
+    span {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+
+  }
+
+  .form {
+    input {
+      height: 65px;
+      width: 100%;
+      font-size: 20px;
+      outline: none;
+      margin-bottom: 30px;
+      padding: 0 10px;
+      border-radius: 5px;
+      border: 1px solid $placeholderFont
+    }
+  }
+
+  button {
+    margin: 0 auto;
+    height: 40px;
+    padding: 0 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    background-color: $brandColor;
+    border-radius: 50px;
+    outline: none;
+    border: 0;
+    cursor: pointer;
+  }
+}
+</style>
