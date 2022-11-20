@@ -1,26 +1,24 @@
-import {getMyInfo} from "@/api";
+import {getMyInfo} from '@/api'
 
-const state={
-    userInfo:{
-    }
+const state = {
+  userInfo: {},
 }
-const actions={
-    async reqUserInfo({commit}) {
-        let result = await getMyInfo()
-        commit('REQUSERINFO', result.data)
-    }
+const actions = {
+  async reqUserInfo({commit}) {
+    let result = await getMyInfo()
+    commit('REQUSERINFO', result.data)
+  },
 }
-const mutations={
-    REQUSERINFO(state,value){
-        state.userInfo = value;
-
-    }
+const mutations = {
+  REQUSERINFO(state, value) {
+    state.userInfo = value
+  },
 }
-const getters={}
+const getters = {}
 
 export default {
-    state,
-    mutations,
-    actions,
-    getters
+  state,
+  mutations,
+  actions,
+  getters,
 }

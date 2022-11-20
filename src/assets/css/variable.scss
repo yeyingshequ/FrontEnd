@@ -1,17 +1,61 @@
+/* 初始化 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/* a标签初始化 */
+a {
+  text-decoration: none;
+  color: #303133;
+}
+
+.post .articlePart img {
+  margin-top: 15px;
+  width: 80%;
+  height: 80%;
+  border-radius: 20px;
+}
+
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* 背景图片样式 */
+.bg {
+  position: fixed;
+  left: 0;
+  top: 60px;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: url(@/components/MainPage/background.png) no-repeat;
+  background-size: cover;
+}
+/* 暗幕 */
+.onhover {
+  background-color: mix(#ff44aa, white, 10%);
+}
+.beforehover {
+  background-color: mix(#ff44aa, white, 0%);
+  transition: 0.1s;
+}
+
 /* 颜色 */
 $brandColor: #ff44aa;
 $mainFont: #303133;
 $regularFont: #606266;
 $minorFont: #909399;
-$placeholderFont: #C0C4CC;
-$borderColor1:#DCDFE6;
-$borderColor2:#E4E7ED;
-$borderColor3:#EBEEF5;
-$borderColor4:#F2F6FC;
+$placeholderFont: #c0c4cc;
+$borderColor1: #dcdfe6;
+$borderColor2: #e4e7ed;
+$borderColor3: #ebeef5;
+$borderColor4: #f2f6fc;
 /* 宽度 */
-$viewPageWidth:698px;
+$viewPageWidth: 698px;
 
 /*高亮*/
-$onHover:mix($brandColor, white, 10%);
-$onHover90:mix($brandColor, white, 90%);
-$onHoverDark:mix($brandColor,black, 10%);
+$onHover: mix($brandColor, white, 10%);
+$onHover90: mix($brandColor, white, 90%);
+$onHoverDark: mix($brandColor, black, 10%);
