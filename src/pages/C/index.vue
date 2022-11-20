@@ -1,25 +1,23 @@
 <template>
   <div>
-    <div class="cover">
-
-    </div>
-    <div class="profile" v-if="message!=='获取信息成功'">
+    <div class="cover"></div>
+    <div class="profile" v-if="message !== '获取信息成功'">
       <div class="iconWrapper">
         <div class="icon">
-          <img :src="defaultAvatar" alt="">
+          <img :src="defaultAvatar" alt="" />
         </div>
       </div>
       <div class="uncreatedCmty">
         <h1>{{ message }}</h1>
       </div>
       <div class="addCmty">
-        <button @click="showCreateCmty=true">创建社区</button>
+        <button @click="showCreateCmty = true">创建社区</button>
       </div>
     </div>
-    <div class="profile" v-if="message=='获取信息成功'">
+    <div class="profile" v-if="message == '获取信息成功'">
       <div class="iconWrapper">
         <div class="icon">
-          <img :src="cmtyInfo.avatar||defaultAvatar" alt="">
+          <img :src="cmtyInfo.avatar || defaultAvatar" alt="" />
         </div>
       </div>
       <div class="aboutBar">
@@ -28,11 +26,11 @@
         </div>
         <div class="membersAndComments">
           <div class="members">
-            <span class="number">{{ cmtyInfo.cmtyJoinedCount}}</span>
+            <span class="number">{{ cmtyInfo.cmtyJoinedCount }}</span>
             <span class="unit"> 成员</span>
           </div>
           <div class="comments">
-            <span class="number">{{ cmtyInfo.cmtyPostCount}}</span>
+            <span class="number">{{ cmtyInfo.cmtyPostCount }}</span>
             <span class="unit"> 发言量</span>
           </div>
         </div>
@@ -41,11 +39,13 @@
         <span>{{ cmtyInfo.cmtyBio }}</span>
       </div>
       <div class="joinAndFavorite">
-        <button class="favorite"><i class="iconfont icon-shoucang" style="font-size: 16px;"></i></button>
+        <button class="favorite">
+          <i class="iconfont icon-shoucang" style="font-size: 16px"></i>
+        </button>
         <button class="join">加 入</button>
       </div>
     </div>
-    <Tab :tabs="tabs" v-if="message=='获取信息成功'"/>
+    <Tab :tabs="tabs" v-if="message == '获取信息成功'" />
     <!-- <div class="board">
         <ul>
             <li>
@@ -65,35 +65,36 @@
         </ul>
     </div> -->
     <router-view></router-view>
-    <CmtyCreator @closeCmtyCreator="closeCmtyCreator" v-if="showCreateCmty"/>
+    <CmtyCreator @closeCmtyCreator="closeCmtyCreator" v-if="showCreateCmty" />
   </div>
 </template>
 <script>
-import Post from '../../components/PostCard/index.vue';
-import CmtyCreator from "@/pages/C/CmtyCreator";
-import {getCmtyInfo} from "@/api";
-import storage from "@/tools/storage";
-import CmtyHome from "@/pages/C/ CmtyHome";
+import Post from '../../components/PostCard/index.vue'
+import CmtyCreator from '@/pages/C/CmtyCreator'
+import {getCmtyInfo} from '@/api'
+import storage from '@/tools/storage'
+import CmtyHome from '@/pages/C/CmtyHome'
 
 export default {
-  name: "C",
+  name: 'C',
   data() {
     return {
       tabs: [
-        {Name: "首页", id: 1, router: "/communities/joined"},
-        {Name: "精品贴", id: 2, router: "/communities/favorite"},
-        {Name: "本吧详情", id: 3, router: "/communities/square"},
+        {Name: '首页', id: 1, router: '/communities/joined'},
+        {Name: '精品贴', id: 2, router: '/communities/favorite'},
+        {Name: '本吧详情', id: 3, router: '/communities/square'},
       ],
       params: {
-        cid: this.$route.params.cid
+        cid: this.$route.params.cid,
       },
-      cmtyInfo: {
-      },
-      defaultAvatar: 'https://i.pinimg.com/564x/ba/5e/67/ba5e6704f5805a32f036b382265d71a4.jpg',
-      defaultCover: 'https://i.pinimg.com/564x/ba/5e/67/ba5e6704f5805a32f036b382265d71a4.jpg',
+      cmtyInfo: {},
+      defaultAvatar:
+        'https://i.pinimg.com/564x/ba/5e/67/ba5e6704f5805a32f036b382265d71a4.jpg',
+      defaultCover:
+        'https://i.pinimg.com/564x/ba/5e/67/ba5e6704f5805a32f036b382265d71a4.jpg',
       message: '',
-      showCreateCmty: false
-    };
+      showCreateCmty: false,
+    }
   },
   methods: {
     async getCmtyInfo(params) {
@@ -105,17 +106,17 @@ export default {
     },
     closeCmtyCreator() {
       this.showCreateCmty = false
-    }
+    },
   },
   mounted() {
     this.getCmtyInfo(this.params)
     console.log(this.cmtyInfo)
-
   },
   components: {
     CmtyHome,
-    Post, CmtyCreator
-  }
+    Post,
+    CmtyCreator,
+  },
 }
 </script>
 <style scoped lang="scss">
@@ -153,7 +154,6 @@ div {
         font-weight: bold;
         cursor: pointer;
       }
-
     }
 
     /* background-color: blue; */
@@ -184,7 +184,6 @@ div {
       width: 560px;
       height: 75px;
 
-
       /* background-color: crimson; */
       .name {
         display: flex;
@@ -211,7 +210,8 @@ div {
           font-weight: 550;
         }
 
-        .members, .comments {
+        .members,
+        .comments {
           cursor: pointer;
 
           &:hover {
@@ -224,7 +224,6 @@ div {
           color: $regularFont;
         }
       }
-
     }
 
     .introduction {
@@ -242,7 +241,8 @@ div {
       top: 17.5px;
       right: 30px;
 
-      .favorite, .join {
+      .favorite,
+      .join {
         height: 40px;
         outline: none;
         border: 0;
@@ -251,11 +251,10 @@ div {
       }
 
       .favorite {
-
         width: 40px;
         color: $regularFont;
         background-color: white;
-        border: 1px #C0C4CC solid;
+        border: 1px #c0c4cc solid;
         margin-right: 20px;
       }
 
@@ -266,7 +265,6 @@ div {
         font-size: 15px;
         font-weight: bold;
       }
-
     }
   }
 
@@ -284,8 +282,6 @@ div {
         color: $regularFont;
       }
     }
-
   }
-
 }
 </style>
