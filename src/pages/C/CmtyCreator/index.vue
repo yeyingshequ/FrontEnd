@@ -8,84 +8,86 @@
         <h1>创建社区</h1>
       </div>
       <div class="cmtyName">
-        <input v-model="params.cmtyName" type="text" placeholder="社区名字" name="" id="">
+        <input
+          v-model="params.cmtyName"
+          type="text"
+          placeholder="社区名字"
+          name=""
+          id=""
+        />
       </div>
       <div class="category">
-<<<<<<< HEAD
-        <select id='sel' name="category" v-model="params.cmtyCategory">
-=======
-        <select id='sel' name="category" v-model="params.category">
->>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
-          <option v-for="category in categoryList " :key=category.value :value="category.name">{{category.name}}</option>
+        <select id="sel" name="category" v-model="params.cmtyCategory">
+          <option
+            v-for="category in categoryList"
+            :key="category.value"
+            :value="category.name"
+          >
+            {{ category.name }}
+          </option>
         </select>
       </div>
       <div class="submit">
-        <button  type="submit" @click="createCmty(params)">创 建</button>
+        <button type="submit" @click="createCmty(params)">创 建</button>
       </div>
-      {{message}}
+      {{ message }}
     </div>
   </div>
 </template>
 
 <script>
-import scroll from "@/tools/scroll";
-import {createCmty} from "@/api";
+import scroll from '@/tools/scroll'
+import {createCmty} from '@/api'
 
 export default {
-  name: "index.vue",
+  name: 'index.vue',
   data() {
     return {
-      categoryList:[
-        {value:1,name:'运动'},{value:2,name:'游戏'},{value:3,name:'数码'},
-        {value:4,name:'科学'},{value:5,name:'动漫'},{value:6,name:'音乐'},
-        {value:7,name:'休闲时尚'},{value:8,name:'文学'},{value:9,name:'校园'},
-        {value:10,name:'明星'},{value:11,name:'网友俱乐部'},{value:12,name:'个人社区'},
-        {value:13,name:'运动'},{value:14,name:'游戏'},{value:15,name:'数码'},
-        {value:16,name:'情感'}
+      categoryList: [
+        {value: 1, name: '运动'},
+        {value: 2, name: '游戏'},
+        {value: 3, name: '数码'},
+        {value: 4, name: '科学'},
+        {value: 5, name: '动漫'},
+        {value: 6, name: '音乐'},
+        {value: 7, name: '休闲时尚'},
+        {value: 8, name: '文学'},
+        {value: 9, name: '校园'},
+        {value: 10, name: '明星'},
+        {value: 11, name: '网友俱乐部'},
+        {value: 12, name: '个人社区'},
+        {value: 13, name: '运动'},
+        {value: 14, name: '游戏'},
+        {value: 15, name: '数码'},
+        {value: 16, name: '情感'},
       ],
-      params:{
-        cmtyName:'',
-<<<<<<< HEAD
-        cmtyCategory: ''
-=======
-        category: ''
->>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
+      params: {
+        cmtyName: '',
+        cmtyCategory: '',
       },
-      message:''
+      message: '',
     }
   },
   methods: {
     close() {
       this.$emit('closeCmtyCreator')
       scroll.move()
-<<<<<<< HEAD
-=======
-
     },
-    mounted() {
-      console.log(this.categoryList)
->>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
-    },
-    async createCmty(params){
+    async createCmty(params) {
       let result = await createCmty(params)
       this.message = result.message
       //关闭社区创建框
-      if(result.status===0){
-        setTimeout(()=>{
-          this.close();
-          this.message ='';
-        },1000)
+      if (result.status === 0) {
+        setTimeout(() => {
+          this.close()
+          this.message = ''
+        }, 1000)
       }
-<<<<<<< HEAD
     },
   },
   mounted() {
     console.log(this.categoryList)
   },
-=======
-    }
-  }
->>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
 }
 </script>
 
@@ -99,7 +101,7 @@ export default {
   height: 100%;
   top: 0;
   left: 0;
-  background-color: rgba(mix($brandColor, black, 10%), .5);
+  background-color: rgba(mix($brandColor, black, 10%), 0.5);
   z-index: 997;
 
   .wrapper {
@@ -123,7 +125,7 @@ export default {
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      transition: .1s;
+      transition: 0.1s;
       cursor: pointer;
 
       i {
@@ -153,12 +155,11 @@ export default {
         border: 1px solid $placeholderFont;
         border-radius: 5px;
       }
-
     }
 
-    .category{
+    .category {
       width: 50%;
-      select{
+      select {
         padding-left: 20px;
         margin-top: 50px;
         height: 60px;
@@ -168,16 +169,15 @@ export default {
         outline: none;
         border: 1px solid $placeholderFont;
         border-radius: 5px;
-        option{
-          &:hover{
+        option {
+          &:hover {
             background-color: $brandColor;
           }
         }
-
       }
     }
 
-    .submit{
+    .submit {
       margin-top: 50px;
       button {
         padding: 0;
@@ -197,7 +197,6 @@ export default {
         }
       }
     }
-
   }
 }
 </style>

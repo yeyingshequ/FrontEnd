@@ -1,21 +1,23 @@
 <template>
   <div class="commentContainer">
-    <div class="commentWrapper" v-for="comment in comments" :key="comment.commentId">
+    <div
+      class="commentWrapper"
+      v-for="comment in comments"
+      :key="comment.commentId"
+    >
       <div class="iconPart">
         <div class="iconWrapper">
           <img
-<<<<<<< HEAD
-              @click="$router.push(`/u/${comment.commentAuthorId}`)"
-=======
->>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
-              :src="comment.avatar"
-              alt="">
+            @click="$router.push(`/u/${comment.commentAuthorId}`)"
+            :src="comment.avatar"
+            alt=""
+          />
         </div>
       </div>
       <div class="commentPart">
         <div class="commentInfo">
           <div class="name">
-            <span>{{ comment.username}}</span>
+            <span>{{ comment.username }}</span>
           </div>
           <div class="timeAndFloor">
             <div class="floor">
@@ -24,36 +26,36 @@
             <div class="dot">
               <span>·</span>
             </div>
-            <span class="pubTime">{{comment.pubTime}}</span>
+            <span class="pubTime">{{ comment.pubTime }}</span>
           </div>
         </div>
         <div class="comment">
-          <span>{{comment.content}}</span>
+          <span>{{ comment.content }}</span>
           <div class="reply">
-            <Reply :commentInfo="comment"/>
+            <Reply :commentInfo="comment" />
           </div>
         </div>
-        <Tools :postInfo="postInfo" :commentInfo="comment" father="Comment"/>
+        <Tools :postInfo="postInfo" :commentInfo="comment" father="Comment" />
       </div>
     </div>
   </div>
 </template>
 <script>
-import Reply from '../Reply/index.vue';
+import Reply from '../Reply/index.vue'
 
 export default {
-  name: "Comment",
+  name: 'Comment',
   props: ['postInfo'],
   components: {Reply},
-  computed:{
-    post(){
+  computed: {
+    post() {
       return this.postInfo.post
     },
-    comments(){
+    comments() {
       return this.postInfo.comments
     },
   },
-  mounted(){
+  mounted() {
     console.log(this.comments[0])
   },
 }
@@ -68,8 +70,7 @@ $containerWidth: 698px;
   width: $viewPageWidth;
   //border-bottom: 1px solid #f1f1f1;
 
-
-  .commentWrapper{
+  .commentWrapper {
     display: flex;
     cursor: pointer;
     &:hover {
@@ -91,7 +92,6 @@ $containerWidth: 698px;
           width: 50px;
           height: 50px;
           border-radius: 50%;
-
         }
       }
     }
@@ -105,17 +105,18 @@ $containerWidth: 698px;
         height: 70px;
         width: 100%;
 
-        .name, .timeAndFloor {
+        .name,
+        .timeAndFloor {
           height: 25px;
 
           /* background-color: red; */
           span {
             line-height: 25px;
           }
-          .floor{
+          .floor {
             margin-right: 7px;
           }
-          .pubTime{
+          .pubTime {
             margin-left: 7px;
           }
         }

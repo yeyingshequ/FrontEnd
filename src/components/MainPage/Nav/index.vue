@@ -3,122 +3,163 @@
     <div class="userInfo">
       <div class="userInfoWrapper">
         <!--登录后的个人信息框-->
-        <div class="userInfoWrapperInside" v-if="isLogin" @click="$router.push(`/u/${userInfo.userId}`).catch(data=>{})">
+        <div
+          class="userInfoWrapperInside"
+          v-if="isLogin"
+          @click="$router.push(`/u/${userInfo.userId}`).catch((data) => {})"
+        >
           <div class="userIcon">
-            <img :src="userInfo.avatar" alt="" class="pic">
+            <img :src="userInfo.avatar" alt="" class="pic" />
           </div>
           <div class="userNameAndUid">
-            <span class="userName">{{userInfo.username}}</span><br>
-            <span class="UID">UID: {{userInfo.userId}}</span>
+            <span class="userName">{{ userInfo.username }}</span
+            ><br />
+            <span class="UID">UID: {{ userInfo.userId }}</span>
           </div>
-<<<<<<< HEAD
-          <div class="qita" @click.stop="isShowLogout=true" >
-=======
-          <div class="qita" @click.stop="isShowLogout=true">
->>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
+          <div class="qita" @click.stop="isShowLogout = true">
             <i class="iconfont icon-qita"></i>
           </div>
         </div>
         <div class="loginAndRegister" @click="showLoginScreen" v-else>
           <div class="userIcon" @click="showLoginScreen">
-            <img src="./1_BigPic.png" alt="" class="pic" @click="showLoginScreen">
+            <img
+              src="./1_BigPic.png"
+              alt=""
+              class="pic"
+              @click="showLoginScreen"
+            />
           </div>
-          <div class="message">
-            登 录 或 注 册
-          </div>
+          <div class="message">登 录 或 注 册</div>
         </div>
       </div>
     </div>
     <!--退出、切换账号 选项-->
     <div class="logoutFn" v-show="isShowLogout">
-      <div class="mask" @click="isShowLogout=false"></div>
+      <div class="mask" @click="isShowLogout = false"></div>
       <div class="logoutWrapper animate__animated animate__fadeIn" key="1">
         <div class="triangle"></div>
         <div class="userLogout" @click="goLogout">
-              <span>
-                退出账号
-              </span>
+          <span> 退出账号 </span>
         </div>
       </div>
     </div>
     <div class="usernav">
-      <router-link v-for="(nav, index) in navList" :key="nav.id" :to="nav.path" class='navRouter'
-                   :class='{ active: nav.path === currentNav }'>
+      <router-link
+        v-for="(nav, index) in navList"
+        :key="nav.id"
+        :to="nav.path"
+        class="navRouter"
+        :class="{active: nav.path === currentNav}"
+      >
         <div class="mask">
-          <i :class='nav.icon'></i>
+          <i :class="nav.icon"></i>
           <span>{{ nav.name }}</span>
         </div>
       </router-link>
     </div>
-    <div class="sendpost" @click ='showEditor=true' >
+    <div class="sendpost" @click="showEditor = true">
       <div>
         <span>发 帖</span>
       </div>
     </div>
-    <postEditor v-if="showEditor" @closeEditor="closeEditor"/>
+    <postEditor v-if="showEditor" @closeEditor="closeEditor" />
     <!--回到顶部按钮-->
     <el-backtop>
-      <div>
-        UP
-      </div>
+      <div>UP</div>
     </el-backtop>
   </div>
 </template>
 
 <script>
-
-import storage from "@/tools/storage";
-import postEditor from "@/components/MainPage/Nav/postEditor";
+import storage from '@/tools/storage'
+import postEditor from '@/components/MainPage/Nav/postEditor'
 
 export default {
   name: '',
   data() {
     return {
       navList: [
-        {name: '首页', id: 1, pathName: "Home", path: '/home', icon: 'iconfont icon-shouye'},
-        {name: '发现', id: 2, pathName: "Discover", path: '/discover', icon: 'iconfont icon-sousuo'},
-        {name: '社区', id: 3, pathName: "Communities", path: '/communities', icon: 'iconfont icon-shequ'},
-        {name: '通知', id: 4, pathName: "Ntifications", path: '/notifications', icon: 'iconfont icon-xiaoxizhongxin'},
-        {name: '聊天', id: 5, pathName: "Chat", path: '/chat', icon: 'iconfont icon-wode'},
-        {name: '设置', id: 6, pathName: "Setting", path: '/setting', icon: 'iconfont icon-shezhi'}],
+        {
+          name: '首页',
+          id: 1,
+          pathName: 'Home',
+          path: '/home',
+          icon: 'iconfont icon-shouye',
+        },
+        {
+          name: '发现',
+          id: 2,
+          pathName: 'Discover',
+          path: '/discover',
+          icon: 'iconfont icon-sousuo',
+        },
+        {
+          name: '社区',
+          id: 3,
+          pathName: 'Communities',
+          path: '/communities',
+          icon: 'iconfont icon-shequ',
+        },
+        {
+          name: '通知',
+          id: 4,
+          pathName: 'Ntifications',
+          path: '/notifications',
+          icon: 'iconfont icon-xiaoxizhongxin',
+        },
+        {
+          name: '聊天',
+          id: 5,
+          pathName: 'Chat',
+          path: '/chat',
+          icon: 'iconfont icon-wode',
+        },
+        {
+          name: '设置',
+          id: 6,
+          pathName: 'Setting',
+          path: '/setting',
+          icon: 'iconfont icon-shezhi',
+        },
+      ],
       //isLogin: false,
       isShowLogout: false,
-      showEditor:false
+      showEditor: false,
     }
   },
   methods: {
     showLoginScreen() {
-      this.$bus.$emit('showLoginScreen', true);
+      this.$bus.$emit('showLoginScreen', true)
     },
     goLogout() {
       this.isShowLogout = false
       storage.remove('token')
       this.$router.go(0)
     },
-    getUserInfo(){
+    getUserInfo() {
       this.$store.dispatch('reqUserInfo')
     },
-    closeEditor(){
-      this.showEditor=false
-    }
+    closeEditor() {
+      this.showEditor = false
+    },
   },
   mounted() {
-    this.getUserInfo();
+    this.getUserInfo()
   },
   computed: {
     isLogin() {
       return storage.get('token')
     },
-    userInfo(){
+    userInfo() {
       return this.$store.state.userInfo.userInfo
     },
-    currentNav(){
+    currentNav() {
       return this.$route.matched[0].path
-    }
+    },
   },
-  components:{
-    postEditor
-  }
+  components: {
+    postEditor,
+  },
 }
 </script>
 <style scoped lang="scss">
@@ -159,8 +200,8 @@ export default {
 
       .userInfoWrapperInside {
         position: relative;
-        height: 50PX;
-        width: 245PX;
+        height: 50px;
+        width: 245px;
         border-radius: 50px;
 
         .userIcon {
@@ -182,30 +223,18 @@ export default {
           display: flex;
           justify-content: center;
           align-items: center;
-<<<<<<< HEAD
           width: 36px;
           height: 36px;
           top: 7px;
           right: 7px;
           border-radius: 50px;
           //background-color: red;
-          transition: .1s;
-          &:hover {
-            color:$brandColor;
-            background-color: mix($brandColor,white,15%);
-=======
-          width: 50px;
-          height: 50px;
-          top: 0;
-          right: 0;
-          border-radius: 50px;
-          //background-color: red;
+          transition: 0.1s;
           &:hover {
             color: $brandColor;
->>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
+            background-color: mix($brandColor, white, 15%);
           }
         }
-
 
         .userNameAndUid {
           position: absolute;
@@ -228,11 +257,10 @@ export default {
       }
     }
 
-
     .loginAndRegister {
       position: relative;
-      height: 50PX;
-      width: 245PX;
+      height: 50px;
+      width: 245px;
       border-radius: 50px;
 
       .userIcon {
@@ -254,8 +282,6 @@ export default {
         font-size: 26px;
         font-weight: bold;
         line-height: 50px;
-
-
       }
     }
   }
@@ -303,14 +329,11 @@ export default {
           background-color: $onHover;
         }
 
-
         span {
           font-size: 15px;
           line-height: 50px;
-
         }
       }
-
     }
   }
 
@@ -321,7 +344,6 @@ export default {
     .active {
       font-weight: bold;
       color: $brandColor;
-
     }
 
     /*background-color: blue;*/
@@ -335,7 +357,7 @@ export default {
 
       .mask {
         border-radius: 50px;
-        transition: .2s;
+        transition: 0.2s;
       }
 
       /* background-color: yellowgreen; */
@@ -349,7 +371,7 @@ export default {
 
       i {
         vertical-align: middle;
-        text-align: center
+        text-align: center;
       }
 
       span {
@@ -360,9 +382,8 @@ export default {
         padding: 0 20px 0 10px;
         line-height: 55px;
         vertical-align: middle;
-        text-align: center
+        text-align: center;
       }
-
     }
 
     .iconfont {
@@ -394,7 +415,7 @@ export default {
       background-color: $brandColor;
       /*#0080FF*/
       border-radius: 50px;
-      transition: .1s;
+      transition: 0.1s;
 
       &:hover {
         background-color: mix($brandColor, black, 90%);
@@ -409,24 +430,21 @@ export default {
         line-height: 60px;
       }
     }
-
   }
 
-  .el-backtop{
+  .el-backtop {
     position: absolute;
-    top:800px;
+    top: 800px;
     left: 40px;
-    div{
+    div {
       height: 100%;
       width: 100%;
       background-color: #f2f5f6;
-      box-shadow: 0 0 6px rgba(0,0,0, .12);
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
       text-align: center;
       line-height: 40px;
       color: $brandColor;
     }
   }
-
-
 }
 </style>

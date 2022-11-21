@@ -1,33 +1,26 @@
 <template>
   <div class="homeContainer">
-    <postCard :postList="postInfo"/>
+    <postCard :postList="postInfo" />
   </div>
 </template>
 
 <script>
-
-import {getCmtyHomePosts, getDiscoverInfo} from "@/api";
-import rename from "@/tools/rename";
-import formatTime from "@/tools/formatTime";
+import {getCmtyHomePosts, getDiscoverInfo} from '@/api'
+import rename from '@/tools/rename'
+import formatTime from '@/tools/formatTime'
 
 export default {
-  name: "CmtyHome",
-  data(){
-    return{
-      params:{
-<<<<<<< HEAD
-        cmtyId:this.$route.params.cmtyId
-=======
-        cmtyId:this.$route.params.cid
->>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
+  name: 'CmtyHome',
+  data() {
+    return {
+      params: {
+        cmtyId: this.$route.params.cmtyId,
       },
-      postInfo:{
-
-      }
+      postInfo: {},
     }
   },
-  methods:{
-    async getCmtyHomePosts(params){
+  methods: {
+    async getCmtyHomePosts(params) {
       let result = await getCmtyHomePosts(params)
       if (result.status === 0) {
         for (let i = 0; i < result.data.length; i++) {
@@ -37,7 +30,7 @@ export default {
         this.postInfo = result.data
         console.log(result.data)
       }
-    }
+    },
   },
   mounted() {
     console.log(this.$route)
@@ -49,10 +42,8 @@ export default {
   },
   beforeDestroy() {
     this.$bus.$off('regetCmtyHomePosts')
-  }
+  },
 }
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

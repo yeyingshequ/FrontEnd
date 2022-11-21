@@ -4,42 +4,44 @@
       <div class="reply" v-for="reply in replies" :key="reply.replyId">
         <div class="replybody">
           <div class="iconWrapper">
-<<<<<<< HEAD
-            <img @click="$router.push(`/u/${reply.replyAuthorId}`)" :src="reply.avatar" alt="">
-=======
-            <img :src="reply.avatar" alt="">
->>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
+            <img
+              @click="$router.push(`/u/${reply.replyAuthorId}`)"
+              :src="reply.avatar"
+              alt=""
+            />
           </div>
           <div class="replyText">
             <div class="replyerName">
               <span>{{ reply.authorName }}</span>
             </div>
-            <span style="font-weight:bold;color: #606266;">回复</span>
+            <span style="font-weight: bold; color: #606266">回复</span>
             <div class="replyto">
               <span> 提亚马特 </span>
             </div>
-            <span style="font-weight:bold;color: #606266;padding-right: 7px">:</span>
-            <span class="text">{{ reply.content}}</span>
+            <span style="font-weight: bold; color: #606266; padding-right: 7px"
+              >:</span
+            >
+            <span class="text">{{ reply.content }}</span>
           </div>
         </div>
         <div class="bottom">
           <div class="time">
-            <span>{{reply.pubTime}}</span>
+            <span>{{ reply.pubTime }}</span>
           </div>
           <div class="tools">
-            <Tools/>
+            <Tools />
           </div>
         </div>
       </div>
       <div class="moreReply" v-if="replies.length > 4">
-        <span>点击查看全部{{  }}条回复</span>
+        <span>点击查看全部{{}}条回复</span>
       </div>
     </div>
   </div>
 </template>
 <script>
-import Tools from '@/components/Tools/index.vue';
-import formatTime from "@/tools/formatTime";
+import Tools from '@/components/Tools/index.vue'
+import formatTime from '@/tools/formatTime'
 
 export default {
   components: {Tools},
@@ -48,11 +50,8 @@ export default {
     replies() {
       return this.commentInfo.replies
     },
-
   },
-  mounted() {
-
-  }
+  mounted() {},
 }
 </script>
 <style scoped lang="scss">
@@ -104,9 +103,7 @@ $iconWrapperWidth: 35px;
         .text {
           color: $mainFont;
         }
-
       }
-
     }
 
     .bottom {
