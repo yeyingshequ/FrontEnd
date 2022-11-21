@@ -1,0 +1,17 @@
+/* 颜色 */
+$brandColor: #ff44aa;
+$mainFont: #303133;
+$regularFont: #606266;
+$minorFont: #909399;
+$placeholderFont: #C0C4CC;
+$borderColor1:#DCDFE6;
+$borderColor2:#E4E7ED;
+$borderColor3:#EBEEF5;
+$borderColor4:#F2F6FC;
+/* 宽度 */
+$viewPageWidth:698px;
+
+/*高亮*/
+$onHover:mix($brandColor, white, 10%);
+$onHover90:mix($brandColor, white, 90%);
+$onHoverDark:mix($brandColor,black, 90%);
