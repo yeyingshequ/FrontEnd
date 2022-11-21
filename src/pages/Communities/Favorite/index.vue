@@ -1,5 +1,6 @@
 <template>
     <div>
+<<<<<<< HEAD
       <CmtyCard :cmtyList="favoriteCmtyInfo"/>
     </div>
 </template>
@@ -34,6 +35,17 @@ export default {
     }
     this.getFavoriteCmty()
   }
+=======
+        <community/>
+        <community/>
+        <community/>
+    </div>
+</template>
+<script>
+import Community from '@/components/CmtyCard/index.vue';
+export default {
+    components: { Community }
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
 }
 </script>
 <style scoped lang="scss">

@@ -1,4 +1,8 @@
 import request from "@/api/request";
+<<<<<<< HEAD
+=======
+import myInfo from "@/api/myInfo";
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
 
 /******************************用户相关的借口******************************/
 //请求登录接口
@@ -12,10 +16,17 @@ export const getUserInfo = (params) =>request({url:'/userinfo',method:'get',para
 
 //获取id,用户名,头像等基本信息
 
+<<<<<<< HEAD
 export const getMyInfo = () => request.get('/myinfo')
 
 //修改密码接口
 export const updatePasswordApi = (params) => request({url: '/updatepassword', method: 'post', data: params})
+=======
+export const getMyInfo = () => myInfo.get('/myinfo')
+
+//修改密码接口
+export const updatePasswordApi = (params) => myInfo({url: '/updatepassword', method: 'post', data: params})
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
 /******************************社区相关的借口******************************/
 
 //获取社区的信息
@@ -30,6 +41,7 @@ export const getCmtySquareInfo = (params)=>request({url:'/cmtysquareinfo',method
 //创建社区
 export const createCmty = (params) =>request({url:'/createcmty',method:'post', data: params})
 
+<<<<<<< HEAD
 //加入社区
 export const joinCmty = (params) =>request({url:'/joincmty',method:'post', data: params})
 
@@ -42,6 +54,8 @@ export const getJoinedCmty = () =>request({url:'/getjoinedcmty',method:'get'})
 //查询特别关注的社区
 export const getFavoriteCmty = () =>request({url:'/getfavoritecmty',method:'get'})
 
+=======
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
 /******************************帖子相关的接口******************************/
 
 //获取帖子的信息

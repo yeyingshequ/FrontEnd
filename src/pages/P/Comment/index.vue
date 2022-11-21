@@ -4,7 +4,10 @@
       <div class="iconPart">
         <div class="iconWrapper">
           <img
+<<<<<<< HEAD
               @click="$router.push(`/u/${comment.commentAuthorId}`)"
+=======
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
               :src="comment.avatar"
               alt="">
         </div>

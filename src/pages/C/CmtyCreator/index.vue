@@ -11,7 +11,11 @@
         <input v-model="params.cmtyName" type="text" placeholder="社区名字" name="" id="">
       </div>
       <div class="category">
+<<<<<<< HEAD
         <select id='sel' name="category" v-model="params.cmtyCategory">
+=======
+        <select id='sel' name="category" v-model="params.category">
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
           <option v-for="category in categoryList " :key=category.value :value="category.name">{{category.name}}</option>
         </select>
       </div>
@@ -41,7 +45,11 @@ export default {
       ],
       params:{
         cmtyName:'',
+<<<<<<< HEAD
         cmtyCategory: ''
+=======
+        category: ''
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
       },
       message:''
     }
@@ -50,6 +58,13 @@ export default {
     close() {
       this.$emit('closeCmtyCreator')
       scroll.move()
+<<<<<<< HEAD
+=======
+
+    },
+    mounted() {
+      console.log(this.categoryList)
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
     },
     async createCmty(params){
       let result = await createCmty(params)
@@ -61,11 +76,16 @@ export default {
           this.message ='';
         },1000)
       }
+<<<<<<< HEAD
     },
   },
   mounted() {
     console.log(this.categoryList)
   },
+=======
+    }
+  }
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
 }
 </script>
 

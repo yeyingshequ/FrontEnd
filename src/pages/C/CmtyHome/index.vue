@@ -15,7 +15,11 @@ export default {
   data(){
     return{
       params:{
+<<<<<<< HEAD
         cmtyId:this.$route.params.cmtyId
+=======
+        cmtyId:this.$route.params.cid
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
       },
       postInfo:{
 

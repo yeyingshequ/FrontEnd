@@ -6,7 +6,11 @@
       </div>
       <div class="bar" @click="$router.push(`/c/${post.cmtyId}`)">
         <div class="icon">
+<<<<<<< HEAD
           <img  src="@/images/barIcon.jpg" alt="">
+=======
+          <img src="@/images/barIcon.jpg" alt="">
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
         </div>
         <div class="barName" @click="$router.push(`/c/${postInfo.post.cmtyId}`)">
           <span>{{ post.cmtyName }}吧</span>

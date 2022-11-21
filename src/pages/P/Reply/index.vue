@@ -4,7 +4,11 @@
       <div class="reply" v-for="reply in replies" :key="reply.replyId">
         <div class="replybody">
           <div class="iconWrapper">
+<<<<<<< HEAD
             <img @click="$router.push(`/u/${reply.replyAuthorId}`)" :src="reply.avatar" alt="">
+=======
+            <img :src="reply.avatar" alt="">
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
           </div>
           <div class="replyText">
             <div class="replyerName">

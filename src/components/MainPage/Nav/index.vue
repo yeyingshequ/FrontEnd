@@ -11,7 +11,11 @@
             <span class="userName">{{userInfo.username}}</span><br>
             <span class="UID">UID: {{userInfo.userId}}</span>
           </div>
+<<<<<<< HEAD
           <div class="qita" @click.stop="isShowLogout=true" >
+=======
+          <div class="qita" @click.stop="isShowLogout=true">
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
             <i class="iconfont icon-qita"></i>
           </div>
         </div>
@@ -178,6 +182,7 @@ export default {
           display: flex;
           justify-content: center;
           align-items: center;
+<<<<<<< HEAD
           width: 36px;
           height: 36px;
           top: 7px;
@@ -188,6 +193,16 @@ export default {
           &:hover {
             color:$brandColor;
             background-color: mix($brandColor,white,15%);
+=======
+          width: 50px;
+          height: 50px;
+          top: 0;
+          right: 0;
+          border-radius: 50px;
+          //background-color: red;
+          &:hover {
+            color: $brandColor;
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
           }
         }
 

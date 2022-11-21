@@ -1,8 +1,13 @@
 <template>
     <div class="tabs">
             <router-link v-for="(tab, index) in tabs" :key="tab.id" :to="tab.router" class="router" @click.native="getId(tab)">
+<<<<<<< HEAD
                 <span :class="{ actived: tab.pathName == $route.name}">{{ tab.Name }}
                     <div v-show="tab.pathName == $route.name"></div>
+=======
+                <span :class="{ actived: tab.id == currentId }">{{ tab.Name }}
+                    <div v-show="tab.id == currentId"></div>
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
                 </span>
             </router-link>
         </div>
@@ -12,7 +17,11 @@ export default {
     name:'Tab',
     data() {
         return {
+<<<<<<< HEAD
 
+=======
+           currentId:'1' 
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
         }
     },
     props:[
@@ -24,10 +33,14 @@ export default {
             this.currentId = tab.id
         }
     },
+<<<<<<< HEAD
   mounted() {
     console.log(this.$route)
   }
 
+=======
+    
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
 }
 </script>
 <style scoped lang="scss">

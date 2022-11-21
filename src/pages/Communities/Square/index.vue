@@ -47,7 +47,10 @@ export default {
     }
   },
   mounted() {
+<<<<<<< HEAD
     this.$router.push('/communities/square/全部')
+=======
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
     this.getCmtySquareInfo(this.$route.params)
   }
 }
@@ -79,7 +82,11 @@ export default {
     .active {
       font-weight: bold;
       /* color: #ff44aa; */
+<<<<<<< HEAD
       background-color: mix(#ff44aa, white, 20%);
+=======
+      background-color: mix(#ff44aa, white, 10%);
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
     }
 
   }

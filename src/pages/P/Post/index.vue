@@ -5,7 +5,11 @@
       <div class="userInfo">
         <div class="iconWrapper">
           <div class="icon">
+<<<<<<< HEAD
             <img @click="$router.push(`/u/${post.postAuthorId}`)"
+=======
+            <img
+>>>>>>> 235c9f042e7a1074c9cef0bb3cddcb4f9c865708
                 :src="post.avatar">
           </div>
         </div>
