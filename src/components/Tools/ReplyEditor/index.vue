@@ -40,6 +40,7 @@ export default {
         commentAuthorId:this.commentInfo.commentAuthorId,
         comment:this.commentInfo.commentAuthorId,
         content:'',
+        cmtyId:this.postInfo.post.cmtyId
       },
       message:''
     }

@@ -73,6 +73,7 @@
 <script>
 import storage from '@/tools/storage'
 import postEditor from '@/components/MainPage/Nav/postEditor'
+import cookie from '@/tools/cookie'
 
 export default {
   name: '',
@@ -134,6 +135,7 @@ export default {
     goLogout() {
       this.isShowLogout = false
       storage.remove('token')
+      cookie.removeCookie('UID')
       this.$router.go(0)
     },
     getUserInfo() {

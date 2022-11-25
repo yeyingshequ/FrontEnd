@@ -37,6 +37,7 @@ export default {
         postId:this.postInfo.post.postId,
         postAuthorId:this.postInfo.post.postAuthorId,
         content:'',
+        cmtyId:this.postInfo.post.cmtyId
       },
       message:''
     }
