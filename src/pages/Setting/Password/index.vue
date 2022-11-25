@@ -5,22 +5,22 @@
         更改你的密码
       </span>
     </div>
-    <el-form class="form" :model="updateparams" :rules="rules" ref="form">
-      <el-from-item prop="oldPassword">
+    <div class="form" :model="updateparams" :rules="rules" ref="form">
+      <div prop="oldPassword">
         <input v-model="updateparams.oldPassword"
                placeholder="旧密码"
                type="password"
                name="" id=""
                prop="oldPassword"
         >
-      </el-from-item>
-      <el-from-item prop="newPassword">
+      </div>
+      <div prop="newPassword">
         <input v-model="updateparams.newPassword" placeholder="新密码" type="password" name="" id="">
-      </el-from-item>
-      <el-from-item newPassword="confirmPassword">
+      </div>
+      <div newPassword="confirmPassword">
         <input v-model="updateparams.confirmPassword" placeholder="确认密码" type="password" name="" id="">
-      </el-from-item>
-    </el-form>
+      </div>
+    </div>
     <p>{{ updateMessage }}</p>
     <button type="submit" @click="getUpdate(updateparams)">提 交</button>
   </div>
@@ -68,6 +68,7 @@ export default {
 
 <style scoped lang="scss">
 .passwordContainer {
+  position: relative;
   width: 500px;
   padding: 0 20px;
 
@@ -102,6 +103,8 @@ export default {
   }
 
   button {
+    position: absolute;
+    right: 20px;
     margin: 0 auto;
     height: 40px;
     padding: 0 20px;
