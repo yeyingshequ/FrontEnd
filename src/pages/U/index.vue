@@ -49,7 +49,7 @@
         </span>
       </div>
       <div class="aboutFollow" v-if="UID!=$route.params.uid">
-        <button class="chat"><i class="el-icon-chat-round" style="font-size: 16px;"></i></button>
+        <button class="chat"><i class="iconfont icon-wode"></i></button>
         <button class="follow">关 注</button>
       </div>
     </div>
@@ -301,6 +301,10 @@ div {
         border: 1px $placeholderFont solid;
         margin-right: 20px;
         transition: .1s;
+        i{
+          font-size: 25px;
+          vertical-align: -5px;
+        }
 
         &:hover {
           background-color: $onHover

@@ -3,7 +3,7 @@
     <LoginAndRegister></LoginAndRegister>
     <Head></Head>
     <MainPage></MainPage>
-
+    
 
     <!-- <div class="bg"></div> -->
   </div>
