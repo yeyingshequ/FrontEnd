@@ -39,10 +39,10 @@
         <span>{{ cmtyInfo.cmtyBio }}</span>
       </div>
       <div class="joinAndFavorite">
-        <button class="favorite" @click="favoriteCmty(params)">
-          <i class="iconfont icon-shoucang" style="font-size: 16px"></i>
+        <button class="favorite" @click="favoriteCmty(cmtyInfo)">
+          <i class='iconfont' :class="cmtyInfo.isFavorite? [favoriteClass,favoriteIcon]:unfavoriteClass" style="font-size: 16px"></i>
         </button>
-        <button class="join" @click="joinCmty(params)">加 入</button>
+        <button class="join" :class='{unJoin:cmtyInfo.isJoined}' @click="joinCmty(cmtyInfo)">{{cmtyInfo.isJoined? '已加入':'加入'}}</button>
       </div>
     </div>
     <Tab :tabs="tabs" v-if="message == '获取信息成功'" />
@@ -71,9 +71,10 @@
 <script>
 import PostCard from '../../components/PostCard/index.vue'
 import CmtyCreator from '@/pages/C/CmtyCreator'
-import {favoriteCmty, getCmtyInfo, joinCmty} from '@/api'
+import {favoriteCmty, getCmtyInfo, joinCmty, unFavoriteCmty, unJoinCmty} from '@/api'
 import storage from '@/tools/storage'
 import CmtyHome from '@/pages/C/CmtyHome'
+import rename from '@/tools/rename'
 
 export default {
   name: 'C',
@@ -86,6 +87,7 @@ export default {
       ],
       params: {
         cmtyId: this.$route.params.cmtyId,
+        //isJoined: this.cmtyInfo
       },
       cmtyInfo: {},
       defaultAvatar:
@@ -96,23 +98,47 @@ export default {
       showCreateCmty: false,
       joinCmtyMsg: '',
       favoriteCmtyMsg: '',
+      /**特别关注的图标类型以及颜色**/
+      favoriteClass:"icon-favorite",
+      unfavoriteClass:"icon-unfavorite",
+      iconfontClass:'iconfont',
+      favoriteIcon:'favoriteIcon',
     }
   },
   methods: {
     async getCmtyInfo(params) {
       let result = await getCmtyInfo(params)
+      result.data = rename.toHump(result.data)
       this.cmtyInfo = result.data
       this.message = result.message
       //console.log(this.message)
-      //console.log(result)
+      console.log(result)
+
     },
     async joinCmty(params) {
-      let result = await joinCmty(params)
-      this.joinCmtyMsg = result.data.message
+      if(!params.isJoined){
+        let result = await joinCmty(params)
+        this.joinCmtyMsg = result.data.message
+        await this.getCmtyInfo(this.params)
+      }else {
+        let result = await unJoinCmty(params)
+        this.joinCmtyMsg = result.data.message
+        await this.getCmtyInfo(this.params)
+      }
     },
     async favoriteCmty(params) {
-      let result = await favoriteCmty(params)
-      this.favoriteCmtyMsg = result.data.message
+      console.log(params)
+      console.log(params.isFavorite == true? '是':'否')
+      if(!params.isFavorite){
+        let result = await favoriteCmty(params)
+        this.favoriteCmtyMsg = result.data.message
+        await this.getCmtyInfo(this.params)
+      }else{
+        let result = await unFavoriteCmty(params)
+        this.favoriteCmtyMsg = result.data.message
+        await this.getCmtyInfo(this.params)
+      }
+
     },
     closeCmtyCreator() {
       this.showCreateCmty = false
@@ -121,7 +147,7 @@ export default {
   mounted() {
     this.getCmtyInfo(this.params)
     //console.log(this.cmtyInfo)
-    console.log(this.$route.params.cmtyId)
+    //console.log(this.$route.params.cmtyId)
   },
   components: {
     CmtyHome,
@@ -264,7 +290,9 @@ div {
         border-radius: 50px;
         cursor: pointer;
       }
-
+      i{
+        font-size: 16px
+      }
       .favorite {
         width: 40px;
         color: $regularFont;
@@ -273,12 +301,15 @@ div {
         margin-right: 20px;
         transition: 0.1s;
         &:hover {
-          background-color: mix($brandColor, white, 50%);
+          background-color: mix($brandColor, white, 20%);
+        }
+        .favoriteIcon{
+          color:$brandColor;
         }
       }
 
       .join {
-        padding: 0 20px;
+        width: 80px;
         background-color: $brandColor;
         color: white;
         font-size: 15px;
@@ -286,6 +317,14 @@ div {
         transition: 0.1s;
         &:hover {
           background-color: $onHoverDark;
+        }
+      }
+      .unJoin{
+        background-color: white;
+        color:$mainFont;
+        border: 1px solid $placeholderFont;
+        &:hover {
+          background-color:mix($brandColor, white, 20%);
         }
       }
     }

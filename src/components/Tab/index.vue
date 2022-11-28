@@ -23,12 +23,12 @@ export default {
   props: ['tabs'],
   methods: {
     getId(tab) {
-      console.log(tab.id)
+      //console.log(tab.id)
       this.currentId = tab.id
     },
   },
   mounted() {
-    console.log(this.$route)
+    //console.log(this.$route)
   },
 }
 </script>

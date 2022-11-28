@@ -35,9 +35,14 @@ export const createCmty = (params) => request({url: '/createcmty', method: 'post
 //加入社区
 export const joinCmty = (params) => request({url: '/joincmty', method: 'post', data: params})
 
+//退出社区
+export const unJoinCmty = (params) => request({url: '/unjoincmty', method: 'post', data: params})
+
 //特别关注
-export const favoriteCmty = (params) =>
-  request({url: '/favoritecmty', method: 'post', data: params})
+export const favoriteCmty = (params) => request({url: '/favoritecmty', method: 'post', data: params})
+
+//取消特别关注
+export const unFavoriteCmty = (params) => request({url: '/unfavoritecmty', method: 'post', data: params})
 
 //查询加入的社区
 export const getJoinedCmty = () => request({url: '/getjoinedcmty', method: 'get'})

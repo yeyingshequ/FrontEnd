@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="list">
-      <CmtyCard :cmtyList="squareInfo" />
+      <CmtyCard :cmtyList="squareInfo" @regetSquareCmty='getCmtySquareInfo' />
     </div>
   </div>
 </template>
@@ -45,8 +45,8 @@ export default {
     }
   },
   methods: {
-    async getCmtySquareInfo(params) {
-      let result = await getCmtySquareInfo(params)
+    async getCmtySquareInfo() {
+      let result = await getCmtySquareInfo(this.$route.params)
       if (result.status == 0) {
         result = result.data
         for (let i = 0; i < result.length; i++) {
@@ -64,7 +64,7 @@ export default {
   },
   mounted() {
     this.$router.push('/communities/square/全部')
-    this.getCmtySquareInfo(this.$route.params)
+    this.getCmtySquareInfo()
   },
 }
 </script>

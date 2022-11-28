@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CmtyCard :cmtyList="favoriteCmtyInfo" />
+    <CmtyCard :cmtyList="favoriteCmtyInfo" @regetFavoriteCmty='getFavoriteCmty'/>
   </div>
 </template>
 <script>

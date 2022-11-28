@@ -1,5 +1,5 @@
 <template>
-  <div class="Joined">
+  <div class="joinedContainer">
     <div
       class="community"
       v-for="community in cmtyList"
@@ -11,7 +11,7 @@
           <img
             :src="
               community.cmtyAvatar ||
-              'https://i.pinimg.com/564x/ba/5e/67/ba5e6704f5805a32f036b382265d71a4.jpg'
+              'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg'
             "
             alt=""
           />
@@ -42,22 +42,67 @@
         <div class="introduction">{{ community.cmtyBio }}</div>
       </div>
       <div class="joinAndFavorite">
-        <button class="goFavorite">
-          <i class="iconfont icon-shoucang" style="font-size: 16px"></i>
+        <button class="goFavorite" @click.stop="favoriteCmty({cmtyId:community.cmtyId,isFavorite:community.isFavorite})">
+          <i class='iconfont' :class="community.isFavorite? [favoriteClass,favoriteIcon]:unfavoriteClass"></i>
         </button>
-        <button class="goJoin">加 入</button>
+        <button class="goJoin" :class='{unJoin:community.isJoined}' @click.stop="joinCmty({cmtyId:community.cmtyId,isJoined:community.isJoined})">{{community.isJoined? '已加入':'加入'}}</button>
       </div>
     </div>
   </div>
 </template>
 <script>
+import {favoriteCmty, getCmtyInfo, joinCmty, unFavoriteCmty, unJoinCmty} from '@/api'
+/*
+:class="{favoriteClass:community.isFavorite,unfavoriteClass:!community.isFavorite}"
+*/
 export default {
   name: 'Community',
   props: ['cmtyList'],
+  data(){
+    return{
+      /**特别关注的图标类型以及颜色**/
+      favoriteClass:"icon-favorite",
+      unfavoriteClass:"icon-unfavorite",
+      iconfontClass:'iconfont',
+      favoriteIcon:'favoriteIcon',
+
+      /**后端响应的信息**/
+      joinCmtyMsg:'',
+      favoriteCmtyMsg:''
+    }
+  },
+  methods:{
+    async joinCmty(params) {
+      if(!params.isJoined){
+        let result = await joinCmty(params)
+        this.joinCmtyMsg = result.data.message
+        this.$emit(`reget${this.$route.name}Cmty`)
+      }else {
+        let result = await unJoinCmty(params)
+        this.joinCmtyMsg = result.data.message
+        this.$emit(`reget${this.$route.name}Cmty`)
+      }
+    },
+    async favoriteCmty(params) {
+      if(!params.isFavorite){
+        let result = await favoriteCmty(params)
+        this.favoriteCmtyMsg = result.data.message
+        this.$emit(`reget${this.$route.name}Cmty`)
+      }else {
+        let result = await unFavoriteCmty(params)
+        this.favoriteCmtyMsg = result.data.message
+        this.$emit(`reget${this.$route.name}Cmty`)
+      }
+
+    },
+  },
+  mounted() {
+    console.log(this.$route)
+  }
 }
 </script>
 <style scoped lang="scss">
-.Joined {
+.joinedContainer {
   position: relative;
 
   .community {
@@ -180,8 +225,8 @@ export default {
       }
 
       .goJoin {
-        padding: 0 16px;
-        font-size: 16px;
+        width: 80px;
+        font-size: 15px;
         background-color: $brandColor;
         color: white;
         font-weight: bold;
@@ -193,6 +238,14 @@ export default {
           background-color: mix($brandColor, black, 90%);
         }
       }
+      .unJoin{
+        background-color: white;
+        color:$mainFont;
+        border: 1px solid $placeholderFont;
+        &:hover {
+          background-color:mix($brandColor, white, 20%);
+        }
+      }
       .goFavorite {
         width: 35px;
         color: $regularFont;
@@ -200,10 +253,18 @@ export default {
         border: 1px $placeholderFont solid;
         margin-right: 20px;
         transition: 0.1s;
+        i{
+          font-size: 16px
+        }
+        .favoriteIcon{
+          color:$brandColor;
+        }
+
 
         &:hover {
-          background-color: mix($brandColor, white, 50%);
+          background-color: mix($brandColor, white, 20%);
         }
+
 
         .el-icon-chat-round {
           font-size: 20px;

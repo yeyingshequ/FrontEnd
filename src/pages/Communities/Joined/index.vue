@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CmtyCard :cmtyList="joinedCmtyInfo" />
+    <CmtyCard :cmtyList="joinedCmtyInfo" @regetJoinedCmty='getJoinedCmty'/>
   </div>
 </template>
 <script>
@@ -24,6 +24,7 @@ export default {
         this.joinedCmtyInfo = result
       }
     },
+
   },
   mounted() {
     //如果没有登录就跳转到社区广场
