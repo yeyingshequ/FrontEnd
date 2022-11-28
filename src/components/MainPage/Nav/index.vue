@@ -56,6 +56,13 @@
           <span>{{ nav.name }}</span>
         </div>
       </router-link>
+      <!--更多导航-->
+      <div class="navRouter">
+        <div class="mask">
+          <i class="iconfont icon-gengduo"></i>
+          <span>更多</span>
+        </div>
+      </div>
     </div>
     <div class="sendpost" @click="showEditor = true">
       <div>
@@ -73,6 +80,7 @@
 <script>
 import storage from '@/tools/storage'
 import postEditor from '@/components/MainPage/Nav/postEditor'
+import cookie from '@/tools/cookie'
 
 export default {
   name: '',
@@ -114,13 +122,13 @@ export default {
           path: '/chat',
           icon: 'iconfont icon-wode',
         },
-        {
+        /*{
           name: '设置',
           id: 6,
           pathName: 'Setting',
           path: '/setting',
           icon: 'iconfont icon-shezhi',
-        },
+        }*/
       ],
       //isLogin: false,
       isShowLogout: false,
@@ -134,6 +142,7 @@ export default {
     goLogout() {
       this.isShowLogout = false
       storage.remove('token')
+      cookie.removeCookie('UID')
       this.$router.go(0)
     },
     getUserInfo() {
@@ -339,7 +348,6 @@ export default {
 
   .usernav {
     width: 100%;
-    height: 420px;
 
     .active {
       font-weight: bold;
@@ -354,6 +362,7 @@ export default {
       align-items: center;
       padding-left: 40px;
       height: 70px;
+      cursor: pointer;
 
       .mask {
         border-radius: 50px;

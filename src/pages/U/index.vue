@@ -37,7 +37,7 @@
           </div>
         </div>
         <div class="introduction">
-          <span>♡ファンクラブ⇨https://lin.ee/6BjPJe1 ♡produce⇨ https://mistreass.com ♡♡💌お仕事依頼⇨ yuamikami.management@gmail.com</span>
+          <span>{{userInfo.bio}}</span>
         </div>
       </div>
       <div class="updateInfo"
@@ -49,7 +49,7 @@
         </span>
       </div>
       <div class="aboutFollow" v-if="UID!=$route.params.uid">
-        <button class="chat"><i class="el-icon-chat-round" style="font-size: 16px;"></i></button>
+        <button class="chat"><i class="iconfont icon-wode"></i></button>
         <button class="follow">关 注</button>
       </div>
     </div>
@@ -63,6 +63,7 @@ import Post from '../../components/PostCard/index.vue';
 import updateUserInfo from "@/pages/U/updateUserInfo";
 import {getUserInfo} from "@/api";
 import cookie from "@/tools/cookie";
+import rename from '@/tools/rename'
 
 export default {
   name: "U",
@@ -125,8 +126,7 @@ export default {
     },
     async getUserInfo(params) {
       let result = await getUserInfo(params)
-
-      console.log(result)
+      result.data = rename.toHump(result.data)
       this.message = result.message
       this.status = result.status
       this.userInfo = result.data
@@ -135,7 +135,7 @@ export default {
   mounted() {
     this.params.uid = this.$route.params.uid
     this.getUserInfo(this.params)
-    console.log(this.status)
+
   },
   computed: {
     UID() {
@@ -301,6 +301,10 @@ div {
         border: 1px $placeholderFont solid;
         margin-right: 20px;
         transition: .1s;
+        i{
+          font-size: 25px;
+          vertical-align: -5px;
+        }
 
         &:hover {
           background-color: $onHover
