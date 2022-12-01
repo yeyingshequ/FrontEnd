@@ -34,11 +34,14 @@ export default {
 </script>
 <style scoped lang="scss">
 .tabs {
+  position: fixed;
   display: flex;
   justify-content: center;
   width: 100%;
   height: 55px;
+  background-color: white;
   border-bottom: 1px #f1f1f1 solid;
+  z-index: 1;
 
   .router {
     display: flex;

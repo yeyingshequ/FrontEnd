@@ -96,6 +96,7 @@ export default {
             this.loginMessage ='';
           },1000)
           this.$router.go(0)
+
         }
       })
     },

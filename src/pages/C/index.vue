@@ -75,6 +75,7 @@ import {favoriteCmty, getCmtyInfo, joinCmty, unFavoriteCmty, unJoinCmty} from '@
 import storage from '@/tools/storage'
 import CmtyHome from '@/pages/C/CmtyHome'
 import rename from '@/tools/rename'
+import moment from 'moment'
 
 export default {
   name: 'C',

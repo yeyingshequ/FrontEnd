@@ -73,9 +73,11 @@ export default {
   display: flex;
 
   .category {
-    flex: 1;
+    position: fixed;
+    width: 100px;
     height: 100vmax;
     border-right: 1px solid #f1f1f1;
+
 
     /* background-color: blueviolet; */
     div {
@@ -99,7 +101,8 @@ export default {
   }
 
   .list {
-    flex: 6;
+    margin-left: 100px;
+    width: 100%;
     /* background-color: blue; */
   }
 }

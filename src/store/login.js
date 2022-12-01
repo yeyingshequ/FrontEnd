@@ -9,8 +9,9 @@ const state = {
 const actions = {
   async reqLogin({commit}, params = {}) {
     let result = await loginApi(params)
+    console.log("result:",result)
     if (result.status === 0) {
-      commit('SETTOKEN', result)
+      commit('SETTOKEN', result.data)
     }
     return result
   },

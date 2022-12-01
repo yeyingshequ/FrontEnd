@@ -1,7 +1,7 @@
 <template>
   <div>
-    <Tab :tabs="tabs" />
-    <router-view></router-view>
+    <Tab :tabs="tabs" style='position: fixed;width:698px' />
+    <router-view style='padding-top: 55px '></router-view>
   </div>
 </template>
 <script>

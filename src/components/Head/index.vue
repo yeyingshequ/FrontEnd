@@ -48,7 +48,7 @@ export default {
   height: 60px;
   background-color: #ffffff;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
-  z-index: 1;
+  z-index: 2;
 
   .headNav {
     width: 1000px;

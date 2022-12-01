@@ -168,7 +168,7 @@ export default {
   },
   components: {
     postEditor,
-  },
+  }
 }
 </script>
 <style scoped lang="scss">
