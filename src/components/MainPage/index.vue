@@ -9,21 +9,14 @@
     </div>
   </div>
 </template>
-<script>
-import Nav from '@/components/MainPage/Nav';
+<script setup lang="ts">
+import Nav from '@/components/MainPage/Nav/index.vue';
+import { ref } from 'vue';
+import { RouterView } from 'vue-router';
+let showLogout = ref(true)
 
-export default {
-  components: {Nav},
-  data() {
-    return {
-      isShowLogout: true,
-    }
-  },
-  methods: {
-    isNotShowLogout(e) {
-      console.log(e)
-    }
-  }
+function isNotShowLogout(e: any) {
+  console.log(e)
 }
 </script>
 <style scoped lang="scss">

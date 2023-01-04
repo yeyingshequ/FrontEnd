@@ -1,55 +1,34 @@
 {
   "name": "yeying",
-  "version": "0.1.0",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "animate.css": "^4.1.1",
-    "axios": "^0.27.2",
-    "core-js": "^3.8.3",
-    "element-ui": "^2.15.9",
-    "moment": "^2.29.4",
-    "normalize.css": "^8.0.1",
-    "vue": "^2.6.14",
-    "vue-router": "^3.2.0",
-    "vuex": "^3.6.2"
+    "@types/lodash": "^4.14.191",
+    "@types/node": "^18.11.11",
+    "clipboard": "^2.0.11",
+    "element-plus": "^2.2.26",
+    "mitt": "^3.0.0",
+    "path": "^0.12.7",
+    "pinia": "^2.0.27",
+    "sass": "^1.56.1",
+    "unplugin-vue-components": "^0.22.11",
+    "vite-plugin-vue-setup-extend": "^0.4.0",
+    "vue": "^3.2.41",
+    "vue-clipboard3": "^2.0.0",
+    "vue-router": "^4.1.6"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.16",
-    "@babel/eslint-parser": "^7.12.16",
-    "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
-    "element-theme-chalk": "^2.15.9",
-    "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3",
-    "node-sass": "^7.0.1",
-    "sass-loader": "^13.0.2",
-    "sass-resources-loader": "^2.2.5",
-    "style-loader": "^3.3.1",
-    "vue-template-compiler": "^2.6.14"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "@babel/eslint-parser"
-    },
-    "rules": {}
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+    "@vitejs/plugin-vue": "^3.2.0",
+    "html-loader": "^4.2.0",
+    "sass-loader": "^13.2.0",
+    "typescript": "^4.6.4",
+    "vite": "^3.2.3",
+    "vue-tsc": "^1.0.9"
+  }
 }

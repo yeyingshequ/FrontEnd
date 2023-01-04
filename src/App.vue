@@ -1,30 +1,17 @@
+<script setup lang="ts">
+import Head from '@/components/Head/index.vue'
+import MainPage from '@/components/MainPage/index.vue';
+import LoginAndRegister from "@/components/LoginAndRegister/index.vue";
+</script>
 <template>
   <div class="app">
     <LoginAndRegister></LoginAndRegister>
     <Head></Head>
     <MainPage></MainPage>
-    
-
     <!-- <div class="bg"></div> -->
   </div>
 </template>
-<script>
-import Head from '@/components/Head'
-import MainPage from './components/MainPage/index.vue';
-import Community from './components/CmtyCard/index.vue';
-import LoginAndRegister from "@/components/LoginAndRegister";
 
-export default {
-  name: 'App',
-  components: {
-    LoginAndRegister,
-    Head,
-    MainPage,
-    Community
-  }
-
-}
-</script>
 <style lang="scss">
 /* 初始化 */
 * {
@@ -34,8 +21,8 @@ export default {
 }
 
 body{
-	overflow-y: scroll;
-	overflow-x: hidden;
+  overflow-y: scroll;
+  overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
   padding-left: calc(100vw - 100%);
 }

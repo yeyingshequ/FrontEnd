@@ -1,173 +1,147 @@
 <template>
-  <div>
-    <PostCard :postList="discoverInfo"/>
-  </div>
+    <div>
+        <PostCard :postCardList="discoverPostCardList" />
+    </div>
 </template>
-<script>
-import formatTime from "@/tools/formatTime";
-import rename from "@/tools/rename";
-import {getDiscoverInfo} from "@/api";
+<script setup lang="ts">
+import {onMounted} from 'vue'
+import usePostStore from '@/store/post'
+import {storeToRefs} from 'pinia'
+const postStore = usePostStore()
+let {discoverPostCardList} = storeToRefs(postStore)
+console.log('discoverPostCardList:', discoverPostCardList)
 
-export default {
-  name: "",
-  data() {
-    return {
-      discoverInfo: {}
-    }
-  },
-  methods: {
-    async getDiscoverInfo() {
-      let result = await getDiscoverInfo()
-      if (result.status === 0) {
-        for (let i = 0; i < result.data.length; i++) {
-          result.data[i] = rename.toHump(result.data[i])
-          result.data[i].updateTime = formatTime(result.data[i].updateTime)
-        }
-        this.discoverInfo = result.data
-        console.log(result.data)
-      }
-    }
-  },
-  mounted() {
-    this.getDiscoverInfo()
-    //发送评论和回复后重新获取数据
-    this.$bus.$on('regetDiscoverInfo', () => {
-      //console.log('接收到了')
-      this.getDiscoverInfo()
-    })
-  },
-  beforeDestroy() {
-    this.$bus.$off('regetDiscoverInfo')
-  }
+function reqGetDiscoverPostCard() {
+    postStore.getDiscoverPostCard()
 }
+onMounted(() => {
+    reqGetDiscoverPostCard()
+})
 </script>
 
 <style scoped lang="scss">
 .post {
-  border-bottom: 1px solid #f1f1f1;
-  transition: .1s;
+    border-bottom: 1px solid #f1f1f1;
+    transition: 0.1s;
 
-  &:hover {
-    background-color: mix(#ff44aa, white, 10%);
-  }
+    &:hover {
+        background-color: mix(#ff44aa, white, 10%);
+    }
 
-  .userInfo {
-    display: flex;
-    align-items: center;
-    height: 70px;
-    width: 100%;
+    .userInfo {
+        display: flex;
+        align-items: center;
+        height: 70px;
+        width: 100%;
 
-    /* background-color: chartreuse; */
+        /* background-color: chartreuse; */
 
-    .iconWrapper {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 80px;
-      height: 70px;
+        .iconWrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            height: 70px;
 
-      /* background-color: pink; */
-      .icon {
+            /* background-color: pink; */
+            .icon {
+                width: 50px;
+                height: 50px;
 
-        width: 50px;
-        height: 50px;
-
-        img {
-          border-radius: 50%;
-          width: 100%;
-          height: 100%;
+                img {
+                    border-radius: 50%;
+                    width: 100%;
+                    height: 100%;
+                }
+            }
         }
-      }
-    }
 
-    .user {
-      height: 50px;
+        .user {
+            height: 50px;
 
-      /* background-color: blueviolet; */
-      .userName {
-        line-height: 25px;
-        height: 25px;
+            /* background-color: blueviolet; */
+            .userName {
+                line-height: 25px;
+                height: 25px;
 
-        span {
-          font-weight: bold;
+                span {
+                    font-weight: bold;
+                }
+            }
+
+            .updateTime {
+                height: 25px;
+
+                span {
+                    line-height: 25px;
+                    color: $regularFont;
+                }
+            }
         }
-      }
+    }
 
-      .updateTime {
+    .content {
+        padding-left: 15px;
+        padding-right: 15px;
+        height: 100%;
+        width: 100%;
 
-        height: 25px;
-
-        span {
-          line-height: 25px;
-          color: $regularFont;
+        /* background-color: firebrick; */
+        .title {
+            font-weight: bold;
         }
-      }
-    }
-  }
 
-  .content {
-    padding-left: 15px;
-    padding-right: 15px;
-    height: 100%;
-    width: 100%;
-
-    /* background-color: firebrick; */
-    .title {
-      font-weight: bold;
-    }
-
-    .bodyText {
-      margin-top: 10px;
-    }
-
-    .block {
-      margin-top: 10px;
-
-      .el-carousel__item h3 {
-        color: #475669;
-        font-size: 14px;
-        opacity: 0.75;
-        line-height: 150px;
-        margin: 0;
-
-        img {
-          width: 100%;
+        .bodyText {
+            margin-top: 10px;
         }
-      }
 
-      .el-carousel__item:nth-child(2n) {
-        background-color: #99a9bf;
-      }
+        .block {
+            margin-top: 10px;
 
-      .el-carousel__item:nth-child(2n+1) {
-        background-color: #d3dce6;
-      }
+            .el-carousel__item h3 {
+                color: #475669;
+                font-size: 14px;
+                opacity: 0.75;
+                line-height: 150px;
+                margin: 0;
 
+                img {
+                    width: 100%;
+                }
+            }
+
+            .el-carousel__item:nth-child(2n) {
+                background-color: #99a9bf;
+            }
+
+            .el-carousel__item:nth-child(2n + 1) {
+                background-color: #d3dce6;
+            }
+        }
     }
-  }
 
-  .tools {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    width: 100%;
-    height: 40px;
-    /* background-color: hotpink; */
+    .tools {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 100%;
+        height: 40px;
+        /* background-color: hotpink; */
 
-    div {
-      color: $regularFont;
+        div {
+            color: $regularFont;
 
-      i {
-        font-size: 20px;
-      }
+            i {
+                font-size: 20px;
+            }
 
-      span {
-        font-size: 16px;
-        position: relative;
-        top: -0.03rem;
-        margin-left: 3px;
-      }
+            span {
+                font-size: 16px;
+                position: relative;
+                top: -0.03rem;
+                margin-left: 3px;
+            }
+        }
     }
-  }
 }
 </style>

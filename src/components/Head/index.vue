@@ -4,56 +4,50 @@
       <div class="iconAndSearch">
         <div class="webicon">
           <div class="logoWrapper">
-            <img src="./images/weblogo.png" alt="">
+            <img src="./images/weblogo.png" alt="" />
           </div>
         </div>
         <div class="searchPart">
-          <div class="search" :class="{'searchOnFocus':(searchOnFocus===true)}">
-            <input type="text" placeholder="游客无需注册也可以发帖喔~~"
-                   v-model="inputText"
-                   ref="searchInput"
-                   @focus="searchOnFocus = true"
-                   @blur="searchOnFocus = false"
-            >
-            <button
-                @click="$refs.searchInput.focus()"
-            ><i class="el-icon-search"></i></button>
+          <div class="search" :class="{searchOnFocus: searchOnFocus === true}">
+            <input
+              type="text"
+              placeholder="游客无需注册也可以发帖喔~~"
+              v-model="inputText"
+              ref="searchInput"
+              @focus="searchOnFocus = true"
+              @blur="searchOnFocus = false"
+            />
+            <button @click="$refs.searchInput.focus()">
+              <i class="el-icon-search"></i>
+            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-<script>
-export default {
-  data() {
-    return {
-      inputText: '',
-      searchOnFocus: false,
-    }
-  },
-  methods: {
+<script setup lang="ts">
+import { ref } from 'vue'
 
-
-  }
-}
+let inputText =  ref('')
+let searchOnFocus = ref(false)
 </script>
+
 <style scoped lang="scss">
 .head {
   display: flex;
   justify-content: center;
   position: fixed;
   top: 0;
-  width: 100%;
+  width: 102%;
   height: 60px;
   background-color: #ffffff;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   z-index: 2;
 
   .headNav {
     width: 1000px;
     height: 100%;
-
 
     /* background-color:blueviolet; */
     .iconAndSearch {
@@ -98,7 +92,8 @@ export default {
 
         /* background-color: green; */
 
-        .search, .searchOnFocus {
+        .search,
+        .searchOnFocus {
           display: flex;
           overflow: hidden;
           align-items: center;
@@ -128,17 +123,19 @@ export default {
             background-color: $onHover;
           }
         }
+
         .searchOnFocus {
           border: 1px solid $brandColor;
-          button{
+
+          button {
             background: white;
           }
-          input{
+
+          input {
             background: white;
           }
         }
       }
-
     }
   }
 }

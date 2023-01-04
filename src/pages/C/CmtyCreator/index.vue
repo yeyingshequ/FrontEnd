@@ -34,60 +34,50 @@
     </div>
   </div>
 </template>
-
-<script>
+<script setup lang="ts">
 import scroll from '@/tools/scroll'
 import {createCmty} from '@/api'
+import { onMounted, reactive, ref } from 'vue';
+import useMainStore from '@/store/index'
+const mainStore = useMainStore()
+const categoryList = [
+ {value: 1,  name: '运动'},
+ {value: 2,  name: '游戏'},
+ {value: 3,  name: '数码'},
+ {value: 4,  name: '科学'},
+ {value: 5,  name: '动漫'},
+ {value: 6,  name: '音乐'},
+ {value: 7,  name: '休闲时尚'},
+ {value: 8,  name: '文学'},
+ {value: 9,  name: '校园'},
+ {value: 10, name: '明星'},
+ {value: 11, name: '网友俱乐部'},
+ {value: 12, name: '个人社区'},
+ {value: 13, name: '运动'},
+ {value: 14, name: '游戏'},
+ {value: 15, name: '数码'},
+ {value: 16, name: '情感'},
+]
+let params= reactive({
+  cmtyName: '',
+  cmtyCategory: ''
+})
+let message = ref('') 
 
-export default {
-  name: 'index.vue',
-  data() {
-    return {
-      categoryList: [
-        {value: 1, name: '运动'},
-        {value: 2, name: '游戏'},
-        {value: 3, name: '数码'},
-        {value: 4, name: '科学'},
-        {value: 5, name: '动漫'},
-        {value: 6, name: '音乐'},
-        {value: 7, name: '休闲时尚'},
-        {value: 8, name: '文学'},
-        {value: 9, name: '校园'},
-        {value: 10, name: '明星'},
-        {value: 11, name: '网友俱乐部'},
-        {value: 12, name: '个人社区'},
-        {value: 13, name: '运动'},
-        {value: 14, name: '游戏'},
-        {value: 15, name: '数码'},
-        {value: 16, name: '情感'},
-      ],
-      params: {
-        cmtyName: '',
-        cmtyCategory: '',
-      },
-      message: '',
-    }
-  },
-  methods: {
-    close() {
-      this.$emit('closeCmtyCreator')
-      scroll.move()
-    },
-    async createCmty(params) {
-      let result = await createCmty(params)
-      this.message = result.message
-      //关闭社区创建框
-      if (result.status === 0) {
-        setTimeout(() => {
-          this.close()
-          this.message = ''
-        }, 1000)
-      }
-    },
-  },
-  mounted() {
-    console.log(this.categoryList)
-  },
+function close() {
+  mainStore.showCmtyCreator=false
+  scroll.move()
+}
+async function createCmty(params:{cmtyName:string,cmtyCategory:string}) {
+  let result:any = await createCmty(params)
+  message.value = result.message
+  //关闭社区创建框
+  if (result.status === 0) {
+    setTimeout(() => {
+      close()
+      message.value = ''
+    }, 1000)
+  }
 }
 </script>
 

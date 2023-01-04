@@ -1,7 +1,7 @@
 <template>
   <div>
     <router-link to="/p" class="container">
-      <div class="post" v-for="(post, index) in postList" :key="post.postId">
+      <div class="post" v-for="(post, index) in postCardList" :key="post.postId">
         <!-- 用户信息、帖子更新时间 -->
         <div class="iconWrapper">
           <div class="icon">
@@ -52,7 +52,7 @@ export default {
     };
   },
   props: [
-    "postList"
+    "postCardList"
   ],
   mounted() {
     window.onresize = () => {

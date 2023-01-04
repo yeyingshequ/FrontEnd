@@ -1,20 +1,13 @@
 <template>
   <div class="joinedContainer">
-    <div
-      class="community"
-      v-for="community in cmtyList"
-      :key="community.cmtyId"
-      @click="$router.push(`/c/${community.cmtyId}`)"
-    >
+    <div class="community" v-for="community in cmtyCardList" :key="community.cmtyId"
+      @click="$router.push(`/c/${community.cmtyId}`)">
       <div class="userIcon">
         <div>
-          <img
-            :src="
-              community.cmtyAvatar ||
-              'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg'
-            "
-            alt=""
-          />
+          <img :src="
+  community.cmtyAvatar ||
+  'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg'
+" alt="" />
         </div>
       </div>
       <div class="aboutCommunity">
@@ -42,64 +35,76 @@
         <div class="introduction">{{ community.cmtyBio }}</div>
       </div>
       <div class="joinAndFavorite">
-        <button class="goFavorite" @click.stop="favoriteCmty({cmtyId:community.cmtyId,isFavorite:community.isFavorite})">
-          <i class='iconfont' :class="community.isFavorite? [favoriteClass,favoriteIcon]:unfavoriteClass"></i>
+        <button class="goFavorite" v-if="route.name == 'Joined' || route.name == 'Favorite'"
+          @click.stop="reqFavoriteCmty({ cmtyId: community.cmtyId, isFavorite: community.isFavorite })">
+          <i class='iconfont' :class="community.isFavorite ? [favoriteClass, favoriteIcon] : unfavoriteClass"></i>
         </button>
-        <button class="goJoin" :class='{unJoin:community.isJoined}' @click.stop="joinCmty({cmtyId:community.cmtyId,isJoined:community.isJoined})">{{community.isJoined? '已加入':'加入'}}</button>
+        <button class="goJoin" :class='{ unJoin: community.isJoined }'
+          @click.stop="reqJoinCmty({ cmtyId: community.cmtyId, isJoined: community.isJoined })">{{ community.isJoined ?
+    '已加入' : '加入'
+          }}</button>
       </div>
     </div>
   </div>
 </template>
-<script>
-import {favoriteCmty, getCmtyInfo, joinCmty, unFavoriteCmty, unJoinCmty} from '@/api'
-/*
-:class="{favoriteClass:community.isFavorite,unfavoriteClass:!community.isFavorite}"
-*/
-export default {
-  name: 'Community',
-  props: ['cmtyList'],
-  data(){
-    return{
-      /**特别关注的图标类型以及颜色**/
-      favoriteClass:"icon-favorite",
-      unfavoriteClass:"icon-unfavorite",
-      iconfontClass:'iconfont',
-      favoriteIcon:'favoriteIcon',
+<script setup lang="ts">
+import { favoriteCmty, getCmtyInfo, joinCmty, unFavoriteCmty, unJoinCmty } from '@/api'
+import { computed, onMounted, ref, toRefs, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
-      /**后端响应的信息**/
-      joinCmtyMsg:'',
-      favoriteCmtyMsg:''
-    }
-  },
-  methods:{
-    async joinCmty(params) {
-      if(!params.isJoined){
-        let result = await joinCmty(params)
-        this.joinCmtyMsg = result.data.message
-        this.$emit(`reget${this.$route.name}Cmty`)
-      }else {
-        let result = await unJoinCmty(params)
-        this.joinCmtyMsg = result.data.message
-        this.$emit(`reget${this.$route.name}Cmty`)
-      }
-    },
-    async favoriteCmty(params) {
-      if(!params.isFavorite){
-        let result = await favoriteCmty(params)
-        this.favoriteCmtyMsg = result.data.message
-        this.$emit(`reget${this.$route.name}Cmty`)
-      }else {
-        let result = await unFavoriteCmty(params)
-        this.favoriteCmtyMsg = result.data.message
-        this.$emit(`reget${this.$route.name}Cmty`)
-      }
 
-    },
-  },
-  mounted() {
-    console.log(this.$route)
+const route = useRoute()
+const emit = defineEmits(['regetJoinedCmty', 'regetFavoriteCmty', 'regetSquareCmty', 'regetRecentCmty'])
+const props = defineProps(['cmtyCardList'])
+let { cmtyCardList } = toRefs(props)
+/**特别关注的图标类型以及颜色**/
+let favoriteClass = ref("icon-favorite")
+let unfavoriteClass = ref("icon-unfavorite")
+let favoriteIcon = ref('favoriteIcon')
+/**后端响应的信息**/
+let joinCmtyMsg = ref('')
+let favoriteCmtyMsg = ref('')
+function regetRouteInfo() {
+  switch (route.name) {
+    case 'Joined':
+      emit('regetJoinedCmty')
+      break;
+    case 'Favorite':
+      emit('regetFavoriteCmty')
+      break;
+    case 'Square':
+      emit('regetSquareCmty')
+      break;
+    case 'Recent':
+      emit('regetRecentCmty')
   }
 }
+async function reqJoinCmty(params: { userId: any, isJoined: any }) {
+  if (!params.isJoined) {
+    let result = await joinCmty(params)
+    joinCmtyMsg.value = result.data.message
+  } else {
+    let result = await unJoinCmty(params)
+    joinCmtyMsg.value = result.data.message
+  }
+  regetRouteInfo()
+}
+async function reqFavoriteCmty(params: { userId: any, isFavorite: any }) {
+  if (!params.isFavorite) {
+    let result = await favoriteCmty(params)
+    favoriteCmtyMsg.value = result.data.message
+  } else {
+    let result = await unFavoriteCmty(params)
+    favoriteCmtyMsg.value = result.data.message
+  }
+  regetRouteInfo()
+
+}
+onMounted(() => {
+  //console.log("onMounted的props:", props.cmtyCardList)
+  //console.log("cmtyCardList:", cmtyCardList);
+
+})
 </script>
 <style scoped lang="scss">
 .joinedContainer {
@@ -112,6 +117,7 @@ export default {
     height: 100%;
     border-bottom: 1px #f6f6f6 solid;
     cursor: pointer;
+
     /* background-color: aqua; */
     &:hover {
       background-color: mix(#ff44aa, white, 10%);
@@ -156,6 +162,7 @@ export default {
 
           .name {
             margin-right: 20px;
+
             span {
               font-size: large;
               font-weight: bold;
@@ -205,6 +212,7 @@ export default {
         /* background-color: blueviolet; */
       }
     }
+
     .joinAndFavorite {
       position: absolute;
       right: 40px;
@@ -238,14 +246,17 @@ export default {
           background-color: mix($brandColor, black, 90%);
         }
       }
-      .unJoin{
+
+      .unJoin {
         background-color: white;
-        color:$mainFont;
+        color: $mainFont;
         border: 1px solid $placeholderFont;
+
         &:hover {
-          background-color:mix($brandColor, white, 20%);
+          background-color: mix($brandColor, white, 20%);
         }
       }
+
       .goFavorite {
         width: 35px;
         color: $regularFont;
@@ -253,11 +264,13 @@ export default {
         border: 1px $placeholderFont solid;
         margin-right: 20px;
         transition: 0.1s;
-        i{
+
+        i {
           font-size: 16px
         }
-        .favoriteIcon{
-          color:$brandColor;
+
+        .favoriteIcon {
+          color: $brandColor;
         }
 
 

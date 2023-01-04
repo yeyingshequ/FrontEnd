@@ -3,11 +3,9 @@
         
     </div>
 </template>
-<script>
-export default {
-    name:'Notification'
-}
+<script setup lang="ts">
+
 </script>
-<style lang="">
+<style scoped lang="scss">
     
 </style>

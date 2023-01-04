@@ -1,38 +1,35 @@
 <template>
-  <div>
-    <CmtyCard :cmtyList="joinedCmtyInfo" @regetJoinedCmty='getJoinedCmty'/>
-  </div>
+    <div>
+        <CmtyCard :cmtyCardList="joinedCmtyCardList" @regetJoinedCmty="reqGetJoinedCmty" />
+    </div>
 </template>
-<script>
+<script setup lang="ts">
 import rename from '@/tools/rename'
 import {getJoinedCmty} from '@/api'
 import storage from '@/tools/storage'
-export default {
-  data() {
-    return {
-      joinedCmtyInfo: {},
-    }
-  },
-  methods: {
-    async getJoinedCmty() {
-      let result = await getJoinedCmty()
-      if (result.status == 0) {
-        result = result.data
-        for (let i = 0; i < result.length; i++) {
-          result[i] = rename.toHump(result[i])
-        }
-        this.joinedCmtyInfo = result
-      }
-    },
+import {onMounted, reactive, watch} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+import CmtyCard from '@/components/CmtyCard/index.vue'
+import {storeToRefs} from 'pinia'
+import useRouterStore from '@/store/community'
+const routerStore = useRouterStore()
+const router = useRouter()
+const route = useRoute()
+let {joinedCmtyCardList} = storeToRefs(routerStore)
 
-  },
-  mounted() {
+async function reqGetJoinedCmty() {
+    routerStore.getJoinedCmty()
+}
+watch(route, (nv: any, ov: any) => {
+    reqGetJoinedCmty()
+})
+onMounted(() => {
     //如果没有登录就跳转到社区广场
     if (!storage.get('token')) {
-      this.$router.push('/communities/square/全部')
+        router.push('/communities/square/全部')
+    } else {
+        reqGetJoinedCmty()
     }
-    this.getJoinedCmty()
-  },
-}
+})
 </script>
 <style scoped lang="scss"></style>

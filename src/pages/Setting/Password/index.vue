@@ -5,14 +5,9 @@
         更改你的密码
       </span>
     </div>
-    <div class="form" :model="updateparams" :rules="rules" ref="form">
+    <div class="form" :model="updateparams">
       <div prop="oldPassword">
-        <input v-model="updateparams.oldPassword"
-               placeholder="旧密码"
-               type="password"
-               name="" id=""
-               prop="oldPassword"
-        >
+        <input v-model="updateparams.oldPassword" placeholder="旧密码" type="password" name="" id="" prop="oldPassword">
       </div>
       <div prop="newPassword">
         <input v-model="updateparams.newPassword" placeholder="新密码" type="password" name="" id="">
@@ -25,8 +20,21 @@
     <button type="submit" @click="getUpdate(updateparams)">提 交</button>
   </div>
 </template>
+<script setup lang="ts">
+
+</script>
 <script>
-import {updatePasswordApi} from "@/api";
+import { updatePasswordApi } from "@/api";
+import { reactive, ref } from "vue";
+let updateMessage = ref('')
+let updateparams = reactive({
+  oldPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+})
+
+
+
 
 export default {
   name: "password",
@@ -40,10 +48,10 @@ export default {
       },
       rule: {
         oldPassword: [
-          {require: true, message: '请填写所有的信息(前端)', trigger: 'blur'},
-          {min: 2, max: 10, message: '用户名长度必须在2-9个字符(前端)'}
+          { require: true, message: '请填写所有的信息(前端)', trigger: 'blur' },
+          { min: 2, max: 10, message: '用户名长度必须在2-9个字符(前端)' }
         ],
-        newPassword:[
+        newPassword: [
           {},
           {}
         ]
@@ -52,12 +60,12 @@ export default {
   },
   methods: {
     getUpdate(params) {
-      this.$refs.form.validate(async(valid)=>{
-        if (valid){
+      this.$refs.form.validate(async (valid) => {
+        if (valid) {
           let results = await updatePasswordApi(params)
           this.updateMessage = results.message
           console.log(results)
-        }else{
+        } else {
           console.log(message)
         }
       })

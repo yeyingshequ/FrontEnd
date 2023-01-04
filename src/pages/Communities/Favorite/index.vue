@@ -1,39 +1,31 @@
 <template>
-  <div>
-    <CmtyCard :cmtyList="favoriteCmtyInfo" @regetFavoriteCmty='getFavoriteCmty'/>
-  </div>
+    <div>
+        <CmtyCard :cmtyCardList="favoriteCmtyCardList" @regetFavoriteCmty="reqGetFavoriteCmty" />
+    </div>
 </template>
-<script>
+<script setup lang="ts">
 import CmtyCard from '@/components/CmtyCard/index.vue'
-import rename from '@/tools/rename'
-import {getFavoriteCmty} from '@/api'
 import storage from '@/tools/storage'
-export default {
-  components: {CmtyCard},
-  data() {
-    return {
-      favoriteCmtyInfo: {},
-    }
-  },
-  methods: {
-    async getFavoriteCmty() {
-      let result = await getFavoriteCmty()
-      if (result.status == 0) {
-        result = result.data
-        for (let i = 0; i < result.length; i++) {
-          result[i] = rename.toHump(result[i])
-        }
-        this.favoriteCmtyInfo = result
-      }
-    },
-  },
-  mounted() {
-    //如果没有登录就跳转到社区广场
-    if (!storage.get('token')) {
-      this.$router.push('/communities/square/全部')
-    }
-    this.getFavoriteCmty()
-  },
+import {onMounted, watch} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+import useRouterStore from '@/store/community'
+import {storeToRefs} from 'pinia'
+const routerStore = useRouterStore()
+const router = useRouter()
+const route = useRoute()
+let {favoriteCmtyCardList} = storeToRefs(routerStore)
+async function reqGetFavoriteCmty() {
+    routerStore.getFavoriteCmty()
 }
+watch(route, (nv: any, ov: any) => {
+    reqGetFavoriteCmty()
+})
+onMounted(() => {
+    if (!storage.get('token')) {
+        router.push('/communities/square/全部')
+    } else {
+        reqGetFavoriteCmty()
+    }
+})
 </script>
 <style scoped lang="scss"></style>
