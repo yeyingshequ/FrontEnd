@@ -69,7 +69,7 @@ async function reqSendPost(params: {}) {
     let result = await sendPost(params)
     message.value = result.message
     //关闭编辑器
-    if (result.message == '发帖成功') {
+    if (result.message == '发送成功') {
         setTimeout(() => {
             close()
             message.value = ''

@@ -4,92 +4,54 @@
             <div class="return">
                 <i class="iconfont icon-fanhui" @click="back"></i>
             </div>
-            <div class="bar" @click="router.push(`/c/${post.cmtyId}`)">
-                <div class="icon">
-                    <img src="@/images/barIcon.jpg" alt="" />
-                </div>
-                <div class="barName">
-                    <span>{{ post.cmtyName }}吧</span>
+            <div class="bar" @click="router.push(`/p/${comment.postId}`)">
+                <div class="showAllComments">
+                    <span>查看所有评论</span>
                 </div>
             </div>
         </div>
-        <Poster :postInfo="postInfo" />
-        <Comment :postInfo="postInfo" />
+        <Comment :commentInfo="commentInfo" />
+        <Reply :replyInfo="commentInfo.replies" />
     </div>
 </template>
-
 <script setup lang="ts">
-import Poster from './Post/index.vue'
-import Comment from './Comment/index.vue'
-import {computed, onMounted, onUnmounted, reactive} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import useMainStore from '@/store/index'
+import Comment from '@/pages/Comment/Comment/index.vue'
+import Reply from '@/pages/Comment/Reply/index.vue'
 import {storeToRefs} from 'pinia'
-import emitter from '@/tools/mitt'
+import {computed, onMounted, onUnmounted, reactive} from 'vue'
 import usePostStore from '@/store/post'
+import emitter from '@/tools/mitt'
 const postStore = usePostStore()
-const mainStore = useMainStore()
-const route = useRoute()
 const router = useRouter()
+const route = useRoute()
 
-let {postInfo} = storeToRefs(postStore)
-let post = computed(() => {
-    return postInfo.value.post
+let {commentInfo} = storeToRefs(postStore)
+let comment = computed(() => {
+    return commentInfo.value
 })
+
+/***************************************/
 
 function back() {
     router.back()
 }
 
+/***************************************/
+
 let params: any = reactive({
-    postId: route.params.pid
+    commentId: route.params.commentId
 })
-function reqGetPostInfo(params: any) {
-    postStore.getPostInfo(params)
+
+function reqGetCommentInfo(params: any) {
+    postStore.getCommentInfo(params)
 }
+
 onMounted(() => {
-    postStore.postInfo = {
-        post: {
-            avatar: '',
-            cmtyAvatar: '',
-            cmtyHots: '' || 0,
-            cmtyId: 1,
-            cmtyName: '',
-            commentCount: 0,
-            content: '',
-            giftCount: 0,
-            isDelete: 0,
-            likeCount: 0,
-            postAuthorId: 0,
-            postId: 0,
-            postTitle: '',
-            pubTime: '',
-            shareCount: 0,
-            topFloor: '',
-            updateTime: '',
-            userId: '',
-            username: ''
-        },
-        comments: [
-            {
-                avatar: '',
-                commentAuthorId: 0,
-                commentId: 0,
-                commentTopFloor: 0,
-                content: '',
-                floor: 0,
-                postAuthorId: 0,
-                postId: 0,
-                pubTime: '',
-                replies: [],
-                userId: 0,
-                username: ''
-            }
-        ]
-    }
-    reqGetPostInfo(params)
+    reqGetCommentInfo(params)
+    console.log('commentInfo:', commentInfo.value)
     emitter.on('regetPostInfo', () => {
-        reqGetPostInfo(params)
+        reqGetCommentInfo(params)
     })
 })
 onUnmounted(() => {
@@ -121,6 +83,7 @@ onUnmounted(() => {
             left: 8px;
             border-radius: 50%;
             transition: 0.1s;
+            cursor: pointer;
             i {
                 margin-left: 5px;
                 font-size: 20px;
@@ -132,8 +95,8 @@ onUnmounted(() => {
         }
 
         .bar {
-            padding-left: 5px;
-            padding-right: 10px;
+            padding-left: 20px;
+            padding-right: 20px;
             display: flex;
             justify-content: center;
             align-items: center;

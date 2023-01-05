@@ -1,4 +1,4 @@
-import { getCmtyPosts, getDiscoverPostCard, getHomePostCard, getPostInfo, getSavedPostCard, loginApi } from "@/api"
+import { getCmtyPosts, getCommentInfo, getDiscoverPostCard, getHomePostCard, getPostInfo, getSavedPostCard, loginApi } from "@/api"
 import formatTime from "@/tools/formatTime"
 import rename from "@/tools/rename"
 import storage from "@/tools/storage"
@@ -133,7 +133,18 @@ const usePostStore = defineStore('postStore', {
                     pubTime: "",
                     replies: [
                         {
-
+                            commentAuthorId: 0,
+                            commentId: 0,
+                            content: '',
+                            postAuthorId: 0,
+                            postId: 0,
+                            pubTime: 0,
+                            repliedAuthorId: 0,
+                            repliedId: 0,
+                            replies: 0,
+                            replyAuthorId: 0,
+                            replyFloor: 0,
+                            replyId: 0
                         }
                     ],
                     userId: 0,
@@ -148,26 +159,69 @@ const usePostStore = defineStore('postStore', {
                 commentTopFloor: 0,
                 content: "",
                 floor: 0,
+                isSaved: 0,
                 postAuthorId: 0,
                 postId: 0,
                 pubTime: "",
-                replies: [
+                repliesCount: 0,
+                reply: [
                     {
+                        avatar: '',
+                        commentAuthorId: 0,
+                        commentId: 0,
+                        content: '',
+                        postAuthorId: 0,
+                        postId: 0,
+                        pubTime: 0,
+                        repliedAuthorId: 0,
+                        repliedId: 0,
+                        replies: 0,
+                        replyAuthorId: 0,
+                        replyFloor: 0,
+                        replyId: 0,
+                        username: '',
 
                     }
                 ],
                 userId: 0,
                 username: "",
-
+            },
+            replyInfo: {
+                commentAuthorId: 0,
+                commentId: 0,
+                content: '',
+                postAuthorId: 0,
+                postId: 0,
+                pubTime: 0,
+                repliedAuthorId: 0,
+                repliedId: 0,
+                replies: 0,
+                replyAuthorId: 0,
+                replyFloor: 0,
+                replyId: 0
+            },
+            comment: {
+                avatar: "",
+                commentAuthorId: 0,
+                commentId: 0,
+                commentTopFloor: 0,
+                content: "",
+                floor: 0,
+                isSaved: 0,
+                postAuthorId: 0,
+                postId: 0,
+                pubTime: "",
+                repliesCount: 0,
+                userId: 0,
+                username: ""
             }
-
-
         }
     },
     actions: {
         formatPostCard(result: { status: number; data: any }) {
             if (result.status === 0) {
                 for (let i = 0; i < result.data.length; i++) {
+                    result.data[i] = Object.assign(result.data[i], result.data[i].user, result.data[i].community)
                     result.data[i] = rename.toHump(result.data[i])
                     result.data[i].updateTime = formatTime(result.data[i].updateTime)
                 }
@@ -223,6 +277,21 @@ const usePostStore = defineStore('postStore', {
                 //console.log(result)
                 this.postInfo = result
             }
+        },
+        async getCommentInfo(params: { postId: number }) {
+            let result = await getCommentInfo(params)
+            result = result.data
+            let reply = result.reply
+            result.pubTime = formatTime(result.pubTime)
+            for (let i = 0; i < reply.length; i++) {
+                reply[i].pubTime = formatTime(reply[i].pubTime)
+                reply[i].username = reply[i].user.username
+                reply[i].avatar = reply[i].user.avatar
+                reply[i].userId = reply[i].user.userId
+            }
+            console.log("result:", result);
+            this.commentInfo = result
+
         }
     }
 })

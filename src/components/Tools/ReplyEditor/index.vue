@@ -38,6 +38,8 @@ import useMainStore from '@/store/index'
 import emitter from '@/tools/mitt'
 import {storeToRefs} from 'pinia'
 import usePostStore from '@/store/post'
+import {useRoute} from 'vue-router'
+const route = useRoute()
 const postStore = usePostStore()
 const mainStore = useMainStore()
 const props = defineProps(['postInfo', 'commentInfo'])
@@ -51,15 +53,15 @@ interface Iparams {
     content: string
 }
 //console.log("props on setup:", props.commentInfo);
-let {postInfo} = storeToRefs(postStore)
-let {commentInfo} = storeToRefs(postStore)
-let post = computed(() => {
-    return postInfo.value.post
+
+let commentInfo = computed(() => {
+    return props.commentInfo
 })
+
 let message = ref('')
 let params: Iparams = reactive({
-    postId: post.value.postId,
-    postAuthorId: post.value.postAuthorId,
+    postId: 0,
+    postAuthorId: 0,
     repliedId: 0,
     repliedAuthorId: 0,
     commentId: 0, //无法在此处传递commentInfo中的数据给params对象,所以在reqSendReply方法中传递
@@ -73,13 +75,13 @@ function close() {
 }
 
 async function reqSendReply(params: Iparams) {
-    console.log('postInfo:', props.postInfo)
-    //console.log('post:', post.value)
-    //console.log('commentInfo:', commentInfo.value)
+    console.log('commentInfo:', commentInfo.value)
+    params.postId = commentInfo.value.postId
+    params.postAuthorId = commentInfo.value.postAuthorId
     params.commentId = commentInfo.value.commentId
     params.commentAuthorId = commentInfo.value.commentAuthorId
+    console.log('commentInfo:', commentInfo.value)
     console.log('params:', params) //这里就变成了undefined
-    //console.log("commentId:", comment)
     let result = await sendReply(params)
     message.value = result.message
     //关闭编辑器
@@ -89,12 +91,17 @@ async function reqSendReply(params: Iparams) {
             message.value = ''
         }, 1000)
     }
-    emitter.emit('regetPostInfo')
+    switch (route.name) {
+        case 'Comment':
+            break
+
+        case ' Post': {
+            emitter.emit('regetPostInfo')
+            break
+        }
+    }
 }
 
-onBeforeMount(() => {
-    //console.log("props on BeforeMount:", props.commentInfo);
-})
 onMounted(() => {
     scroll.stop()
 })

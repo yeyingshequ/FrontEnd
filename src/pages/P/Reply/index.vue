@@ -32,7 +32,9 @@
                 </div>
             </div>
             <div class="moreReply" v-if="replies.length > 4">
-                <span>点击查看全部{{ commentInfo.repliesCount }}条回复</span>
+                <span @click="router.push(`/comment/${commentInfo.commentId}`)"
+                    >点击查看全部{{ commentInfo.repliesCount }}条回复</span
+                >
             </div>
         </div>
     </div>
@@ -40,6 +42,8 @@
 <script setup lang="ts">
 import Tools from '@/components/Tools/index.vue'
 import {computed, toRefs} from 'vue'
+import {useRouter} from 'vue-router'
+const router = useRouter()
 
 let props = defineProps(['commentInfo'])
 let {commentInfo} = toRefs(props)
@@ -126,6 +130,11 @@ $iconWrapperWidth: 35px;
     .moreReply {
         font-size: 14px;
         color: $regularFont;
+        span {
+            &:hover {
+                color: $mainFont;
+            }
+        }
     }
 }
 </style>

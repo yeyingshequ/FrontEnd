@@ -1,75 +1,63 @@
 <template>
-    <div class="commentContainer">
-        <div class="commentWrapper" v-for="comment in comments" :key="comment.commentId">
+    <div class="replyContainer">
+        <div class="replyWrapper" v-for="reply in replies" :key="reply.replyId">
             <div class="iconPart">
                 <div class="iconWrapper">
                     <img
-                        @click="$router.push(`/u/${comment.commentAuthorId}`)"
-                        :src="comment.avatar || defaultAvatar"
+                        @click="$router.push(`/u/${reply.replyAuthorId}`)"
+                        :src="reply.avatar || defaultAvatar"
                         alt=""
                     />
                 </div>
             </div>
-            <div class="commentPart">
+            <div class="replyPart">
                 <PostMenu
                     class="postMenu"
-                    :content="comment.content"
-                    father="comment"
-                    :postId="comment.postId"
+                    :content="reply.content"
+                    father="reply"
+                    :postId="reply.postId"
                 />
-                <div class="commentInfo">
+                <div class="replyInfo">
                     <div class="name">
-                        <span>{{ comment.username }}</span>
+                        <span>{{ reply.username }}</span>
                     </div>
                     <div class="timeAndFloor">
                         <div class="floor">
-                            <span>{{ comment.floor }}楼</span>
+                            <span>#{{ reply.replyFloor }}</span>
                         </div>
                         <div class="dot">
                             <span>·</span>
                         </div>
-                        <span class="pubTime">{{ comment.pubTime }}</span>
+                        <span class="pubTime">{{ reply.pubTime }}</span>
                     </div>
                 </div>
-                <div class="comment">
-                    <span>{{ comment.content }}</span>
-                    <div class="reply">
-                        <Reply :commentInfo="comment" />
-                    </div>
+                <div class="reply">
+                    <span>{{ reply.content }}</span>
                 </div>
-                <Tools :commentInfo="comment" father="comment" />
+                <Tools :replyInfo="reply" @click="postStore.replyInfo = reply" father="reply" />
             </div>
         </div>
     </div>
 </template>
 <script setup lang="ts">
-import {storeToRefs} from 'pinia'
-import {computed, onMounted, provide} from 'vue'
-import Reply from '../Reply/index.vue'
-import PostMenu from '@/components/PostMenu/index.vue'
+import {computed} from 'vue'
 import usePostStore from '@/store/post'
-import Tools from '@/components/Tools/index.vue'
-import {sendComment} from '@/api'
+import {storeToRefs} from 'pinia'
 const postStore = usePostStore()
-let {postInfo} = storeToRefs(postStore)
-let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg'
-
-let comments = computed(() => {
-    return postInfo.value.comments
+let {commentInfo} = storeToRefs(postStore)
+let replies = computed(() => {
+    return commentInfo.value.reply
 })
-console.log('comments:', comments)
+let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg'
 </script>
-<style scoped lang="scss">
-@import '@/assets/css/variable.scss';
-
+<style lang="scss" scoped>
 $iconPartWidth: 90px;
 $containerWidth: 698px;
-
-.commentContainer {
+.replyContainer {
     width: $viewPageWidth;
     //border-bottom: 1px solid #f1f1f1;
 
-    .commentWrapper {
+    .replyWrapper {
         display: flex;
         cursor: pointer;
         padding-top: 10px;
@@ -98,7 +86,7 @@ $containerWidth: 698px;
             }
         }
 
-        .commentPart {
+        .replyPart {
             position: relative;
             width: ($containerWidth - $iconPartWidth);
             border-bottom: 1px solid #f1f1f1;
@@ -109,7 +97,7 @@ $containerWidth: 698px;
                 right: 10px;
             }
 
-            .commentInfo {
+            .replyInfo {
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -150,7 +138,7 @@ $containerWidth: 698px;
                 }
             }
 
-            .comment {
+            .reply {
                 padding-right: 20px;
             }
         }

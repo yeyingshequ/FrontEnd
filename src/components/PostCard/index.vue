@@ -8,6 +8,13 @@
         >
             <!-- 用户信息、帖子更新时间 -->
             <div class="userInfo">
+                <PostMenu
+                    class="postMenu"
+                    :content="post.content"
+                    father="post"
+                    :postId="post.postId"
+                    @click.stop
+                />
                 <div class="iconWrapper">
                     <div class="icon">
                         <img :src="post.avatar" />
@@ -49,8 +56,8 @@
 import {computed, onMounted, ref, toRefs} from 'vue'
 import useRouterStore from '@/store/community'
 import {storeToRefs} from 'pinia'
+import PostMenu from '@/components/PostMenu/index.vue'
 const routerStore = useRouterStore()
-
 const props = defineProps(['postCardList'])
 let postCardList = computed(() => {
     return props.postCardList
@@ -72,11 +79,17 @@ onMounted(() => {
     }
 
     .userInfo {
+        position: relative;
         display: flex;
         align-items: center;
         height: 70px;
         width: 100%;
-        padding-top: 10px;
+        padding-top: 15px;
+        .postMenu {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
 
         /* background-color: chartreuse; */
 

@@ -60,6 +60,9 @@ export const getRecentCmty = () => request({ url: '/getrecentcmty', method: 'get
 //获取帖子的信息
 export const getPostInfo = (params: object) => request({ url: '/postinfo', method: 'get', params })
 
+//获取评论的信息
+export const getCommentInfo = (params: object) => request({ url: '/commentinfo', method: 'get', params })
+
 //获取首页导航信息
 export const getHomePostCard = () => request({ url: '/homepostcard', method: 'get' })
 
@@ -80,7 +83,7 @@ export const sendComment = (params: object) => request({ url: '/sendcomment', me
 export const sendReply = (params: object) => request({ url: '/sendreply', method: 'post', data: params })
 
 //收藏帖子
-export const savePost = (params: object) => request({ url: '/savepost', method: 'post', data: params })
+export const savePost = (params: object) => request({ url: '/updateuserpost', method: 'post', data: params })
 
 //屏蔽帖子
 export const hidePost = (params: object) => request({ url: '/hidepost', method: 'post', data: params })

@@ -11,6 +11,7 @@ import U from '@/router/U'
 import Setting from '@/router/Setting'
 import Saved from "./Saved";
 import History from "./History";
+import Comment from '@/router/Comment'
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -25,6 +26,7 @@ const router = createRouter({
     U,
     Saved,
     History,
+    Comment,
     //重定向,在项目跑起来的时候,访问/,立马让他指定到首页
     {
       path: '/pathMatch(.*)',

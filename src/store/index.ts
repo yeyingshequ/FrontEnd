@@ -26,7 +26,7 @@ const useMainStore = defineStore('mainStore', {
       showReplyEditor: false,
       showLogout: false,
       showCmtyCreator: false,
-      showMoreNav: false
+      showMoreNav: false,
 
 
     }

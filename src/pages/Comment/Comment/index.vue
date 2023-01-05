@@ -5,43 +5,40 @@
             <div class="userInfo">
                 <PostMenu
                     class="postMenu"
-                    :content="post.content"
+                    :content="comment.content"
                     father="post"
-                    :postId="post.postId"
+                    :postId="comment.postId"
                 />
                 <div class="iconWrapper">
                     <div class="icon">
                         <img
-                            @click="$router.push(`/u/${post.postAuthorId}`)"
-                            :src="post.avatar || defaultAvatar"
+                            @click="$router.push(`/u/${comment.postAuthorId}`)"
+                            :src="comment.avatar || defaultAvatar"
                         />
                     </div>
                 </div>
                 <div class="user">
                     <div class="userName">
-                        <span>{{ post.username }}</span>
+                        <span>{{ comment.username }}</span>
                     </div>
 
                     <div class="timeAndFloor">
                         <div class="floor">
-                            <span>1楼</span>
+                            <span>{{ comment.floor }}楼</span>
                         </div>
                         <div class="dot">
                             <span>·</span>
                         </div>
                         <div class="updateTime">
-                            <span>{{ post.pubTime }}</span>
+                            <span>{{ comment.pubTime }}</span>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- 标题和正文 -->
             <div class="content">
-                <div class="title">
-                    <h4>{{ post.postTitle }}</h4>
-                </div>
                 <div class="bodyText" v-show="true /* post.bodyText */">
-                    <span>{{ post.content }}</span>
+                    <span>{{ comment.content }}</span>
                 </div>
                 <!-- 图片 -->
                 <div class="imgDisplay">
@@ -59,22 +56,31 @@
                 </div>
             </div>
             <div class="toolWrapper">
-                <Tools :postInfo="postInfo" father="post" />
+                <Tools :commentInfo="comment" father="comment" />
             </div>
         </div>
     </div>
 </template>
 <script setup lang="ts">
 import {storeToRefs} from 'pinia'
-import {computed, reactive, ref} from 'vue'
+import {computed, onMounted, reactive, ref} from 'vue'
 import PostMenu from '@/components/PostMenu/index.vue'
 import usePostStore from '@/store/post'
+import {useRoute} from 'vue-router'
+import Tools from '@/components/Tools/index.vue'
+const props = defineProps(['commentInfo'])
+const route = useRoute()
 const postStore = usePostStore()
-let {postInfo} = storeToRefs(postStore)
-let post = computed(() => {
-    return postInfo.value.post
+let {commentInfo} = storeToRefs(postStore)
+let comment = computed(() => {
+    return postStore.commentInfo
 })
 let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg'
+
+onMounted(() => {
+    console.log('route:', route.name)
+    //console.log(route.params)
+})
 </script>
 <style scoped lang="scss">
 .container {

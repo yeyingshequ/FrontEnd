@@ -67,7 +67,7 @@
             </li>
         </ul>
     </div> -->
-        <router-view style="padding-top: 55px"></router-view>
+        <router-view></router-view>
         <CmtyCreator v-if="showCmtyCreator" />
     </div>
 </template>

@@ -10,7 +10,7 @@
                     <i class="iconfont icon-copy"></i>
                     <span>复制</span>
                 </div>
-                <div class="items" @click="reqSavePost({postId: postId})">
+                <div class="items" @click="reqSavePost({postId: postId, request: 'save'})">
                     <i class="iconfont icon-saved"></i>
                     <span>收藏帖子</span>
                 </div>
@@ -61,7 +61,7 @@ const copy = async (msg: string) => {
 /******************复制文本功能*******************/
 
 /******************收藏帖子功能*******************/
-async function reqSavePost(params: {postId: number}) {
+async function reqSavePost(params: {postId: number; request: string}) {
     showMenu.value = false
     console.log('postId:', postId?.value)
     let result = await savePost(params)
