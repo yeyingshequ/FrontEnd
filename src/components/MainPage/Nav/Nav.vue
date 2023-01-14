@@ -6,15 +6,15 @@
                 <div
                     class="userInfoWrapperInside"
                     v-if="isLogin"
-                    @click="$router.push(`/u/${userInfo.userId}`).catch((data) => {})"
+                    @click="$router.push(`/u/${myInfo.userId}`).catch((data) => {})"
                 >
                     <div class="userIcon">
-                        <img :src="userInfo.avatar" alt="" class="pic" />
+                        <img :src="myInfo.avatar" alt="" class="pic" />
                     </div>
                     <div class="userNameAndUid">
-                        <span class="userName">{{ userInfo.username }}</span
+                        <span class="userName">{{ myInfo.username }}</span
                         ><br />
-                        <span class="UID">UID: {{ userInfo.userId }}</span>
+                        <span class="UID">UID: {{ myInfo.userId }}</span>
                     </div>
                     <div class="qita" @click.stop="showLogout = true">
                         <i class="iconfont icon-qita"></i>
@@ -74,18 +74,18 @@
 </template>
 
 <script setup lang="ts">
-import postEditor from '@/components/MainPage/Nav/postEditor/index.vue'
+import postEditor from '@/components/MainPage/Nav/postEditor/postEditor.vue'
 import {computed, onMounted, ref, watch} from 'vue'
 import {RouterLink, useRoute, useRouter} from 'vue-router'
 import useMainStore from '@/store/index'
 import {storeToRefs} from 'pinia'
 import storage from '@/tools/storage'
 import cookie from '@/tools/cookie'
-import useUserInfoStore from '@/store/user'
+import useUserStore from '@/store/user'
 import {ElBacktop} from 'element-plus'
 import MoreNav from '@/components/MoreNav/index.vue'
 import pinia from '@/store/store'
-const userInfoStore = useUserInfoStore()
+const userStore = useUserStore()
 const mainStore = useMainStore()
 const router = useRouter()
 const route = useRoute()
@@ -144,7 +144,7 @@ const navList: list[] = [
 //展示 退出/
 let {showLogout, showPostEditor, showLoginScreen, showMoreNav} = storeToRefs(mainStore)
 //展示登录用户信息
-let {userInfo} = storeToRefs(userInfoStore)
+let {myInfo} = storeToRefs(userStore)
 //判断是否登录
 let isLogin = computed(() => {
     return storage.get('token')
@@ -153,8 +153,7 @@ let isLogin = computed(() => {
 //当前的路由地址
 let currentNav = ref('')
 watch(route, (nv: any, ov: any) => {
-    //console.log("route:", nv.matched[0].path);
-    currentNav.value = nv.matched[0].path
+    currentNav.value = nv.matched[0].path || null
 })
 
 //跳转路由
@@ -175,7 +174,7 @@ function goLogout() {
 }
 //获取登录用户信息
 function reqGetUserInfo() {
-    userInfoStore.getMyInfo()
+    userStore.getMyInfo()
 }
 
 onMounted(() => {

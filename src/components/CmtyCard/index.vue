@@ -46,7 +46,7 @@
                     class="goFavorite"
                     v-if="route.name == 'Joined' || route.name == 'Favorite'"
                     @click.stop="
-                        reqFavoriteCmty({
+                        reqAddToFavoriteCmty({
                             cmtyId: community.cmtyId,
                             isFavorite: community.isFavorite
                         })
@@ -73,7 +73,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import {favoriteCmty, getCmtyInfo, joinCmty, unFavoriteCmty, unJoinCmty} from '@/api'
+import {updateUserCmty} from '@/api'
 import {computed, onMounted, ref, toRefs, watch} from 'vue'
 import {useRoute} from 'vue-router'
 
@@ -108,22 +108,22 @@ function regetRouteInfo() {
             emit('regetRecentCmty')
     }
 }
-async function reqJoinCmty(params: {userId: any; isJoined: any}) {
+async function reqJoinCmty(params: {cmtyId: number; isJoined: number}) {
     if (!params.isJoined) {
-        let result = await joinCmty(params)
+        let result = await updateUserCmty({request: 'join', ...params})
         joinCmtyMsg.value = result.data.message
     } else {
-        let result = await unJoinCmty(params)
+        let result = await updateUserCmty({request: 'unjoin', ...params})
         joinCmtyMsg.value = result.data.message
     }
     regetRouteInfo()
 }
-async function reqFavoriteCmty(params: {userId: any; isFavorite: any}) {
+async function reqAddToFavoriteCmty(params: {cmtyId: number; isFavorite: number}) {
     if (!params.isFavorite) {
-        let result = await favoriteCmty(params)
+        let result = await updateUserCmty({request: 'addToFavorite', ...params})
         favoriteCmtyMsg.value = result.data.message
     } else {
-        let result = await unFavoriteCmty(params)
+        let result = await updateUserCmty({request: 'removeFromFavorite', ...params})
         favoriteCmtyMsg.value = result.data.message
     }
     regetRouteInfo()
@@ -154,7 +154,7 @@ onMounted(() => {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 90px;
+            height: 100px;
             width: 100px;
             /*           background-color: blueviolet; */
 

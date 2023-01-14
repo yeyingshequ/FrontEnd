@@ -43,6 +43,7 @@
 import {computed} from 'vue'
 import usePostStore from '@/store/post'
 import {storeToRefs} from 'pinia'
+import Tools from '@/components/Tools/index.vue'
 const postStore = usePostStore()
 let {commentInfo} = storeToRefs(postStore)
 let replies = computed(() => {
@@ -60,7 +61,6 @@ $containerWidth: 698px;
     .replyWrapper {
         display: flex;
         cursor: pointer;
-        padding-top: 10px;
 
         &:hover {
             background-color: mix(#ff44aa, white, 10%);
@@ -75,7 +75,7 @@ $containerWidth: 698px;
                 justify-content: center;
                 align-items: center;
                 width: 100%;
-                height: 70px;
+                height: 90px;
                 /* background-color: blue; */
 
                 img {
@@ -101,7 +101,7 @@ $containerWidth: 698px;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-                height: 70px;
+                height: 90px;
                 width: 100%;
 
                 .name,

@@ -10,7 +10,13 @@ import PostCard from '@/components/PostCard/index.vue'
 import Notification from '@/components/Notification/index.vue'
 import Tools from '@/components/Tools/index.vue'
 import PostMune from '@/components/PostMenu/index.vue'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+
 const app = createApp(App)
+
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+}
 const pinia = createPinia();
 app.component("CmtyCard", CmtyCard)
     .component('Tab', Tab)

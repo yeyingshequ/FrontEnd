@@ -88,6 +88,8 @@ onMounted(() => {
         ]
     }
     reqGetPostInfo(params)
+})
+onMounted(() => {
     emitter.on('regetPostInfo', () => {
         reqGetPostInfo(params)
     })

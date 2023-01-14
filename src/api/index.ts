@@ -2,7 +2,6 @@ import request from '@/api/request'
 
 /******************************用户相关的借口******************************/
 //请求登录接口
-
 export const loginApi = (params: object) => request({ url: '/login', method: 'post', data: params })
 
 //请求注册接口
@@ -11,8 +10,10 @@ export const registerApi = (params: object) => request({ url: '/register', metho
 //获取用户信息'/u'
 export const getUserInfo = (params: object) => request({ url: '/userinfo', method: 'get', params: params })
 
-//获取id,用户名,头像等基本信息
+//更新用户用户关系表
+export const updateUserUser = (params: object) => request({ url: '/updateuseruser', method: 'post', data: params })
 
+//获取id,用户名,头像等基本信息
 export const getMyInfo = () => request.get('/myinfo')
 
 //修改密码接口
@@ -23,15 +24,15 @@ export const updatePasswordApi = (params: object) =>
 //获取社区的信息
 export const getCmtyInfo = (params: object) => request({ url: '/cmtyinfo', method: 'get', params })
 
-//获取社区帖子信息
-export const getCmtyPosts = (params: object) => request({ url: '/cmtyposts', method: 'get', params })
-
 //获取社区广场信息
 export const getCmtySquareCardList = (params: object) =>
-  request({ url: '/cmtySquareCardList', method: 'get', params })
+  request({ url: '/cmtysquarecard', method: 'get', params })
 
 //创建社区
 export const createCmty = (params: object) => request({ url: '/createcmty', method: 'post', data: params })
+
+//更新用户社区关系表
+export const updateUserCmty = (params: object) => request({ url: '/updateusercmty', method: 'post', data: params })
 
 //加入社区
 export const joinCmty = (params: object) => request({ url: '/joincmty', method: 'post', data: params })
@@ -62,6 +63,12 @@ export const getPostInfo = (params: object) => request({ url: '/postinfo', metho
 
 //获取评论的信息
 export const getCommentInfo = (params: object) => request({ url: '/commentinfo', method: 'get', params })
+
+//获取用户的帖子卡片
+export const getPostCard = (params: object) => request({ url: '/postcard', method: 'get', params })
+
+//获取社区帖子信息
+export const getCmtyPosts = (params: object) => request({ url: '/cmtyposts', method: 'get', params })
 
 //获取首页导航信息
 export const getHomePostCard = () => request({ url: '/homepostcard', method: 'get' })

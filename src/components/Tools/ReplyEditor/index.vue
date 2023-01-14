@@ -14,11 +14,11 @@
                     <div class="content">
                         <textarea
                             v-model="params.content"
-                            placeholder="回复:"
+                            :placeholder="replyTo"
                             name=""
                             id=""
                             cols="52"
-                            rows="9"
+                            rows="11"
                         ></textarea>
                     </div>
                 </div>
@@ -39,10 +39,14 @@ import emitter from '@/tools/mitt'
 import {storeToRefs} from 'pinia'
 import usePostStore from '@/store/post'
 import {useRoute} from 'vue-router'
+import {flattedChildren} from 'element-plus/es/utils'
+import {placements} from '@popperjs/core'
 const route = useRoute()
 const postStore = usePostStore()
 const mainStore = useMainStore()
-const props = defineProps(['postInfo', 'commentInfo'])
+const props = defineProps(['postInfo', 'commentInfo', 'replyInfo', 'father'])
+
+const emit = defineEmits(['closeEditor'])
 interface Iparams {
     postId: number
     postAuthorId: number
@@ -54,9 +58,19 @@ interface Iparams {
 }
 //console.log("props on setup:", props.commentInfo);
 
+let father = computed(() => {
+    return props.father
+})
+
 let commentInfo = computed(() => {
     return props.commentInfo
 })
+
+let replyInfo = computed(() => {
+    return props.replyInfo
+})
+
+let replyTo = ref('回复 :')
 
 let message = ref('')
 let params: Iparams = reactive({
@@ -64,24 +78,40 @@ let params: Iparams = reactive({
     postAuthorId: 0,
     repliedId: 0,
     repliedAuthorId: 0,
-    commentId: 0, //无法在此处传递commentInfo中的数据给params对象,所以在reqSendReply方法中传递
-    commentAuthorId: 0, //无法在此处传递commentInfo中的数据给params对象,所以在reqSendReply方法中传递
+    commentId: 0,
+    commentAuthorId: 0,
     content: ''
 })
 function close() {
-    mainStore.showReplyEditor = false
+    //mainStore.showReplyEditor = false
+    console.log('关闭回复编辑器')
+    emit('closeEditor', 'replyEditor')
     scroll.move()
     message.value = ''
 }
 
 async function reqSendReply(params: Iparams) {
-    console.log('commentInfo:', commentInfo.value)
-    params.postId = commentInfo.value.postId
-    params.postAuthorId = commentInfo.value.postAuthorId
-    params.commentId = commentInfo.value.commentId
-    params.commentAuthorId = commentInfo.value.commentAuthorId
-    console.log('commentInfo:', commentInfo.value)
-    console.log('params:', params) //这里就变成了undefined
+    switch (father.value) {
+        case 'comment':
+            params.postId = commentInfo.value.postId
+            params.postAuthorId = commentInfo.value.postAuthorId
+            params.commentId = commentInfo.value.commentId
+            params.commentAuthorId = commentInfo.value.commentAuthorId
+            console.log('commentInfo:', commentInfo.value)
+            break
+        case 'reply':
+            params.postId = replyInfo.value.postId
+            params.postAuthorId = replyInfo.value.postAuthorId
+            params.repliedId = replyInfo.value.replyId
+            params.repliedAuthorId = replyInfo.value.replyAuthorId
+            params.commentId = replyInfo.value.commentId
+            params.commentAuthorId = replyInfo.value.commentAuthorId
+            console.log('replyInfo:', replyInfo.value)
+            break
+    }
+    console.log('params:', params)
+    console.log('time:', new Date())
+
     let result = await sendReply(params)
     message.value = result.message
     //关闭编辑器
@@ -92,17 +122,20 @@ async function reqSendReply(params: Iparams) {
         }, 1000)
     }
     switch (route.name) {
-        case 'Comment':
-            break
-
-        case ' Post': {
+        case 'P':
             emitter.emit('regetPostInfo')
             break
-        }
+
+        case 'Comment':
+            emitter.emit('regetCommentInfo')
+            break
     }
 }
 
 onMounted(() => {
+    if (father.value == 'reply') {
+        replyTo.value = `回复${replyInfo.value.username || ''} :`
+    }
     scroll.stop()
 })
 </script>

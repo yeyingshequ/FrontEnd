@@ -11,12 +11,13 @@ import usePostStore from '@/store/post'
 const postStore = usePostStore()
 const route = useRoute()
 
-let params: any = reactive({
-    cmtyId: route.params.cmtyId
+let params = reactive({
+    cmtyId: Number(route.params.cmtyId)
 })
 
 let {cmtyPostCardList} = storeToRefs(postStore)
-function reqGetCmtyPosts(params: {cmtyId: string | number}) {
+function reqGetCmtyPosts(params: {cmtyId: number}) {
+    console.log('cmtyId:', typeof params.cmtyId)
     postStore.getCmtyPosts(params)
 }
 onMounted(() => {

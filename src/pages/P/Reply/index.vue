@@ -27,7 +27,7 @@
                         <span>{{ reply.pubTime }}</span>
                     </div>
                     <div class="tools">
-                        <Tools />
+                        <Tools :replyInfo="reply" father="reply" />
                     </div>
                 </div>
             </div>

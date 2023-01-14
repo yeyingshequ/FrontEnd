@@ -98,8 +98,8 @@ import {useRouter} from 'vue-router'
 import useLoginStore from '@/store/login'
 import useMainStore from '@/store/index'
 import {storeToRefs} from 'pinia'
-import useUserInfoStore from '@/store/user'
-const userInfoStore = useUserInfoStore()
+import useUserStore from '@/store/user'
+const userStore = useUserStore()
 const store = useLoginStore()
 const mainStore = useMainStore()
 const router = useRouter()
@@ -142,6 +142,8 @@ let registerParams = reactive({
 })
 
 async function reqRegister(params: any) {
+    console.log('注册的params:', params)
+
     let result = await registerApi(registerMessage)
     //console.log(result.message)
     registerMessage.value = result.message

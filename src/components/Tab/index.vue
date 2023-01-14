@@ -1,24 +1,19 @@
 <template>
     <div class="tabs">
-        <router-link
-            v-for="tab in tabs"
-            :key="tab.id"
-            :to="tab.router"
-            class="router"
-            @click.native="getId(tab)"
-        >
-            <span :class="{actived: tab.routeName == route.name}"
+        <div v-for="tab in tabs" :key="tab.id" class="router" @click="router.push(tab.router)">
+            <span :class="{actived: tab.routeName == route.name || tab.default}"
                 >{{ tab.Name }}
-                <div v-show="tab.routeName == route.name"></div>
+                <div v-show="tab.routeName == route.name || tab.default"></div>
             </span>
-        </router-link>
+        </div>
     </div>
 </template>
 <script setup lang="ts">
 import {computed, onMounted, ref, toRefs} from 'vue'
-import {useRoute, RouterLink} from 'vue-router'
+import {useRoute, RouterLink, useRouter} from 'vue-router'
+const router = useRouter()
 const props = defineProps(['tabs'])
-//console.log(props.tabs);
+//console.log('tabs', props.tabs)
 
 let {tabs} = toRefs(props)
 
@@ -54,6 +49,7 @@ onMounted(() => {
         height: 100%;
         width: 698px;
         transition: 0.1s;
+        cursor: pointer;
 
         &:hover {
             background-color: mix(#ff44aa, white, 10%);

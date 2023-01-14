@@ -50,12 +50,12 @@ function reqGetCommentInfo(params: any) {
 onMounted(() => {
     reqGetCommentInfo(params)
     console.log('commentInfo:', commentInfo.value)
-    emitter.on('regetPostInfo', () => {
+    emitter.on('regetCommentInfo', () => {
         reqGetCommentInfo(params)
     })
 })
 onUnmounted(() => {
-    emitter.off('regetPostInfo')
+    emitter.off('regetCommentInfo')
 })
 </script>
 <style scoped lang="scss">

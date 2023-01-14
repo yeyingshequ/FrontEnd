@@ -17,7 +17,10 @@
                 />
                 <div class="iconWrapper">
                     <div class="icon">
-                        <img :src="post.avatar" />
+                        <img
+                            :src="post.avatar"
+                            @click.stop="router.push(`/u/${post.postAuthorId}`)"
+                        />
                     </div>
                 </div>
                 <div class="user">
@@ -48,6 +51,13 @@
           </div>
         </div> -->
             </div>
+            <button
+                class="bar"
+                @click.stop="router.push(`/c/${post.cmtyId}`)"
+                v-if="route.matched[0].name != 'C'"
+            >
+                <span> {{ post.cmtyName }}吧 </span>
+            </button>
             <Tools />
         </div>
     </div>
@@ -57,6 +67,9 @@ import {computed, onMounted, ref, toRefs} from 'vue'
 import useRouterStore from '@/store/community'
 import {storeToRefs} from 'pinia'
 import PostMenu from '@/components/PostMenu/index.vue'
+import {useRoute, useRouter} from 'vue-router'
+const route = useRoute()
+const router = useRouter()
 const routerStore = useRouterStore()
 const props = defineProps(['postCardList'])
 let postCardList = computed(() => {
@@ -65,11 +78,13 @@ let postCardList = computed(() => {
 let showMenu = ref(false)
 onMounted(() => {
     console.log('postCardList', postCardList.value)
+    console.log('route:', route)
 })
 </script>
 
 <style scoped lang="scss">
 .post {
+    position: relative;
     border-bottom: 1px solid #f1f1f1;
     transition: 0.1s;
     cursor: pointer;
@@ -82,9 +97,9 @@ onMounted(() => {
         position: relative;
         display: flex;
         align-items: center;
-        height: 70px;
+        height: 90px;
         width: 100%;
-        padding-top: 15px;
+        //padding-top: 15px;
         .postMenu {
             position: absolute;
             top: 10px;
@@ -98,7 +113,7 @@ onMounted(() => {
             justify-content: center;
             align-items: center;
             width: 90px;
-            height: 70px;
+            height: 90px;
 
             /* background-color: pink; */
             .icon {
@@ -192,6 +207,29 @@ onMounted(() => {
                     object-fit: cover;
                 }
             }
+        }
+    }
+    .bar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 26px;
+        margin-left: 20px;
+        margin-top: 10px;
+        background-color: white;
+        border: $brandColor solid 1px;
+        border-radius: 50px;
+        cursor: pointer;
+        &:hover {
+            background-color: mix(#ff44aa, white, 20%);
+        }
+
+        span {
+            padding: 0 10px;
+            font-size: 15px;
+            font-weight: bold;
+            color: $brandColor;
+            //line-height: 26px;
         }
     }
 }

@@ -38,6 +38,8 @@ import useMainStore from '@/store/index'
 import {storeToRefs} from 'pinia'
 import emitter from '@/tools/mitt'
 import usePostStore from '@/store/post'
+import {useRoute} from 'vue-router'
+const route = useRoute()
 const postStore = usePostStore()
 const mainStore = useMainStore()
 let {postInfo} = toRefs(postStore)
@@ -50,7 +52,8 @@ let params = {
 let message = ref('')
 let emit = defineEmits(['closeEditor'])
 function close() {
-    mainStore.showCommentEditor = false
+    //mainStore.showCommentEditor = false
+    emit('closeEditor', 'commentEditor')
     scroll.move()
     message.value = ''
 }
@@ -69,7 +72,15 @@ async function reqSendComment(params: {
             close()
             message.value = ''
         }, 1000)
-        emitter.emit('regetPostInfo')
+        switch (route.name) {
+            case 'P':
+                emitter.emit('regetPostInfo')
+                break
+
+            case 'Comment':
+                emitter.emit('regetCommentInfo')
+                break
+        }
     }
 }
 onMounted(() => {

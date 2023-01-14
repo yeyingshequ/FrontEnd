@@ -17,7 +17,7 @@
         <div class="profile" v-if="message == '获取信息成功'">
             <div class="iconWrapper">
                 <div class="icon">
-                    <img :src="cmtyInfo.avatar || defaultAvatar" alt="" />
+                    <img :src="cmtyInfo.cmtyAvatar || defaultAvatar" alt="" />
                 </div>
             </div>
             <div class="aboutBar">
@@ -74,17 +74,24 @@
 <script setup lang="ts">
 import PostCard from '../../components/PostCard/index.vue'
 import CmtyCreator from '@/pages/C/CmtyCreator/index.vue'
-import {favoriteCmty, getCmtyInfo, joinCmty, unFavoriteCmty, unJoinCmty} from '@/api'
+import {
+    favoriteCmty,
+    getCmtyInfo,
+    joinCmty,
+    unFavoriteCmty,
+    unJoinCmty,
+    updateUserCmty
+} from '@/api'
 import storage from '@/tools/storage'
 import CmtyHome from '@/pages/C/CmtyHome/index.vue'
 import rename from '@/tools/rename'
 import moment from 'moment'
 import {onMounted, reactive, ref} from 'vue'
-import {useRoute, RouterView} from 'vue-router'
+import {useRoute, RouterView, useRouter} from 'vue-router'
 import {storeToRefs} from 'pinia'
 import useMainStore from '@/store/index'
 import useRouterStore from '@/store/community'
-import router from '@/router'
+const router = useRouter()
 const routerStore = useRouterStore()
 const mainStore = useMainStore()
 
@@ -95,7 +102,7 @@ const tabs = reactive([
     {routeName: '', Name: '本吧详情', id: 3, router: '/communities/square'}
 ])
 
-let params = reactive({cmtyId: route.params.cmtyId})
+let params = reactive({cmtyId: Number(route.params.cmtyId)})
 
 let {cmtyInfo} = storeToRefs(routerStore)
 let defaultAvatar = ref('https://i.pinimg.com/564x/ba/5e/67/ba5e6704f5805a32f036b382265d71a4.jpg')
@@ -110,18 +117,17 @@ let unfavoriteClass = ref('icon-unfavorite')
 let favoriteIcon = ref('favoriteIcon')
 
 //获取社区信息
-async function reqGetCmtyInfo(params: {cmtyId: string | string[]}) {
+async function reqGetCmtyInfo(params: {cmtyId: number}) {
     routerStore.getCmtyInfo(params).then((res) => {
         message.value = res
     })
 }
-//加入社区
-async function reqJoinCmty(params: any) {
+async function reqJoinCmty(params: {cmtyId: number; isJoined: number}) {
     if (!params.isJoined) {
-        let result: any = await joinCmty(params)
+        let result = await updateUserCmty({request: 'join', ...params})
         joinCmtyMsg.value = result.data.message
     } else {
-        let result = await unJoinCmty(params)
+        let result = await updateUserCmty({request: 'unjoin', ...params})
         joinCmtyMsg.value = result.data.message
     }
     await reqGetCmtyInfo(params)

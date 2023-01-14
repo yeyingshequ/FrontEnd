@@ -74,12 +74,13 @@ let {postInfo} = storeToRefs(postStore)
 let post = computed(() => {
     return postInfo.value.post
 })
+/****** 默认头像 ******/
 let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg'
 </script>
 <style scoped lang="scss">
 .container {
     .poster {
-        padding-top: 10px;
+        //padding-top: 10px;
         border-bottom: 1px solid #f1f1f1;
         transition: 0.1s;
         cursor: pointer;
@@ -92,7 +93,7 @@ let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997
             position: relative;
             display: flex;
             align-items: center;
-            height: 70px;
+            height: 90px;
             width: 100%;
 
             .postMenu {

@@ -72,8 +72,6 @@ $containerWidth: 698px;
     .commentWrapper {
         display: flex;
         cursor: pointer;
-        padding-top: 10px;
-
         &:hover {
             background-color: mix(#ff44aa, white, 10%);
         }
@@ -87,7 +85,7 @@ $containerWidth: 698px;
                 justify-content: center;
                 align-items: center;
                 width: 100%;
-                height: 70px;
+                height: 90px;
                 /* background-color: blue; */
 
                 img {
@@ -113,7 +111,7 @@ $containerWidth: 698px;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-                height: 70px;
+                height: 90px;
                 width: 100%;
 
                 .name,

@@ -29,7 +29,7 @@ const router = createRouter({
     Comment,
     //重定向,在项目跑起来的时候,访问/,立马让他指定到首页
     {
-      path: '/pathMatch(.*)',
+      path: '/',
       redirect: 'home',
     },
   ],

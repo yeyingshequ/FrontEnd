@@ -21,7 +21,20 @@ const useCmtyStore = defineStore('cmtyStore', {
         isJoined: 0,
       },
       /** 社区卡片列表数据 **/
-      joinedCmtyCardList: [],
+      joinedCmtyCardList: [{
+        cmtyAvatar: '',
+        cmtyBio: "",
+        cmtyCategory: "",
+        cmtyCover: "",
+        cmtyHots: 0,
+        cmtyId: 1,
+        cmtyJoinedCount: 0,
+        cmtyName: "",
+        cmtyPostsCount: 0,
+        isFavorite: 0,
+        isJoined: 0,
+        lastVisitTime: "",
+      }],
       cmtySquareCardList: [],
       recentCmtyCardList: [],
       favoriteCmtyCardList: [],
@@ -31,7 +44,7 @@ const useCmtyStore = defineStore('cmtyStore', {
 
 
     /** 获取CPU三路由的信息的信息 **/
-    async getCmtyInfo(params: { cmtyId: string | string[] }) {
+    async getCmtyInfo(params: { cmtyId: number }) {
       let result = await getCmtyInfo(params)
       result.data = rename.toHump(result.data)
       this.cmtyInfo = result.data

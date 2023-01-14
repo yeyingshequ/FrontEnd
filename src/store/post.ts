@@ -1,7 +1,6 @@
-import { getCmtyPosts, getCommentInfo, getDiscoverPostCard, getHomePostCard, getPostInfo, getSavedPostCard, loginApi } from "@/api"
+import { getCmtyPosts, getCommentInfo, getDiscoverPostCard, getHomePostCard, getPostCard, getPostInfo, getSavedPostCard } from "@/api"
 import formatTime from "@/tools/formatTime"
 import rename from "@/tools/rename"
-import storage from "@/tools/storage"
 import { defineStore } from "pinia"
 interface IpostCardList {
     avatar: "",
@@ -38,6 +37,7 @@ const usePostStore = defineStore('postStore', {
             discoverPostCardList: [],
             //c路由的帖子卡片信息
             cmtyPostCardList: [],
+            userPostCardList: [],
             homePostCardList: [
                 {
                     avatar: "",
@@ -234,10 +234,23 @@ const usePostStore = defineStore('postStore', {
             this.formatPostCard(result)
             this.discoverPostCardList = result.data
         },
-        async getCmtyPosts(params: { cmtyId: string | number | string[] }) {
+        async getCmtyPosts(params: { cmtyId: number }) {
             let result = await getCmtyPosts(params)
             this.formatPostCard(result)
             this.cmtyPostCardList = result.data
+
+        },
+        async getPostCard(params: { type: string, userId?: number }) {
+            let result = await getPostCard(params)
+            this.formatPostCard(result)
+            switch (params.type) {
+                case "user":
+                    this.userPostCardList = result.data
+                    break;
+                case "discover":
+                    this.discoverPostCardList = result.data
+                    break;
+            }
 
         },
         async getHomePostCard() {
@@ -250,7 +263,7 @@ const usePostStore = defineStore('postStore', {
             this.formatPostCard(result)
             this.savedPostCardList = result.data
         },
-        async getPostInfo(params: { postId: number }) {
+        async getPostInfo(params: any) {
             let result = await getPostInfo(params)
             if (result.status === 0) {
                 result = result.data

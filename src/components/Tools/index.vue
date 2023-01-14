@@ -15,8 +15,19 @@
         <div>
             <i class="iconfont icon-aixin"></i><span><!--{{postInfo.likeCount||'点赞' }}--></span>
         </div>
-        <CommentEditor v-if="showCommentEditor" @closeEditor="closeEditor" :postInfo="postInfo" />
-        <ReplyEditor v-if="showReplyEditor" @closeEditor="closeEditor" :commentInfo="commentInfo" />
+        <CommentEditor
+            v-if="showCommentEditor"
+            @closeEditor="closeEditor"
+            :postInfo="postInfo"
+            :father="father"
+        />
+        <ReplyEditor
+            v-if="showReplyEditor"
+            @closeEditor="closeEditor"
+            :commentInfo="commentInfo"
+            :replyInfo="replyInfo"
+            :father="father"
+        />
     </div>
 </template>
 <script setup lang="ts">
@@ -29,13 +40,17 @@ import {computed, ref, toRefs} from 'vue'
 //主容器
 const mainStore = useMainStore()
 //父传子
-let props = defineProps(['postInfo', 'father', 'commentInfo'])
+let props = defineProps(['postInfo', 'father', 'commentInfo', 'replyInfo'])
 
 //父组件的组件名
 let {father} = toRefs(props)
 
 //打开评论和回复编辑器
-let {showCommentEditor, showReplyEditor} = storeToRefs(mainStore)
+//let {showCommentEditor, showReplyEditor} = storeToRefs(mainStore)
+
+let showCommentEditor = ref(false)
+let showReplyEditor = ref(false)
+
 let commentInfo = computed(() => {
     return props.commentInfo
 })
@@ -43,28 +58,38 @@ let commentInfo = computed(() => {
 let postInfo = computed(() => {
     return props.postInfo
 })
+
+let replyInfo = computed(() => {
+    return props.replyInfo
+})
 /**************************************************************************/
 //开启编辑器
 function showEditor() {
     console.log('father:', father?.value)
     switch (father?.value) {
         case 'post':
-            console.log('post in tools:', postInfo?.value)
+            //console.log('post in tools:', postInfo?.value)
             showCommentEditor.value = true
             break
         case 'comment':
             console.log('在子组件Tools中的CommentInfo:', commentInfo?.value)
+            showReplyEditor.value = true
+            break
+        case 'reply':
+            console.log(11)
             showReplyEditor.value = true
     }
 }
 
 //关闭 编辑器
 function closeEditor(data: string) {
+    //console.log('data:', data)
     switch (data) {
-        case 'showCommentEditor':
+        case 'commentEditor':
             showCommentEditor.value = false
+
             break
-        case 'showReplyEditor':
+        case 'replyEditor':
             showReplyEditor.value = false
             break
     }

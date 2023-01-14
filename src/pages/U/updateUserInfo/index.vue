@@ -47,8 +47,8 @@ function close() {
     scroll.move()
 }
 let updateparams: {username: string; boi: string} = reactive({
-    username: userStore.userInfo.username,
-    boi: userStore.userInfo.boi
+    username: userStore.myInfo.username,
+    boi: userStore.myInfo.boi
 })
 onMounted(() => {
     scroll.stop()

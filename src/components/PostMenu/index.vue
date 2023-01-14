@@ -1,6 +1,6 @@
 <template>
     <div class="menuContainer">
-        <div class="buttonWrapper" @click="showMenu = true">
+        <div class="buttonWrapper" @click="showMenu = true" @mouseenter.stop>
             <i class="iconfont icon-qita"></i>
         </div>
         <div class="menu" v-if="showMenu == true">

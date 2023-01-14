@@ -28,10 +28,23 @@
                         rows="9"
                     ></textarea>
                 </div>
-                <div class="community">
-                    <select id="sel" name="cmtyId" v-model="params.cmtyId">
-                        <option value="1">switch</option>
-                    </select>
+                <div class="chooseCommunity" @click="showCmtyList = !showCmtyList">
+                    <span>{{ cmtyName || '选择社区' }}</span>
+                    <span v-if="cmtyName">吧</span>
+                </div>
+                <div class="cmtyList" v-if="showCmtyList == true">
+                    <div class="mask" @click="showCmtyList = !showCmtyList"></div>
+                    <div class="hideScrollBar">
+                        <div class="cmtyBox">
+                            <div
+                                v-for="cmty in joinedCmtyCardList"
+                                :key="cmty.cmtyId"
+                                @click="setCmty(cmty.cmtyId, cmty.cmtyName)"
+                            >
+                                <span>{{ cmty.cmtyName }}吧</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="submit">
                     <button type="submit" @click="reqSendPost(params)">发 帖</button>
@@ -44,21 +57,32 @@
 <script setup lang="ts">
 import scroll from '@/tools/scroll'
 import {sendPost} from '@/api/index'
-import {onMounted, reactive, ref} from 'vue'
+import {computed, onMounted, reactive, ref} from 'vue'
 import {useRoute} from 'vue-router'
 import useMainStore from '@/store/index'
 import usePostStore from '@/store/post'
+import useCmtyStore from '@/store/community'
+const cmtyStore = useCmtyStore()
 const postStore = usePostStore()
 const mainStore = useMainStore()
 const route = useRoute()
-
+let joinedCmtyCardList = computed(() => {
+    return cmtyStore.joinedCmtyCardList
+})
 let params = reactive({
     postTitle: '',
     content: '',
-    cmtyId: ''
+    cmtyId: 0
 })
 let message = ref('')
 
+let showCmtyList = ref(false)
+let cmtyName = ref('')
+function setCmty(id: number, name: string) {
+    showCmtyList.value = false
+    cmtyName.value = name
+    params.cmtyId = id
+}
 function close() {
     mainStore.showPostEditor = false
     scroll.move()
@@ -70,6 +94,7 @@ async function reqSendPost(params: {}) {
     message.value = result.message
     //关闭编辑器
     if (result.message == '发送成功') {
+        postStore.formatPostCard(result)
         setTimeout(() => {
             close()
             message.value = ''
@@ -82,7 +107,7 @@ async function reqSendPost(params: {}) {
                 postStore.getDiscoverPostCard()
                 break
             case '/communities':
-                postStore.getCmtyPosts({cmtyId: route.params.cmtyId})
+                postStore.getCmtyPosts({cmtyId: Number(route.params.cmtyId)})
                 break
         }
     }
@@ -90,6 +115,8 @@ async function reqSendPost(params: {}) {
 
 onMounted(() => {
     scroll.stop()
+    cmtyStore.getJoinedCmty()
+    //console.log(route)
 })
 </script>
 
@@ -103,7 +130,7 @@ onMounted(() => {
     height: 100%;
     top: 0;
     left: 0;
-    background-color: rgba(mix($brandColor, black, 10%), 0.5);
+    background-color: rgba(mix($brandColor, black, 10%), 0.3);
     z-index: 998;
 
     .editorWrapper {
@@ -188,16 +215,83 @@ onMounted(() => {
                 }
             }
         }
+        .chooseCommunity {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            bottom: 17px;
+            left: 120px;
+            //width: 80px;
+            height: 26px;
+            padding: 0 7px;
+            border: $brandColor solid 1px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.1s;
+            &:hover {
+                background-color: $onHover;
+            }
+            span {
+                font-size: 15px;
+                line-height: 20px;
+                font-weight: bold;
+                color: $brandColor;
+            }
+        }
+
+        .cmtyList {
+            .mask {
+                position: fixed;
+                //background-color: #ff44aa;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 3;
+                cursor: auto;
+            }
+            .cmtyBox {
+                position: absolute;
+                top: 120px;
+                left: 30px;
+                //width: 200px;
+                //height: 280px;
+                background-color: white;
+                border-radius: 20px;
+                box-shadow: 0 0 10px 1px rgb(255, 199, 230);
+                overflow: hidden;
+                z-index: 4;
+
+                div {
+                    display: flex;
+                    align-items: center;
+                    height: 40px;
+                    width: 100%;
+                    cursor: pointer;
+                    &:hover {
+                        background-color: $onHover;
+                    }
+                    span {
+                        font-weight: bold;
+                        padding: 0 40px;
+                    }
+                }
+            }
+        }
 
         .submit {
-            position: relative;
-            padding-top: 10px;
+            position: absolute;
+            right: 20px;
+            bottom: 50px;
+            //padding-top: px;
 
             button {
                 position: absolute;
                 right: 10px;
                 height: 40px;
-                padding: 0 20px;
+                width: 90px;
+                //padding: 0 20px;
                 font-size: 20px;
                 font-weight: bold;
                 color: white;

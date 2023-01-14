@@ -5,32 +5,32 @@
             <div class="userInfo">
                 <PostMenu
                     class="postMenu"
-                    :content="comment.content"
-                    father="post"
-                    :postId="comment.postId"
+                    :content="commentInfo.content"
+                    father="comment"
+                    :postId="commentInfo.postId"
                 />
                 <div class="iconWrapper">
                     <div class="icon">
                         <img
-                            @click="$router.push(`/u/${comment.postAuthorId}`)"
-                            :src="comment.avatar || defaultAvatar"
+                            @click="$router.push(`/u/${commentInfo.postAuthorId}`)"
+                            :src="commentInfo.avatar || defaultAvatar"
                         />
                     </div>
                 </div>
                 <div class="user">
                     <div class="userName">
-                        <span>{{ comment.username }}</span>
+                        <span>{{ commentInfo.username }}</span>
                     </div>
 
                     <div class="timeAndFloor">
                         <div class="floor">
-                            <span>{{ comment.floor }}楼</span>
+                            <span>{{ commentInfo.floor }}楼</span>
                         </div>
                         <div class="dot">
                             <span>·</span>
                         </div>
                         <div class="updateTime">
-                            <span>{{ comment.pubTime }}</span>
+                            <span>{{ commentInfo.pubTime }}</span>
                         </div>
                     </div>
                 </div>
@@ -38,7 +38,7 @@
             <!-- 标题和正文 -->
             <div class="content">
                 <div class="bodyText" v-show="true /* post.bodyText */">
-                    <span>{{ comment.content }}</span>
+                    <span>{{ commentInfo.content }}</span>
                 </div>
                 <!-- 图片 -->
                 <div class="imgDisplay">
@@ -56,7 +56,7 @@
                 </div>
             </div>
             <div class="toolWrapper">
-                <Tools :commentInfo="comment" father="comment" />
+                <Tools :commentInfo="commentInfo" father="comment" />
             </div>
         </div>
     </div>
@@ -72,20 +72,17 @@ const props = defineProps(['commentInfo'])
 const route = useRoute()
 const postStore = usePostStore()
 let {commentInfo} = storeToRefs(postStore)
-let comment = computed(() => {
-    return postStore.commentInfo
-})
 let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg'
 
 onMounted(() => {
-    console.log('route:', route.name)
+    //console.log('route:', route.name)
     //console.log(route.params)
 })
 </script>
 <style scoped lang="scss">
 .container {
     .poster {
-        padding-top: 10px;
+        //padding-top: 10px;
         border-bottom: 1px solid #f1f1f1;
         transition: 0.1s;
         cursor: pointer;
@@ -98,7 +95,7 @@ onMounted(() => {
             position: relative;
             display: flex;
             align-items: center;
-            height: 70px;
+            height: 90px;
             width: 100%;
 
             .postMenu {

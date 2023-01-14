@@ -40,53 +40,69 @@
                 <span> 编辑个人信息 </span>
             </div>
             <div class="aboutFollow" v-if="UID != route.params.uid">
-                <button class="chat"><i class="iconfont icon-wode"></i></button>
-                <button class="follow">关 注</button>
+                <button class="chat" v-if="undefined"><i class="iconfont icon-wode"></i></button>
+                <button
+                    class="follow"
+                    :class="{unFollow: userInfo.isFollowing}"
+                    @click="
+                        reqFollowUser({
+                            objUserId: Number(userInfo.userId),
+                            isFollowing: Number(userInfo.isFollowing),
+                            userId: Number(route.params.uid)
+                        })
+                    "
+                >
+                    {{ userInfo.isFollowing ? '已关注' : '加关注' }}
+                </button>
             </div>
         </div>
         <updateUserInfo v-if="showUpdateInfo" @closeUpdate="closeUpdateInfo" />
         <Tab v-if="status == 0" :tabs="tabs" />
-        <Post style="padding-top: 55px" v-if="status == 0" :postCardList="postCardList" />
+        <router-view></router-view>
     </div>
 </template>
-<script setup lang="ts">
+<script setup lang="ts" name="xxx">
 import Post from '../../components/PostCard/index.vue'
 import updateUserInfo from '@/pages/U/updateUserInfo/index.vue'
-import {getUserInfo} from '@/api'
+import {getUserInfo, updateUserUser} from '@/api'
 import cookie from '@/tools/cookie'
 import rename from '@/tools/rename'
-import {computed, onMounted, reactive, ref} from 'vue'
-import {useRoute} from 'vue-router'
+import Tab from '@/components/Tab/index.vue'
+import {computed, onMounted, reactive, ref, watch} from 'vue'
+import {RouterView, useRoute, useRouter} from 'vue-router'
 import {storeToRefs} from 'pinia'
 import useUserStore from '@/store/user'
+import {Params} from 'express-serve-static-core'
+import emitter from '@/tools/mitt'
+const router = useRouter()
 const userStore = useUserStore()
 const route = useRoute()
 
-interface IuserInfo {
-    avatar: string
-    username: string
-    userId: number | string
-    followerCount: number
-    followingCount: number
-    bio: string
-}
+//interface IuserInfo {
+//    avatar: string
+//    username: string
+//    userId: number | string
+//    followerCount: number
+//    followingCount: number
+//    bio: string
+//    isFollowing: number
+//}
 
 const tabs = [
-    {Name: '帖子', id: 1, router: '/communities/joined'},
-    {Name: '评论和回复', id: 2, router: '/communities/favorite'},
-    {Name: '关注的吧', id: 3, router: '/communities/square'}
+    {
+        Name: '帖子',
+        id: 1,
+        routeName: 'userPost',
+        router: `/u/${route.params.uid}/home`,
+        default: true
+    },
+    {Name: '评论和回复', id: 2, router: '/communities/favorite', default: false},
+    {Name: '关注的吧', id: 3, router: '/communities/square', default: false}
 ]
-let postCardList = reactive([{}])
-let params: {uid: string[] | string} = reactive({
-    uid: ''
-})
-let userInfo: IuserInfo = reactive({
-    avatar: '',
-    username: '',
-    userId: '',
-    followerCount: 0,
-    followingCount: 0,
-    bio: ''
+let {userInfo} = storeToRefs(userStore)
+
+let params = reactive({
+    userId: 0
 })
 let message = ref('')
 let status = ref(-1)
@@ -97,19 +113,41 @@ function closeUpdateInfo() {
 }
 
 async function reqGetUserInfo(params: object) {
-    let result = await getUserInfo(params)
-    result.data = rename.toHump(result.data)
-    message.value = result.message
-    status.value = result.status
-    userInfo = result.data
+    userStore.getUserInfo(params).then((res) => {
+        message.value = res.message
+        status.value = res.status
+    })
+    console.log(userInfo.value)
+}
+async function reqFollowUser(params: {objUserId: number; isFollowing: number; userId: number}) {
+    if (!params.isFollowing) {
+        let result = await updateUserUser({request: 'follow', objUserId: params.objUserId})
+        message.value = result.data.message
+    } else {
+        let result = await updateUserUser({request: 'unFollow', objUserId: params.objUserId})
+        message.value = result.data.message
+    }
+    reqGetUserInfo({userId: params.userId})
 }
 
 let UID = computed(() => {
-    return userStore.userInfo.userId
+    return userStore.myInfo.userId
+})
+watch(route, (nv, ov) => {
+    console.log('nv:', nv.params.uid)
+    console.log(params.userId)
+    if (Number(nv.params.uid) != params.userId) {
+        params.userId = Number(nv.params.uid)
+        router.push(`/u/${nv.params.uid}/home`)
+        reqGetUserInfo(params)
+    }
 })
 onMounted(() => {
-    params.uid = route.params.uid
+    //console.log('userInfo:', userInfo)
+    //router.push(`/u/${route.params.uid}/home`)
+    params.userId = Number(route.params.uid)
     reqGetUserInfo(params)
+    //前端个人主页
 })
 </script>
 
@@ -259,6 +297,15 @@ div {
 
                 &:hover {
                     background-color: mix($brandColor, black, 90%);
+                }
+            }
+            .unFollow {
+                background-color: white;
+                color: $mainFont;
+                border: 1px solid $placeholderFont;
+
+                &:hover {
+                    background-color: mix($brandColor, white, 20%);
                 }
             }
 

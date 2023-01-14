@@ -12,7 +12,7 @@ let {discoverPostCardList} = storeToRefs(postStore)
 console.log('discoverPostCardList:', discoverPostCardList)
 
 function reqGetDiscoverPostCard() {
-    postStore.getDiscoverPostCard()
+    postStore.getPostCard({type: 'discover'})
 }
 onMounted(() => {
     reqGetDiscoverPostCard()
