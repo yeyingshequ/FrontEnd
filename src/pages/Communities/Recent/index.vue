@@ -1,6 +1,6 @@
 <template>
     <div>
-        <CmtyCard :cmtyCardList="recentCmtyCardList" @regetRecentCmty="reqGetRecentCmty" />
+        <CmtyCard :cmtyCardList="recentCmtyCardList" @regetCmtyCard="reqGetRecentCmty" />
     </div>
 </template>
 <script setup lang="ts">

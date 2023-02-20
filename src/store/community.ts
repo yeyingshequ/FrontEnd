@@ -1,4 +1,4 @@
-import { getCmtyInfo, getCmtyPosts, getCmtySquareCardList, getDiscoverPostCard, getFavoriteCmty, getHomePostCard, getJoinedCmty, getPostInfo, getRecentCmty, getSavedPostCard } from "@/api"
+import { getCmtyInfo, getCmtyPosts, getCmtySquareCardList, getDiscoverPostCard, getFavoriteCmty, getHomePostCard, getJoinedCmty, getPostInfo, getRecentCmty, getSavedPostCard, getUserCmty } from "@/api"
 import formatTime from "@/tools/formatTime"
 import rename from "@/tools/rename";
 import { isNumber } from "lodash";
@@ -21,6 +21,22 @@ const useCmtyStore = defineStore('cmtyStore', {
         isJoined: 0,
       },
       /** 社区卡片列表数据 **/
+      userCmtyCardList: [
+        {
+          cmtyAvatar: '',
+          cmtyBio: "",
+          cmtyCategory: "",
+          cmtyCover: "",
+          cmtyHots: 0,
+          cmtyId: 1,
+          cmtyJoinedCount: 0,
+          cmtyName: "",
+          cmtyPostsCount: 0,
+          isFavorite: 0,
+          isJoined: 0,
+          lastVisitTime: "",
+        }
+      ],
       joinedCmtyCardList: [{
         cmtyAvatar: '',
         cmtyBio: "",
@@ -41,9 +57,17 @@ const useCmtyStore = defineStore('cmtyStore', {
     }
   },
   actions: {
+    async formatCmtyCard(cmtyCard: Object, result: { status: number, data: Object }) {
+      console.log('社区卡片:', cmtyCard);
+      console.log('数据:', result);
+      if (result.status == 0) {
+        cmtyCard = result.data
+        //console.log("joinedCmtyCardList:", joinedCmtyCardList);
+      }
 
+      console.log('更新后的社区卡片:', cmtyCard);
 
-    /** 获取CPU三路由的信息的信息 **/
+    },
     async getCmtyInfo(params: { cmtyId: number }) {
       let result = await getCmtyInfo(params)
       result.data = rename.toHump(result.data)
@@ -57,23 +81,19 @@ const useCmtyStore = defineStore('cmtyStore', {
       let result: any = await getRecentCmty()
       console.log("result:", result);
       if (result.status == 0) {
-        result = result.data
-        for (let i = 0; i < result.length; i++) {
-          result[i] = rename.toHump(result[i])
-        }
-        this.recentCmtyCardList = result
+        this.recentCmtyCardList = result.data
       }
     },
     async getJoinedCmty() {
       let result: any = await getJoinedCmty()
       if (result.status == 0) {
-        result = result.data
-        for (let i = 0; i < result.length; i++) {
-          result[i] = rename.toHump(result[i])
-        }
-        this.joinedCmtyCardList = result
-        //console.log("joinedCmtyCardList:", joinedCmtyCardList);
-
+        this.joinedCmtyCardList = result.data
+      }
+    },
+    async getUserCmty(params: { userId: Number }) {
+      let result: any = await getUserCmty(params)
+      if (result.status == 0) {
+        this.userCmtyCardList = result.data
       }
     },
     async getCmtySquareCardList(params: {
@@ -81,11 +101,7 @@ const useCmtyStore = defineStore('cmtyStore', {
     }) {
       let result: any = await getCmtySquareCardList(params)
       if (result.status == 0) {
-        result = result.data
-        for (let i = 0; i < result.length; i++) {
-          result[i] = rename.toHump(result[i])
-        }
-        this.cmtySquareCardList = result
+        this.cmtySquareCardList = result.data
         console.log("cmtySquareCardList:", this.cmtySquareCardList);
 
       }
@@ -93,14 +109,10 @@ const useCmtyStore = defineStore('cmtyStore', {
     async getFavoriteCmty() {
       let result = await getFavoriteCmty();
       if (result.status == 0) {
-        result = result.data;
-        for (let i = 0; i < result.length; i++) {
-          result[i] = rename.toHump(result[i]);
-        }
-        this.favoriteCmtyCardList = result;
+        this.favoriteCmtyCardList = result.data;
         console.log("favoriteCmtyCardList:", this.favoriteCmtyCardList);
       }
-    }
+    },
   },
 
 
@@ -109,3 +121,4 @@ const useCmtyStore = defineStore('cmtyStore', {
   }
 })
 export default useCmtyStore
+

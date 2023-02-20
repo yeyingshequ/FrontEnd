@@ -1,17 +1,8 @@
 <template>
     <div class="container">
-        <div class="top">
-            <div class="return">
-                <i class="iconfont icon-fanhui" @click="back"></i>
-            </div>
-            <div class="bar" @click="router.push(`/p/${comment.postId}`)">
-                <div class="showAllComments">
-                    <span>查看所有评论</span>
-                </div>
-            </div>
-        </div>
+        <Top parent="comment" :info="commentInfo" />
         <Comment :commentInfo="commentInfo" />
-        <Reply :replyInfo="commentInfo.replies" />
+        <Reply :replyInfo="commentInfo.reply" />
     </div>
 </template>
 <script setup lang="ts">
@@ -22,6 +13,8 @@ import {storeToRefs} from 'pinia'
 import {computed, onMounted, onUnmounted, reactive} from 'vue'
 import usePostStore from '@/store/post'
 import emitter from '@/tools/mitt'
+import yyReturn from '@/components/littleComponents/yy-button/yy-return.vue'
+import Top from '@/components/Top/Top.vue'
 const postStore = usePostStore()
 const router = useRouter()
 const route = useRoute()
@@ -60,77 +53,5 @@ onUnmounted(() => {
 </script>
 <style scoped lang="scss">
 .container {
-    .top {
-        position: sticky;
-        top: 60px;
-        display: flex;
-        /* background-color: orangered; */
-        align-items: center;
-        justify-content: center;
-        background-color: white;
-        width: 100%;
-        height: 50px;
-        border-bottom: 1px solid #f1f1f1;
-        z-index: 1;
-
-        .return {
-            position: absolute;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 40px;
-            height: 40px;
-            left: 8px;
-            border-radius: 50%;
-            transition: 0.1s;
-            cursor: pointer;
-            i {
-                margin-left: 5px;
-                font-size: 20px;
-                cursor: pointer;
-            }
-            &:hover {
-                background-color: $onHover;
-            }
-        }
-
-        .bar {
-            padding-left: 20px;
-            padding-right: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 40px;
-            border-radius: 50px;
-            cursor: pointer;
-
-            /* background-color: blueviolet; */
-            &:hover {
-                background-color: mix(#ff44aa, white, 10%);
-            }
-
-            .icon {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                margin-right: 5px;
-                width: 30px;
-                height: 30px;
-                /* background-color: red; */
-
-                img {
-                    border-radius: 50%;
-                    width: 100%;
-                    height: 100%;
-                }
-            }
-
-            .barName {
-                span {
-                    line-height: 35px;
-                }
-            }
-        }
-    }
 }
 </style>

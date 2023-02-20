@@ -1,6 +1,8 @@
 <template>
     <div>
-        <div class="cover"></div>
+        <div class="cover">
+            <img :src="cmtyInfo.cmtyCover || defaultCover" alt="" />
+        </div>
         <div class="profile" v-if="message !== '获取信息成功'">
             <div class="iconWrapper">
                 <div class="icon">
@@ -39,13 +41,7 @@
                 <span>{{ cmtyInfo.cmtyBio }}</span>
             </div>
             <div class="joinAndFavorite">
-                <button
-                    class="join"
-                    :class="{unJoin: cmtyInfo.isJoined}"
-                    @click="reqJoinCmty(cmtyInfo)"
-                >
-                    {{ cmtyInfo.isJoined ? '已加入' : '加入' }}
-                </button>
+                <JoinBtn :cmtyInfo="cmtyInfo" size="large" parent="C" />
             </div>
         </div>
         <Tab :tabs="tabs" v-if="message == '获取信息成功'" />
@@ -72,25 +68,15 @@
     </div>
 </template>
 <script setup lang="ts">
-import PostCard from '../../components/PostCard/index.vue'
+import JoinBtn from '@/components/littleComponents/JoinBtn/JoinBtn.vue'
 import CmtyCreator from '@/pages/C/CmtyCreator/index.vue'
-import {
-    favoriteCmty,
-    getCmtyInfo,
-    joinCmty,
-    unFavoriteCmty,
-    unJoinCmty,
-    updateUserCmty
-} from '@/api'
-import storage from '@/tools/storage'
-import CmtyHome from '@/pages/C/CmtyHome/index.vue'
-import rename from '@/tools/rename'
-import moment from 'moment'
-import {onMounted, reactive, ref} from 'vue'
+import {updateUserCmty} from '@/api'
+import {onMounted, onUnmounted, reactive, ref} from 'vue'
 import {useRoute, RouterView, useRouter} from 'vue-router'
 import {storeToRefs} from 'pinia'
 import useMainStore from '@/store/index'
 import useRouterStore from '@/store/community'
+import emitter from '@/tools/mitt'
 const router = useRouter()
 const routerStore = useRouterStore()
 const mainStore = useMainStore()
@@ -106,7 +92,7 @@ let params = reactive({cmtyId: Number(route.params.cmtyId)})
 
 let {cmtyInfo} = storeToRefs(routerStore)
 let defaultAvatar = ref('https://i.pinimg.com/564x/ba/5e/67/ba5e6704f5805a32f036b382265d71a4.jpg')
-let defaultCover = ref('https://i.pinimg.com/564x/ba/5e/67/ba5e6704f5805a32f036b382265d71a4.jpg')
+let defaultCover = ref('https://i.328888.xyz/2023/02/20/XSyxy.jpeg')
 let message = ref('')
 let {showCmtyCreator} = storeToRefs(mainStore)
 let joinCmtyMsg = ref('')
@@ -122,20 +108,16 @@ async function reqGetCmtyInfo(params: {cmtyId: number}) {
         message.value = res
     })
 }
-async function reqJoinCmty(params: {cmtyId: number; isJoined: number}) {
-    if (!params.isJoined) {
-        let result = await updateUserCmty({request: 'join', ...params})
-        joinCmtyMsg.value = result.data.message
-    } else {
-        let result = await updateUserCmty({request: 'unjoin', ...params})
-        joinCmtyMsg.value = result.data.message
-    }
-    await reqGetCmtyInfo(params)
-}
 
 onMounted(() => {
     reqGetCmtyInfo(params)
-    router.push(`/c/${route.params.cmtyId}/home`)
+    //router.push(`/c/${route.params.cmtyId}/home`)
+    emitter.on('reqGetCmtyInfo', () => {
+        reqGetCmtyInfo(params)
+    })
+})
+onUnmounted(() => {
+    emitter.off('reqGetCmtyInfo')
 })
 </script>
 <style scoped lang="scss">
@@ -143,7 +125,10 @@ div {
     .cover {
         width: 100%;
         height: 233px;
-        background-image: url(@/images/communityBackground.jpg);
+        img {
+            width: 100%;
+            height: 100%;
+        }
     }
 
     .profile {
@@ -192,6 +177,7 @@ div {
             height: 143px;
             background-color: white;
             border-radius: 50%;
+            -webkit-user-select: none;
 
             img {
                 width: 135px;
@@ -287,7 +273,7 @@ div {
                 transition: 0.1s;
 
                 &:hover {
-                    background-color: mix($brandColor, white, 20%);
+                    background-color: mix($brandColor, white, 10%);
                 }
 
                 .favoriteIcon {
@@ -302,7 +288,7 @@ div {
                 font-size: 15px;
                 font-weight: bold;
                 transition: 0.1s;
-
+                -webkit-user-select: none;
                 &:hover {
                     background-color: $onHoverDark;
                 }
@@ -314,7 +300,7 @@ div {
                 border: 1px solid $placeholderFont;
 
                 &:hover {
-                    background-color: mix($brandColor, white, 20%);
+                    background-color: mix($brandColor, white, 10%);
                 }
             }
         }

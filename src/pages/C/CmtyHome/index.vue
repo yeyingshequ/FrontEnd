@@ -12,13 +12,14 @@ const postStore = usePostStore()
 const route = useRoute()
 
 let params = reactive({
+    type: 'community',
     cmtyId: Number(route.params.cmtyId)
 })
 
 let {cmtyPostCardList} = storeToRefs(postStore)
-function reqGetCmtyPosts(params: {cmtyId: number}) {
+function reqGetCmtyPosts(params: {type: string; cmtyId: number}) {
     console.log('cmtyId:', typeof params.cmtyId)
-    postStore.getCmtyPosts(params)
+    postStore.getPostCard(params)
 }
 onMounted(() => {
     //console.log(route)

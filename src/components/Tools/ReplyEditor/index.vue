@@ -12,19 +12,11 @@
                         </div>
                     </div>
                     <div class="content">
-                        <textarea
-                            v-model="params.content"
-                            :placeholder="replyTo"
-                            name=""
-                            id=""
-                            cols="52"
-                            rows="11"
-                        ></textarea>
+                        <p @input="setContent($event)" :contenteditable="true"></p>
                     </div>
                 </div>
                 <div class="submit">
                     <button type="submit" @click="reqSendReply(params)">发 送</button>
-                    {{ message }}
                 </div>
             </div>
         </div>
@@ -41,11 +33,11 @@ import usePostStore from '@/store/post'
 import {useRoute} from 'vue-router'
 import {flattedChildren} from 'element-plus/es/utils'
 import {placements} from '@popperjs/core'
+import {ElMessage} from 'element-plus'
 const route = useRoute()
 const postStore = usePostStore()
 const mainStore = useMainStore()
 const props = defineProps(['postInfo', 'commentInfo', 'replyInfo', 'father'])
-
 const emit = defineEmits(['closeEditor'])
 interface Iparams {
     postId: number
@@ -55,6 +47,7 @@ interface Iparams {
     commentId: number
     commentAuthorId: number
     content: string
+    repliedContent: string
 }
 //console.log("props on setup:", props.commentInfo);
 
@@ -80,14 +73,26 @@ let params: Iparams = reactive({
     repliedAuthorId: 0,
     commentId: 0,
     commentAuthorId: 0,
-    content: ''
+    content: '',
+    repliedContent: ''
 })
+function setContent(content: any /* content: {target: {innerHTML: string}} */) {
+    console.log('content:', content.target.innerHTML)
+    params.content = content.target.innerHTML
+}
 function close() {
     //mainStore.showReplyEditor = false
     console.log('关闭回复编辑器')
     emit('closeEditor', 'replyEditor')
     scroll.move()
     message.value = ''
+}
+function showMessage(message: string, type: undefined) {
+    ElMessage({
+        grouping: true,
+        message: message,
+        type: type == 0 ? 'success' : 'error'
+    })
 }
 
 async function reqSendReply(params: Iparams) {
@@ -97,7 +102,7 @@ async function reqSendReply(params: Iparams) {
             params.postAuthorId = commentInfo.value.postAuthorId
             params.commentId = commentInfo.value.commentId
             params.commentAuthorId = commentInfo.value.commentAuthorId
-            console.log('commentInfo:', commentInfo.value)
+            params.repliedContent = commentInfo.value.content
             break
         case 'reply':
             params.postId = replyInfo.value.postId
@@ -106,6 +111,7 @@ async function reqSendReply(params: Iparams) {
             params.repliedAuthorId = replyInfo.value.replyAuthorId
             params.commentId = replyInfo.value.commentId
             params.commentAuthorId = replyInfo.value.commentAuthorId
+            params.repliedContent = replyInfo.value.content
             console.log('replyInfo:', replyInfo.value)
             break
     }
@@ -114,12 +120,11 @@ async function reqSendReply(params: Iparams) {
 
     let result = await sendReply(params)
     message.value = result.message
+    showMessage(message.value, result.status)
     //关闭编辑器
     if (result.message == '发送成功') {
-        setTimeout(() => {
-            close()
-            message.value = ''
-        }, 1000)
+        close()
+        message.value = ''
     }
     switch (route.name) {
         case 'P':
@@ -137,6 +142,7 @@ onMounted(() => {
         replyTo.value = `回复${replyInfo.value.username || ''} :`
     }
     scroll.stop()
+    console.log('props的comment', commentInfo.value)
 })
 </script>
 
@@ -156,7 +162,7 @@ onMounted(() => {
     .editorWrapper {
         position: relative;
         width: 700px;
-        height: 410px;
+        //height: 410px;
         padding: 20px;
         border-radius: 20px;
         background-color: white;
@@ -213,14 +219,17 @@ onMounted(() => {
                     //background-color: red;
                     border-bottom: 1px solid #f1f1f1;
 
-                    textarea {
-                        color: $regularFont;
+                    p {
                         padding-left: 10px;
-                        font-family: inherit;
-                        font-size: 19px;
-                        resize: none;
+                        font-size: 20px;
+                        width: 550px;
+                        min-height: 230px;
+                        max-height: 650px;
+                        background-color: white;
+                        color: $regularFont;
                         outline: none;
-                        border: 0;
+                        overflow-y: scroll;
+                        cursor: auto;
                     }
                 }
             }
@@ -228,6 +237,7 @@ onMounted(() => {
             .submit {
                 position: relative;
                 padding-top: 10px;
+                height: 40px;
 
                 button {
                     position: absolute;

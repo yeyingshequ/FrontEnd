@@ -4,6 +4,7 @@
 
 import rename from "@/tools/rename";
 import formatTime from "@/tools/formatTime";
+import { ElMessage } from "element-plus";
 
 export function isValidKey(
     key: string | number | symbol,
@@ -20,4 +21,11 @@ export function formatPostCard(result: { status: number; data: any }, PostCardLi
         PostCardList = result.data
         console.log(result.data)
     }
+}
+export function showMessage(message: string, type: undefined) {
+    ElMessage({
+        grouping: true,
+        message: message,
+        type: type == 0 ? 'success' : 'error'
+    })
 }

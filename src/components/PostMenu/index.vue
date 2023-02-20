@@ -93,13 +93,14 @@ let menuList = [
         width: 40px;
         height: 40px;
         border-radius: 50px;
+        transition: 0.1s;
 
         i {
             color: $brandColor;
         }
 
         &:hover {
-            background-color: mix(#ff44aa, white, 20%);
+            background-color: $button;
         }
     }
 

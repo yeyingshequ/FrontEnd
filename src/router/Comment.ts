@@ -5,4 +5,5 @@ export default {
     name: 'Comment',
     path: '/Comment/:commentId',
     component: Comment,
+    meta: { hasTop: true }
 }

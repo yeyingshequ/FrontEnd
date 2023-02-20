@@ -12,8 +12,14 @@
     "@element-plus/icons-vue": "^2.0.10",
     "@types/lodash": "^4.14.191",
     "@types/node": "^18.11.11",
+    "@vueup/vue-quill": "^1.1.0",
+    "@wangeditor/editor": "^5.1.23",
+    "@wangeditor/editor-for-vue": "^5.1.12",
+    "animate.css": "^4.1.1",
     "clipboard": "^2.0.11",
     "element-plus": "^2.2.26",
+    "element-resize-detector": "^1.2.4",
+    "iscroll": "^5.2.0",
     "mitt": "^3.0.0",
     "path": "^0.12.7",
     "pinia": "^2.0.27",
@@ -22,6 +28,7 @@
     "vite-plugin-vue-setup-extend": "^0.4.0",
     "vue": "^3.2.41",
     "vue-clipboard3": "^2.0.0",
+    "vue-quill-editor": "^3.0.6",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {

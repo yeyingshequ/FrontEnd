@@ -1,41 +1,105 @@
 <template>
     <div>
-        <div class="notification">
+        <div class="notification" v-for="noti in notiCardList">
             <div class="userInfo">
                 <div class="iconWrapper">
                     <div class="icon">
-                        <img src="@/pages/Home/images/白夜茶会icon.jpg" />
+                        <img
+                            :src="noti.notiSender.avatar"
+                            @click.stop="$router.push(`/u/${noti.notiSender.userId}`)"
+                        />
                     </div>
                 </div>
                 <div class="user">
                     <div class="userName">
-                        <span>叶雨 <span style="color: $regularFont">回复了你的帖子</span></span>
+                        <span
+                            >{{ noti.notiSender.username }}
+                            <span style="color: $regularFont">{{ noti.notiMessage }}</span></span
+                        >
                     </div>
                     <div class="updateTime">
-                        <span>2027-11-22</span>
+                        <span>{{ formatTime(noti.notiTime) }}</span>
                     </div>
                 </div>
             </div>
             <div class="reply">
-                <div class="box">
-                    <span>我去海鲜市场搜了下都搜不到，听说有事件被禁止了。这可怎么买卖？？？</span>
+                <div class="content">
+                    <span v-html="noti.content"></span>
                 </div>
             </div>
-            <div class="replyto">
-                <span>
-                    对战是ps上更难打上去还是实机ns更难？对战是ps上更难打上去还是实机ns更难？对战是ps上更难打上去还是实机ns更难？对战是ps上更难打上去还是实机ns更难？
-                </span>
+            <div class="repliedContent" @click.stop="$router.push(`/p/${noti.postId}`)">
+                <span v-html="noti.repliedContent || noti.postTitle || noti.postContent"> </span>
+                <div class="postContent" v-if="noti.repliedContent">
+                    <span v-html="noti.postTitle || noti.postContent"></span>
+                </div>
             </div>
-            <Tools />
+            <Tools style="padding: 0 20px" />
         </div>
     </div>
 </template>
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import formatTime from '@/tools/formatTime'
+import {computed, onMounted} from 'vue'
+
+const props = defineProps(['notiCardList', 'parent'])
+let notiCardList = computed(() => {
+    return props.notiCardList
+})
+
+let parent = computed(() => {
+    return props.parent
+})
+
+function getPubTime(noti: {
+    notiType: string
+    notiComment: {pubTime: string}
+    notiReply: {pubTime: string}
+}) {
+    if (noti.notiType == 'comment') {
+        return noti.notiComment.pubTime
+    } else {
+        return noti.notiReply.pubTime
+    }
+}
+function getContent(noti: {
+    notiType: string
+    notiComment: {content: string}
+    notiReply: {content: string}
+}) {
+    if (noti.notiType == 'comment') {
+        return noti.notiComment.content
+    } else {
+        return noti.notiReply.content
+    }
+}
+function getReplyTo(noti: {
+    notiType: string
+    notiReply: {repliedAuthorId: any}
+    receiverId: any
+    notiComment: {commentAuthorId: any}
+}) {
+    if (noti.notiType == 'reply') {
+        if (noti.notiReply.repliedAuthorId == noti.receiverId) {
+            return '回复了你的回复'
+        } else if (noti.notiComment.commentAuthorId == noti.receiverId) {
+            return '回复了你的评论'
+        } else {
+            return '回复了你的帖子'
+        }
+    } else if (noti.notiType == 'comment') {
+        return '评论了你的帖子'
+    }
+}
+onMounted(() => {
+    console.log(notiCardList.value)
+})
+</script>
 <style lang="scss" scoped>
 .notification {
     width: 100%;
     height: 100%;
     border-bottom: 1px #f1f1f1 solid;
+    cursor: pointer;
     /* background-color: blueviolet; */
     &:hover {
         background-color: mix(#ff44aa, white, 10%);
@@ -95,20 +159,24 @@
             }
         }
     }
-    .box {
-        padding: 20px;
-        padding-top: 0;
-        padding-bottom: 15px;
+    .content {
+        padding: 0 20px 10px 20px;
     }
-    .replyto {
+    .repliedContent {
         margin: 20px;
         margin-top: 0;
-        padding: 7px;
-        padding-left: 15px;
+        padding: 15px 15px;
         background-color: $borderColor4;
+        -webkit-line-clamp: 3;
         border-radius: 10px;
         span {
-            color: $regularFont;
+            color: $mainFont;
+        }
+        .postContent {
+            margin-top: 10px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
         }
     }
 }

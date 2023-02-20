@@ -12,19 +12,19 @@
                         </div>
                     </div>
                     <div class="content">
-                        <textarea
-                            v-model="params.content"
-                            placeholder="正文"
-                            name=""
-                            id=""
-                            cols="52"
-                            rows="9"
-                        ></textarea>
+                        <!-- <p @input="setContent($event)" :contenteditable="true"></p> -->
+                        <Editor
+                            class="richEditorContent"
+                            style="min-height: 230px,max-height:650px"
+                            v-model="valueHtml"
+                            :defaultConfig="editorConfig"
+                            mode="default"
+                            @onCreated="handleCreated"
+                        />
                     </div>
                 </div>
                 <div class="submit">
                     <button type="submit" @click="reqSendComment(params)">发 送</button>
-                    {{ message }}
                 </div>
             </div>
         </div>
@@ -33,39 +33,77 @@
 <script setup lang="ts">
 import scroll from '@/tools/scroll'
 import {sendComment} from '@/api/index'
-import {onMounted, ref, toRefs} from 'vue'
+import {onBeforeUnmount, onMounted, ref, shallowRef, toRefs} from 'vue'
 import useMainStore from '@/store/index'
 import {storeToRefs} from 'pinia'
 import emitter from '@/tools/mitt'
 import usePostStore from '@/store/post'
 import {useRoute} from 'vue-router'
+import {ElMessage} from 'element-plus'
+import {Editor} from '@wangeditor/editor-for-vue'
+import '@wangeditor/editor/dist/css/style.css'
 const route = useRoute()
 const postStore = usePostStore()
 const mainStore = useMainStore()
 let {postInfo} = toRefs(postStore)
+/**************************** 关于编辑器 ****************************/
+
+const editorRef = shallowRef() // 编辑器实例，必须用 shallowRef
+const valueHtml = ref('ni') // 内容 HTML
+const toolbarConfig = {}
+const editorConfig = {placeholder: '正文'}
+const handleCreated = (editor: any) => {
+    editorRef.value = editor // 记录 editor 实例，重要！
+}
+
+/**************************** 关于编辑器 ****************************/
+// 组件销毁时，也及时销毁编辑器
+onBeforeUnmount(() => {
+    const editor = editorRef.value
+    if (editor == null) return
+    editor.destroy()
+})
 let params = {
-    postId: postInfo.value.post.postId,
-    postAuthorId: postInfo?.value.post.postAuthorId,
+    postId: postInfo.value.postId,
+    postAuthorId: postInfo?.value.postAuthorId,
     content: '',
-    cmtyId: postInfo.value.post.cmtyId
+    postContent: postInfo.value.content,
+    postTitle: postInfo.value.postTitle,
+    cmtyId: postInfo.value.community.cmtyId,
+    cmtyName: postInfo.value.community.cmtyName
 }
 let message = ref('')
 let emit = defineEmits(['closeEditor'])
+function showMessage(message: string, type: undefined) {
+    ElMessage({
+        grouping: true,
+        message: message,
+        type: type == 0 ? 'success' : 'error'
+    })
+}
 function close() {
     //mainStore.showCommentEditor = false
     emit('closeEditor', 'commentEditor')
     scroll.move()
     message.value = ''
 }
+function setContent(content: any /* content: {target: {innerHTML: string}} */) {
+    console.log('content:', content.target.innerHTML)
+    params.content = content.target.innerHTML
+}
 async function reqSendComment(params: {
     postId: number
     postAuthorId: number
     content: string
-    cmtyId: number
+    postContent: string
+    postTitle: string
+    cmtyId: string
+    cmtyName: string
 }) {
     console.log(params)
     let result = await sendComment(params)
     message.value = result.message
+    showMessage(message.value, result.status)
     //关闭编辑器
     if (result.message == '发送成功') {
         setTimeout(() => {
@@ -85,6 +123,7 @@ async function reqSendComment(params: {
 }
 onMounted(() => {
     scroll.stop()
+    console.log('props的postInfo', postInfo.value)
 })
 </script>
 
@@ -92,7 +131,7 @@ onMounted(() => {
 .editorContainer {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     position: fixed;
     width: 100%;
     height: 100%;
@@ -104,7 +143,8 @@ onMounted(() => {
     .editorWrapper {
         position: relative;
         width: 700px;
-        height: 410px;
+        margin-top: 70px;
+        //height: 410px;
         padding: 20px;
         border-radius: 20px;
         background-color: white;
@@ -159,16 +199,46 @@ onMounted(() => {
                 .content {
                     margin-top: 30px;
                     //background-color: red;
-                    border-bottom: 1px solid #f1f1f1;
+                    //border-bottom: 1px solid #f1f1f1;
 
-                    textarea {
-                        color: $regularFont;
+                    /* p {
                         padding-left: 10px;
-                        font-family: inherit;
-                        font-size: 19px;
-                        resize: none;
+                        font-size: 20px;
+                        width: 550px;
+                        min-height: 230px;
+                        max-height: 650px;
+                        background-color: white;
+                        color: $regularFont;
                         outline: none;
-                        border: 0;
+                        overflow-y: scroll;
+                        cursor: auto;
+                    } */
+                    .richEditorContent {
+                        padding-left: 10px;
+                        font-size: 20px;
+                        width: 550px;
+                        min-height: 230px;
+                        max-height: 650px;
+                        background-color: white;
+                        color: $regularFont;
+                        outline: none;
+                        overflow-y: hidden;
+                        cursor: auto;
+
+                        //min-height: 300px !important;
+
+                        //background-color: red;
+
+                        :deep(p) {
+                            margin: 0 0;
+                            font-size: 20px;
+                        }
+                        :deep(.w-e-text-placeholder) {
+                            top: 3px;
+                            font-size: 20px;
+                            color: gray;
+                            font-style: normal;
+                        }
                     }
                 }
             }
@@ -176,6 +246,7 @@ onMounted(() => {
             .submit {
                 position: relative;
                 padding-top: 10px;
+                height: 40px;
 
                 button {
                     position: absolute;

@@ -5,4 +5,5 @@ export default {
   name: 'P',
   path: '/p/:pid',
   component: P,
+  meta: { hasTop: true }
 }

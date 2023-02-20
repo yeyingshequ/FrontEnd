@@ -5,7 +5,7 @@
                 <div class="iconWrapper">
                     <img
                         @click="$router.push(`/u/${reply.replyAuthorId}`)"
-                        :src="reply.avatar || defaultAvatar"
+                        :src="reply.replyAuthor.avatar || defaultAvatar"
                         alt=""
                     />
                 </div>
@@ -19,7 +19,7 @@
                 />
                 <div class="replyInfo">
                     <div class="name">
-                        <span>{{ reply.username }}</span>
+                        <span>{{ reply.replyAuthor.username }}</span>
                     </div>
                     <div class="timeAndFloor">
                         <div class="floor">
@@ -28,28 +28,48 @@
                         <div class="dot">
                             <span>·</span>
                         </div>
-                        <span class="pubTime">{{ reply.pubTime }}</span>
+                        <span class="pubTime">{{ formatTime(reply.pubTime) }}</span>
                     </div>
                 </div>
                 <div class="reply">
+                    <span v-if="reply.repliedAuthorId" style="font-weight: bold; color: #606266"
+                        >回复</span
+                    >
+                    <div v-if="reply.repliedAuthorId" class="replyto">
+                        <span> {{ reply.repliedAuthor.username }} </span>
+                    </div>
+                    <span
+                        v-if="reply.repliedAuthorId"
+                        style="
+                            font-weight: bold;
+                            color: #606266;
+                            padding-right: 7px;
+                            word-break: break-all;
+                        "
+                        >:</span
+                    >
                     <span>{{ reply.content }}</span>
                 </div>
-                <Tools :replyInfo="reply" @click="postStore.replyInfo = reply" father="reply" />
+                <Tools :replyInfo="reply" father="reply" />
             </div>
         </div>
     </div>
 </template>
 <script setup lang="ts">
-import {computed} from 'vue'
+import {computed, onMounted} from 'vue'
 import usePostStore from '@/store/post'
 import {storeToRefs} from 'pinia'
 import Tools from '@/components/Tools/index.vue'
+import formatTime from '@/tools/formatTime'
 const postStore = usePostStore()
 let {commentInfo} = storeToRefs(postStore)
 let replies = computed(() => {
     return commentInfo.value.reply
 })
 let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg'
+onMounted(() => {
+    console.log('回复信息:', replies)
+})
 </script>
 <style lang="scss" scoped>
 $iconPartWidth: 90px;
@@ -140,6 +160,14 @@ $containerWidth: 698px;
 
             .reply {
                 padding-right: 20px;
+                margin-top: -10px;
+                .replyto {
+                    display: inline-block;
+                    margin-left: 5px;
+                    margin-right: 5px;
+                    color: $regularFont;
+                    font-weight: bold;
+                }
             }
         }
     }

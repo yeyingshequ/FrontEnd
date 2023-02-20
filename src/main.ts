@@ -24,7 +24,6 @@ app.component("CmtyCard", CmtyCard)
     .component('Notification', Notification)
     .component('Tools', Tools)
     .component('PostMune', PostMune)
-
 app.use(pinia).use(router).use(ElementPlus).mount('#app')
 
 

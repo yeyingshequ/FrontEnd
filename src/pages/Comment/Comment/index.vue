@@ -13,13 +13,13 @@
                     <div class="icon">
                         <img
                             @click="$router.push(`/u/${commentInfo.postAuthorId}`)"
-                            :src="commentInfo.avatar || defaultAvatar"
+                            :src="commentInfo.commentAuthor.avatar || defaultAvatar"
                         />
                     </div>
                 </div>
                 <div class="user">
                     <div class="userName">
-                        <span>{{ commentInfo.username }}</span>
+                        <span>{{ commentInfo.commentAuthor.username }}</span>
                     </div>
 
                     <div class="timeAndFloor">
@@ -30,7 +30,7 @@
                             <span>·</span>
                         </div>
                         <div class="updateTime">
-                            <span>{{ commentInfo.pubTime }}</span>
+                            <span>{{ formatTime(commentInfo.pubTime) }}</span>
                         </div>
                     </div>
                 </div>
@@ -45,18 +45,10 @@
                     <!-- <div class="img" v-for="img in post.imgSrc" :key="post.imgSrc.id">
                   <img :src="img.img">
               </div> -->
-                    <img
-                        src="http://tiebapic.baidu.com/forum/w%3D580/sign=cf8c755d4a2442a7ae0efdade141ad95/317a5d6034a85edfdc6cb1fd0c540923df5475d3.jpg?tbpicau=2022-09-13-05_b504e610ca6b9278056a027ae639b5e6"
-                        alt=""
-                    />
-                    <img
-                        src="http://tiebapic.baidu.com/forum/w%3D580/sign=1cec70bbf619ebc4c0787691b224cf79/3c7e32fa828ba61ecd0e87f10434970a324e59d3.jpg?tbpicau=2022-09-13-05_42183b52d3b18f0602cc1a2363feec50"
-                        alt=""
-                    />
                 </div>
             </div>
             <div class="toolWrapper">
-                <Tools :commentInfo="commentInfo" father="comment" />
+                <Tools :commentInfo="commentInfo" father="commentMain" />
             </div>
         </div>
     </div>
@@ -68,6 +60,8 @@ import PostMenu from '@/components/PostMenu/index.vue'
 import usePostStore from '@/store/post'
 import {useRoute} from 'vue-router'
 import Tools from '@/components/Tools/index.vue'
+import formatTime from '@/tools/formatTime'
+
 const props = defineProps(['commentInfo'])
 const route = useRoute()
 const postStore = usePostStore()
@@ -77,6 +71,7 @@ let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997
 onMounted(() => {
     //console.log('route:', route.name)
     //console.log(route.params)
+    //console.log('commentMain:', commentInfo.value)
 })
 </script>
 <style scoped lang="scss">
@@ -185,6 +180,7 @@ onMounted(() => {
             .bodyText {
                 margin-top: 10px;
                 color: $mainFont;
+                word-break: break-all;
             }
 
             .imgDisplay {

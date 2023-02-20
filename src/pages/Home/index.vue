@@ -13,21 +13,19 @@ import emitter from '@/tools/mitt'
 import usePostStore from '@/store/post'
 const postStore = usePostStore()
 let {homePostCardList} = storeToRefs(postStore)
-
+console.log('homePostCardList:', homePostCardList.value)
 async function reqGetHomePostCard() {
     postStore.getHomePostCard()
 }
+emitter.on('regetHomeInfo', () => {
+    reqGetHomePostCard()
+})
 
 onMounted(() => {
-    console.log('homePostCardList:', homePostCardList.value)
-
     reqGetHomePostCard()
-    emitter.on('regetHomeInfo', () => {
-        reqGetHomePostCard()
-    })
-    onUnmounted(() => {
-        emitter.off('regetHomeInfo')
-    })
+})
+onUnmounted(() => {
+    emitter.off('regetHomeInfo')
 })
 </script>
 

@@ -13,7 +13,7 @@
         <div class="list">
             <CmtyCard
                 :cmtyCardList="cmtySquareCardList"
-                @regetSquareCmty="reqGetCmtySquareCardList"
+                @regetCmtyCard="reqGetCmtySquareCardList"
             />
         </div>
     </div>
@@ -42,7 +42,8 @@ let categoryList = reactive([
     {name: '明星', id: 10},
     {name: '网友俱乐部', id: 11},
     {name: '个人社区', id: 12},
-    {name: '情感', id: 13}
+    {name: '情感', id: 13},
+    {name: '战场', id: 14}
 ])
 
 let {cmtySquareCardList} = storeToRefs(routerStore)
@@ -87,7 +88,7 @@ onMounted(() => {
         .active {
             font-weight: bold;
             /* color: #ff44aa; */
-            background-color: mix(#ff44aa, white, 20%);
+            background-color: $button;
         }
     }
 

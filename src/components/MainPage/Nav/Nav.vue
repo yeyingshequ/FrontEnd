@@ -29,15 +29,23 @@
             </div>
         </div>
         <!--退出、切换账号 选项-->
-        <div class="logoutFn" v-show="showLogout">
-            <div class="mask" @click="showLogout = false"></div>
-            <div class="logoutWrapper animate__animated animate__fadeIn" key="1">
-                <div class="triangle"></div>
-                <div class="userLogout" @click="goLogout">
-                    <span> 退出账号 </span>
+
+        <div class="logoutFn">
+            <div class="mask" v-show="showLogout" @click="showLogout = false"></div>
+            <transition
+                name="animate__animated animate__bounce"
+                enter-active-class="animate__fadeIn"
+                leave-active-class="animate__fadeOut"
+            >
+                <div v-show="showLogout" class="logoutWrapper animate__faster" key="1">
+                    <div class="triangle"></div>
+                    <div class="userLogout" @click="goLogout">
+                        <span> 退出账号 </span>
+                    </div>
                 </div>
-            </div>
+            </transition>
         </div>
+
         <div class="usernav">
             <div
                 v-for="(nav, index) in navList"
@@ -74,6 +82,7 @@
 </template>
 
 <script setup lang="ts">
+import 'animate.css'
 import postEditor from '@/components/MainPage/Nav/postEditor/postEditor.vue'
 import {computed, onMounted, ref, watch} from 'vue'
 import {RouterLink, useRoute, useRouter} from 'vue-router'
@@ -178,6 +187,8 @@ function reqGetUserInfo() {
 }
 
 onMounted(() => {
+    console.log('route:', route)
+
     reqGetUserInfo()
 })
 </script>
@@ -252,7 +263,7 @@ onMounted(() => {
 
                     &:hover {
                         color: $brandColor;
-                        background-color: mix($brandColor, white, 15%);
+                        background-color: $button;
                     }
                 }
 

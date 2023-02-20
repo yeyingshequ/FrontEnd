@@ -1,13 +1,9 @@
 <template lang="">
     <div>
-        
+        <NotiCard parent="like" :notiCardList="replyNotiCardList" />
     </div>
 </template>
 <script>
-export default {
-    
-}
+export default {}
 </script>
-<style lang="">
-    
-</style>
+<style lang=""></style>

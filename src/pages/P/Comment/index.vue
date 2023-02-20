@@ -5,7 +5,7 @@
                 <div class="iconWrapper">
                     <img
                         @click="$router.push(`/u/${comment.commentAuthorId}`)"
-                        :src="comment.avatar || defaultAvatar"
+                        :src="comment.commentAuthor.avatar || defaultAvatar"
                         alt=""
                     />
                 </div>
@@ -19,7 +19,7 @@
                 />
                 <div class="commentInfo">
                     <div class="name">
-                        <span>{{ comment.username }}</span>
+                        <span>{{ comment.commentAuthor.username }}</span>
                     </div>
                     <div class="timeAndFloor">
                         <div class="floor">
@@ -28,11 +28,11 @@
                         <div class="dot">
                             <span>·</span>
                         </div>
-                        <span class="pubTime">{{ comment.pubTime }}</span>
+                        <span class="pubTime">{{ formatTime(comment.pubTime) }}</span>
                     </div>
                 </div>
                 <div class="comment">
-                    <span>{{ comment.content }}</span>
+                    <span v-html="comment.content"></span>
                     <div class="reply">
                         <Reply :commentInfo="comment" />
                     </div>
@@ -49,13 +49,14 @@ import Reply from '../Reply/index.vue'
 import PostMenu from '@/components/PostMenu/index.vue'
 import usePostStore from '@/store/post'
 import Tools from '@/components/Tools/index.vue'
+import formatTime from '@/tools/formatTime'
 import {sendComment} from '@/api'
 const postStore = usePostStore()
 let {postInfo} = storeToRefs(postStore)
 let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg'
 
 let comments = computed(() => {
-    return postInfo.value.comments
+    return postInfo.value.comment
 })
 console.log('comments:', comments)
 </script>
@@ -103,7 +104,7 @@ $containerWidth: 698px;
 
             .postMenu {
                 position: absolute;
-                top: 0;
+                top: 10px;
                 right: 10px;
             }
 
@@ -149,7 +150,9 @@ $containerWidth: 698px;
             }
 
             .comment {
+                margin-top: -10px;
                 padding-right: 20px;
+                word-break: break-all;
             }
         }
     }

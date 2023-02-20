@@ -1,9 +1,9 @@
 <template>
-    <div class="tabs">
+    <div class="tabs" ref="tabScroll" :class="{hasTop: checkHasTop() == true}">
         <div v-for="tab in tabs" :key="tab.id" class="router" @click="router.push(tab.router)">
-            <span :class="{actived: tab.routeName == route.name || tab.default}"
+            <span :class="{actived: tab.routeName == route.name /* || tab.default */}"
                 >{{ tab.Name }}
-                <div v-show="tab.routeName == route.name || tab.default"></div>
+                <div v-show="tab.routeName == route.name /* || tab.default */"></div>
             </span>
         </div>
     </div>
@@ -11,20 +11,27 @@
 <script setup lang="ts">
 import {computed, onMounted, ref, toRefs} from 'vue'
 import {useRoute, RouterLink, useRouter} from 'vue-router'
+import useIndexStore from '@/store/index'
+const indexStore = useIndexStore()
 const router = useRouter()
 const props = defineProps(['tabs'])
 //console.log('tabs', props.tabs)
 
 let {tabs} = toRefs(props)
 
-let currentId = ref(0)
+let tabScroll = ref()
 
-function getId(tab: {id: number}) {
-    currentId.value = tab.id
+//查询看否有top
+function checkHasTop(): boolean {
+    return route.meta.hasTop ? true : false
 }
 
 const route = useRoute()
 onMounted(() => {
+    /* window.addEventListener('scroll', function () {
+        //console.log('tab:', tabScroll.value.getBoundingClientRect().top)
+        //indexStore.tabTop = tabScroll.value.getBoundingClientRect().top
+    }) */
     //console.log("route.name", route.name);
     //console.log("tabs", tabs);
 })
@@ -73,5 +80,8 @@ onMounted(() => {
             font-weight: bold;
         }
     }
+}
+.hasTop {
+    top: 110px;
 }
 </style>

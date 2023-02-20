@@ -59,31 +59,20 @@
                         "
                     ></i>
                 </button>
-                <button
-                    class="goJoin"
-                    :class="{unJoin: community.isJoined}"
-                    @click.stop="
-                        reqJoinCmty({cmtyId: community.cmtyId, isJoined: community.isJoined})
-                    "
-                >
-                    {{ community.isJoined ? '已加入' : '加入' }}
-                </button>
+                <JoinBtn :cmtyInfo="community" size="default" parent="CmtyCard" />
             </div>
         </div>
     </div>
 </template>
 <script setup lang="ts">
 import {updateUserCmty} from '@/api'
-import {computed, onMounted, ref, toRefs, watch} from 'vue'
+import emitter from '@/tools/mitt'
+import {onMounted, onUnmounted, ref, toRefs} from 'vue'
 import {useRoute} from 'vue-router'
+import JoinBtn from '../littleComponents/JoinBtn/JoinBtn.vue'
 
 const route = useRoute()
-const emit = defineEmits([
-    'regetJoinedCmty',
-    'regetFavoriteCmty',
-    'regetSquareCmty',
-    'regetRecentCmty'
-])
+const emit = defineEmits(['regetCmtyCard'])
 const props = defineProps(['cmtyCardList'])
 let {cmtyCardList} = toRefs(props)
 /**特别关注的图标类型以及颜色**/
@@ -94,19 +83,7 @@ let favoriteIcon = ref('favoriteIcon')
 let joinCmtyMsg = ref('')
 let favoriteCmtyMsg = ref('')
 function regetRouteInfo() {
-    switch (route.name) {
-        case 'Joined':
-            emit('regetJoinedCmty')
-            break
-        case 'Favorite':
-            emit('regetFavoriteCmty')
-            break
-        case 'Square':
-            emit('regetSquareCmty')
-            break
-        case 'Recent':
-            emit('regetRecentCmty')
-    }
+    emit('regetCmtyCard')
 }
 async function reqJoinCmty(params: {cmtyId: number; isJoined: number}) {
     if (!params.isJoined) {
@@ -129,8 +106,13 @@ async function reqAddToFavoriteCmty(params: {cmtyId: number; isFavorite: number}
     regetRouteInfo()
 }
 onMounted(() => {
-    //console.log("onMounted的props:", props.cmtyCardList)
-    //console.log("cmtyCardList:", cmtyCardList);
+    emitter.on('regetCmtyCard', () => {
+        //console.log('已经触发 regetCmtyCard')
+        regetRouteInfo()
+    })
+})
+onUnmounted(() => {
+    emitter.off('regetCmtyCardMitt')
 })
 </script>
 <style scoped lang="scss">
@@ -241,13 +223,13 @@ onMounted(() => {
         }
 
         .joinAndFavorite {
+            display: flex;
             position: absolute;
-            right: 40px;
+            right: 20px;
             top: 21px;
 
             /* background-color: steelblue; */
-            .goFavorite,
-            .goJoin {
+            .goFavorite {
                 height: 35px;
                 outline: none;
                 border: 0;
@@ -258,32 +240,6 @@ onMounted(() => {
                     background-color: mix($brandColor, black, 10%);
                 }
             }
-
-            .goJoin {
-                width: 80px;
-                font-size: 15px;
-                background-color: $brandColor;
-                color: white;
-                font-weight: bold;
-                vertical-align: middle;
-                text-align: center;
-                transition: 0.1s;
-
-                &:hover {
-                    background-color: mix($brandColor, black, 90%);
-                }
-            }
-
-            .unJoin {
-                background-color: white;
-                color: $mainFont;
-                border: 1px solid $placeholderFont;
-
-                &:hover {
-                    background-color: mix($brandColor, white, 20%);
-                }
-            }
-
             .goFavorite {
                 width: 35px;
                 color: $regularFont;
@@ -301,7 +257,7 @@ onMounted(() => {
                 }
 
                 &:hover {
-                    background-color: mix($brandColor, white, 20%);
+                    background-color: $button;
                 }
 
                 .el-icon-chat-round {

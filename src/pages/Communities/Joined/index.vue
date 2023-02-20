@@ -1,6 +1,6 @@
 <template>
     <div>
-        <CmtyCard :cmtyCardList="joinedCmtyCardList" @regetJoinedCmty="reqGetJoinedCmty" />
+        <CmtyCard :cmtyCardList="joinedCmtyCardList" @regetCmtyCard="reqGetJoinedCmty" />
     </div>
 </template>
 <script setup lang="ts">

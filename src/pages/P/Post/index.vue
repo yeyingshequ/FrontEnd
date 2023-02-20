@@ -13,13 +13,13 @@
                     <div class="icon">
                         <img
                             @click="$router.push(`/u/${post.postAuthorId}`)"
-                            :src="post.avatar || defaultAvatar"
+                            :src="postAuthor.avatar || defaultAvatar"
                         />
                     </div>
                 </div>
                 <div class="user">
                     <div class="userName">
-                        <span>{{ post.username }}</span>
+                        <span>{{ postAuthor.username }}</span>
                     </div>
 
                     <div class="timeAndFloor">
@@ -30,7 +30,7 @@
                             <span>·</span>
                         </div>
                         <div class="updateTime">
-                            <span>{{ post.pubTime }}</span>
+                            <span>{{ formatTime(post.pubTime) }}</span>
                         </div>
                     </div>
                 </div>
@@ -41,25 +41,17 @@
                     <h4>{{ post.postTitle }}</h4>
                 </div>
                 <div class="bodyText" v-show="true /* post.bodyText */">
-                    <span>{{ post.content }}</span>
+                    <span v-html="post.content"></span>
                 </div>
                 <!-- 图片 -->
-                <div class="imgDisplay">
-                    <!-- <div class="img" v-for="img in post.imgSrc" :key="post.imgSrc.id">
-                  <img :src="img.img">
-              </div> -->
-                    <img
-                        src="http://tiebapic.baidu.com/forum/w%3D580/sign=cf8c755d4a2442a7ae0efdade141ad95/317a5d6034a85edfdc6cb1fd0c540923df5475d3.jpg?tbpicau=2022-09-13-05_b504e610ca6b9278056a027ae639b5e6"
-                        alt=""
-                    />
-                    <img
-                        src="http://tiebapic.baidu.com/forum/w%3D580/sign=1cec70bbf619ebc4c0787691b224cf79/3c7e32fa828ba61ecd0e87f10434970a324e59d3.jpg?tbpicau=2022-09-13-05_42183b52d3b18f0602cc1a2363feec50"
-                        alt=""
-                    />
-                </div>
+                <!-- <div class="imgDisplay">
+                    <div class="img" v-for="img in post.imgSrc" :key="post.imgSrc.id">
+                        <img :src="img.img" />
+                    </div>
+                </div> -->
             </div>
             <div class="toolWrapper">
-                <Tools :postInfo="postInfo" father="post" />
+                <Tools :postInfo="post" father="postMain" />
             </div>
         </div>
     </div>
@@ -69,10 +61,15 @@ import {storeToRefs} from 'pinia'
 import {computed, reactive, ref} from 'vue'
 import PostMenu from '@/components/PostMenu/index.vue'
 import usePostStore from '@/store/post'
+import Tools from '@/components/Tools/index.vue'
+import formatTime from '@/tools/formatTime'
 const postStore = usePostStore()
 let {postInfo} = storeToRefs(postStore)
 let post = computed(() => {
-    return postInfo.value.post
+    return postInfo.value
+})
+let postAuthor = computed(() => {
+    return postInfo.value.postAuthor
 })
 /****** 默认头像 ******/
 let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg'
@@ -98,7 +95,7 @@ let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997
 
             .postMenu {
                 position: absolute;
-                top: 0;
+                top: 10px;
                 right: 10px;
             }
 
@@ -169,19 +166,20 @@ let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997
         }
 
         .content {
-            padding-left: 20px;
-            padding-right: 20px;
+            margin-top: -10px;
+            padding: 0 20px;
             height: 100%;
             width: 100%;
+            word-break: break-all;
 
             /* background-color: firebrick; */
             .title {
+                margin-bottom: 5px;
                 color: $mainFont;
                 font-weight: bold;
             }
 
             .bodyText {
-                margin-top: 10px;
                 color: $mainFont;
             }
 

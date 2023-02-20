@@ -19,6 +19,8 @@ export const getMyInfo = () => request.get('/myinfo')
 //修改密码接口
 export const updatePasswordApi = (params: object) =>
   request({ url: '/updatepassword', method: 'post', data: params })
+//获取用户卡片
+export const getUserCard = (params: object) => request({ url: '/usercard', method: 'get', params: params })
 /******************************社区相关的接口******************************/
 
 //获取社区的信息
@@ -55,6 +57,9 @@ export const getFavoriteCmty = () => request({ url: '/getfavoritecmty', method: 
 //查询最近逛过的社区
 export const getRecentCmty = () => request({ url: '/getrecentcmty', method: 'get' })
 
+//查询用户的社区
+export const getUserCmty = (params: object) => request({ url: '/getusercmty', method: 'get', params })
+
 
 /******************************帖子相关的接口******************************/
 
@@ -78,7 +83,8 @@ export const getDiscoverPostCard = () => request({ url: '/discoverpostcard', met
 
 //获取收藏导航板块信息
 export const getSavedPostCard = () => request({ url: '/savedpostcard', method: 'get' })
-
+//查询通知
+export const getNotiCard = (params: object) => request({ url: '/noticard', method: 'get', params })
 
 //发主题帖
 export const sendPost = (params: object) => request({ url: '/sendpost', method: 'post', data: params })

@@ -4,6 +4,7 @@
             <div class="borderline"></div>
             <div class="Mainpart" ref="viewPage" style="height: 100%">
                 <router-view></router-view>
+                <!-- <Home v-if="route.path == '/'" /> -->
             </div>
             <Nav></Nav>
         </div>
@@ -12,7 +13,9 @@
 <script setup lang="ts">
 import Nav from '@/components/MainPage/Nav/Nav.vue'
 import {ref} from 'vue'
-import {RouterView} from 'vue-router'
+import {RouterView, useRoute} from 'vue-router'
+import Home from '@/pages/Home/index.vue'
+const route = useRoute()
 let showLogout = ref(true)
 
 function isNotShowLogout(e: any) {

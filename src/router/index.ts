@@ -14,6 +14,10 @@ import History from "./History";
 import Comment from '@/router/Comment'
 
 const router = createRouter({
+  scrollBehavior(to, from, savedPosition) {
+    // 始终滚动到顶部
+    return { top: 0 }
+  },
   history: createWebHashHistory(),
   routes: [
     Home,
@@ -31,7 +35,7 @@ const router = createRouter({
     {
       path: '/',
       redirect: 'home',
-    },
+    }
   ],
 })
 

@@ -1,18 +1,19 @@
 <template>
     <div class="container">
-        <div class="top">
+        <Top parent="post" :info="postInfo" />
+        <!-- <div class="top">
             <div class="return">
-                <i class="iconfont icon-fanhui" @click="back"></i>
+                <yyReturn />
             </div>
             <div class="bar" @click="router.push(`/c/${post.cmtyId}`)">
                 <div class="icon">
                     <img src="@/images/barIcon.jpg" alt="" />
                 </div>
                 <div class="barName">
-                    <span>{{ post.cmtyName }}吧</span>
+                    <span>{{ cmty.cmtyName }}吧</span>
                 </div>
             </div>
-        </div>
+        </div> -->
         <Poster :postInfo="postInfo" />
         <Comment :postInfo="postInfo" />
     </div>
@@ -27,6 +28,8 @@ import useMainStore from '@/store/index'
 import {storeToRefs} from 'pinia'
 import emitter from '@/tools/mitt'
 import usePostStore from '@/store/post'
+import yyReturn from '@/components/littleComponents/yy-button/yy-return.vue'
+import Top from '@/components/Top/Top.vue'
 const postStore = usePostStore()
 const mainStore = useMainStore()
 const route = useRoute()
@@ -34,12 +37,11 @@ const router = useRouter()
 
 let {postInfo} = storeToRefs(postStore)
 let post = computed(() => {
-    return postInfo.value.post
+    return postInfo.value
 })
-
-function back() {
-    router.back()
-}
+let cmty = computed(() => {
+    return postInfo.value.community
+})
 
 let params: any = reactive({
     postId: route.params.pid
@@ -49,30 +51,26 @@ function reqGetPostInfo(params: any) {
 }
 onMounted(() => {
     postStore.postInfo = {
-        post: {
-            avatar: '',
-            cmtyAvatar: '',
-            cmtyHots: '' || 0,
-            cmtyId: 1,
-            cmtyName: '',
-            commentCount: 0,
-            content: '',
-            giftCount: 0,
-            isDelete: 0,
-            likeCount: 0,
-            postAuthorId: 0,
-            postId: 0,
-            postTitle: '',
-            pubTime: '',
-            shareCount: 0,
-            topFloor: '',
-            updateTime: '',
-            userId: '',
-            username: ''
-        },
-        comments: [
+        postId: 0,
+        postTitle: '',
+        content: '',
+        updateTime: '',
+        pubTime: '',
+        isDeleted: false,
+        cmtyId: 0,
+        postAuthorId: 0,
+        commentCount: 0,
+        likeCount: 0,
+        giftCount: 0,
+        shareCount: 0,
+        topFloor: 0,
+        comment: [
             {
-                avatar: '',
+                commentAuthor: {
+                    avatar: '',
+                    userId: 0,
+                    username: ''
+                },
                 commentAuthorId: 0,
                 commentId: 0,
                 commentTopFloor: 0,
@@ -81,11 +79,41 @@ onMounted(() => {
                 postAuthorId: 0,
                 postId: 0,
                 pubTime: '',
-                replies: [],
-                userId: 0,
-                username: ''
+                repliesCount: 0,
+                reply: {
+                    commentAuthorId: 0,
+                    commentId: 0,
+                    content: '',
+                    postAuthorId: 0,
+                    postId: 0,
+                    pubTime: '',
+                    repliedAuthor: {
+                        userId: 0,
+                        username: ''
+                    },
+                    repliedAuthorId: 0,
+                    repliedId: 0,
+                    replyAuthor: {
+                        avatar: '',
+                        userId: 0,
+                        username: ''
+                    },
+                    replyAuthorId: 0,
+                    replyFloor: 0,
+                    replyId: 0
+                }
             }
-        ]
+        ],
+        postAuthor: {
+            avatar: '',
+            userId: 0,
+            username: ''
+        },
+        community: {
+            cmtyAvatar: '',
+            cmtyName: '',
+            cmtyId: 0
+        }
     }
     reqGetPostInfo(params)
 })
@@ -115,22 +143,9 @@ onUnmounted(() => {
 
         .return {
             position: absolute;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 40px;
             height: 40px;
-            left: 8px;
-            border-radius: 50%;
-            transition: 0.1s;
-            i {
-                margin-left: 5px;
-                font-size: 20px;
-                cursor: pointer;
-            }
-            &:hover {
-                background-color: $onHover;
-            }
+            left: 20px;
+            border: 0;
         }
 
         .bar {
@@ -166,6 +181,7 @@ onUnmounted(() => {
 
             .barName {
                 span {
+                    //font-weight: bold;
                     line-height: 35px;
                 }
             }

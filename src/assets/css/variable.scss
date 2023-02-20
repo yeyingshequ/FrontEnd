@@ -1,5 +1,7 @@
 /* 颜色 */
 $brandColor: #ff44aa;
+$minorColor: #1d9bf0 /* #409eff */;
+
 $mainFont: #303133;
 $regularFont: #606266;
 $minorFont: #909399;
@@ -12,6 +14,21 @@ $borderColor4: #f2f6fc;
 $viewPageWidth: 698px;
 
 /*高亮*/
+$button: mix($brandColor, white, 20%);
 $onHover: mix($brandColor, white, 10%);
+$onHover20: mix($brandColor, white, 20%);
+$onHover30: mix($brandColor, white, 30%);
+$onHover40: mix($brandColor, white, 40%);
+$onHover50: mix($brandColor, white, 50%);
+$onHover60: mix($brandColor, white, 60%);
+$onHover70: mix($brandColor, white, 70%);
+$onHover80: mix($brandColor, white, 80%);
 $onHover90: mix($brandColor, white, 90%);
+/**********************************************/
+$onHoverMino: mix($minorColor, white, 10%);
+$onHoverMino20: mix($minorColor, white, 20%);
+$onHoverMino30: mix($minorColor, white, 30%);
+$onHoverMino40: mix($minorColor, white, 40%);
+$onHoverMino50: mix($minorColor, white, 50%);
+
 $onHoverDark: mix($brandColor, black, 90%);

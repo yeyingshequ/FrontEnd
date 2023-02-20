@@ -27,10 +27,13 @@
     </div>
 </template>
 <script setup lang="ts">
+import useCmtyStore from '@/store/community'
+import {storeToRefs} from 'pinia'
 import {ref} from 'vue'
 import {useRouter} from 'vue-router'
-const router = useRouter()
 
+const router = useRouter()
+const cmtyStore = useCmtyStore()
 let inputText = ref('')
 let searchOnFocus = ref(false)
 </script>
@@ -67,6 +70,7 @@ let searchOnFocus = ref(false)
                 line-height: 52px;
                 cursor: pointer;
                 /* background-color:purple; */
+                -webkit-user-select: none;
                 transition: 0.5s;
 
                 .logoWrapper {

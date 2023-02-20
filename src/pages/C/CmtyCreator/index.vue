@@ -33,6 +33,7 @@ import scroll from '@/tools/scroll'
 import {createCmty} from '@/api'
 import {onMounted, reactive, ref} from 'vue'
 import useMainStore from '@/store/index'
+import {showMessage} from '@/tools'
 const mainStore = useMainStore()
 const categoryList = [
     {value: 1, name: '运动'},
@@ -50,7 +51,8 @@ const categoryList = [
     {value: 13, name: '运动'},
     {value: 14, name: '游戏'},
     {value: 15, name: '数码'},
-    {value: 16, name: '情感'}
+    {value: 16, name: '情感'},
+    {value: 17, name: '战场'}
 ]
 let params = reactive({
     cmtyName: '',
@@ -63,8 +65,8 @@ function close() {
     scroll.move()
 }
 async function reqCreateCmty(params: {cmtyName: string; cmtyCategory: string}) {
-    let result: any = await createCmty(params)
-    message.value = result.message
+    let result = await createCmty(params)
+    showMessage(result.message, result.status)
     //关闭社区创建框
     if (result.status === 0) {
         setTimeout(() => {

@@ -58,6 +58,14 @@ a {
     background-size: cover;
 }
 
+//.vue-html5-editor [contenteditable='true']:empty:before {
+//    content: attr(placeholder);
+//    width: inherit;
+//    height: inherit;
+//    color: grey;
+//    display: block;
+//}
+
 /* 暗幕 */
 .onhover {
     background-color: mix(#ff44aa, white, 10%);

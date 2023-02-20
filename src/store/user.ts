@@ -1,4 +1,4 @@
-import { getMyInfo, getUserInfo } from '@/api/index'
+import { getMyInfo, getUserCard, getUserInfo } from '@/api/index'
 import rename from '@/tools/rename'
 import { defineStore } from 'pinia'
 
@@ -7,7 +7,7 @@ const useUserStore = defineStore('user', {
     return {
       showUpdateInfo: false,
       myInfo: {
-        userId: '',
+        userId: 0,
         username: '',
         avatar: '',
         boi: ''
@@ -22,7 +22,29 @@ const useUserStore = defineStore('user', {
         followingCount: 0,
         isFollowing: 0,
         isBlock: 0
-      }
+      },
+      followers: [{
+        avatar: "",
+        bio: "",
+        cover: "",
+        followerCount: 0,
+        followingCount: 0,
+        isBlock: 0,
+        isFollowing: 0,
+        userId: 0,
+        username: "",
+      }],
+      following: [{
+        avatar: "",
+        bio: "",
+        cover: "",
+        followerCount: 0,
+        followingCount: 0,
+        isBlock: 0,
+        isFollowing: 0,
+        userId: 0,
+        username: "",
+      }]
     }
   },
   actions: {
@@ -39,6 +61,23 @@ const useUserStore = defineStore('user', {
       this.userInfo = result.data
       //console.log('userInfo:', this.userInfo)
       return result
+    },
+    async getUserCard(params: { type: string, userId: number }) {
+      let result: any = await getUserCard(params)
+      if (result.status == 0) {
+        result = result.data
+        switch (params.type) {
+          case 'Followers':
+            console.log('用户卡片:', result);
+            this.followers = result
+            break;
+
+          case 'Following':
+            console.log('用户卡片:', result);
+            this.following = result
+            break;
+        }
+      }
     }
   },
   getters: {

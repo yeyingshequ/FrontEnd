@@ -5,18 +5,22 @@
                 <div class="replybody">
                     <div class="iconWrapper">
                         <img
-                            @click="$router.push(`/u/${reply.replyAuthorId}`)"
-                            :src="reply.avatar || defaultAvatar"
+                            @click="$router.push(`/u/${reply.replyAuthor.userId}`)"
+                            :src="reply.replyAuthor.avatar || defaultAvatar"
                             alt=""
                         />
                     </div>
                     <div class="replyText">
                         <div class="replyerName">
-                            <span>{{ reply.authorName }}</span>
+                            <span>{{ reply.replyAuthor.username }}</span>
                         </div>
-                        <span v-if="reply" style="font-weight: bold; color: #606266">回复</span>
-                        <div class="replyto">
-                            <span> 提亚马特 </span>
+                        <span v-if="reply.repliedAuthorId" style="font-weight: bold; color: #606266"
+                            >回复</span
+                        >
+                        <div v-if="reply.repliedAuthorId" class="replyto">
+                            <span @click="router.push(`/u/${reply.repliedAuthor.userId}`)">
+                                {{ reply.repliedAuthor.username }}
+                            </span>
                         </div>
                         <span style="font-weight: bold; color: #606266; padding-right: 7px">:</span>
                         <span class="text">{{ reply.content }}</span>
@@ -24,14 +28,14 @@
                 </div>
                 <div class="bottom">
                     <div class="time">
-                        <span>{{ reply.pubTime }}</span>
+                        <span>{{ formatTime(reply.pubTime) }}</span>
                     </div>
                     <div class="tools">
                         <Tools :replyInfo="reply" father="reply" />
                     </div>
                 </div>
             </div>
-            <div class="moreReply" v-if="replies.length > 4">
+            <div class="moreReply" v-if="commentInfo.repliesCount > 5">
                 <span @click="router.push(`/comment/${commentInfo.commentId}`)"
                     >点击查看全部{{ commentInfo.repliesCount }}条回复</span
                 >
@@ -41,16 +45,22 @@
 </template>
 <script setup lang="ts">
 import Tools from '@/components/Tools/index.vue'
-import {computed, toRefs} from 'vue'
+import {computed, onMounted, toRefs} from 'vue'
 import {useRouter} from 'vue-router'
+import formatTime from '@/tools/formatTime'
 const router = useRouter()
 
 let props = defineProps(['commentInfo'])
-let {commentInfo} = toRefs(props)
+let commentInfo = computed(() => {
+    return props.commentInfo
+})
 
 let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg'
 let replies = computed(() => {
-    return commentInfo?.value.replies
+    return commentInfo.value.reply
+})
+onMounted(() => {
+    //console.log('replies:', replies)
 })
 </script>
 <style scoped lang="scss">
@@ -60,7 +70,7 @@ $iconWrapperWidth: 35px;
 
 .border {
     margin-top: 15px;
-    padding: 20px;
+    padding: 20px 20px 0px 20px;
     width: 588px;
     background-color: $borderColor4;
     border-radius: 15px;
@@ -102,6 +112,7 @@ $iconWrapperWidth: 35px;
 
                 .text {
                     color: $mainFont;
+                    word-break: break-all;
                 }
             }
         }
@@ -128,6 +139,7 @@ $iconWrapperWidth: 35px;
     }
 
     .moreReply {
+        padding-bottom: 10px;
         font-size: 14px;
         color: $regularFont;
         span {

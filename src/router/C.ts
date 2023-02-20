@@ -5,11 +5,16 @@ export default {
   name: 'C',
   path: '/c/:cmtyId',
   component: C,
+  redirect: (to: any) => {
+    console.log("to:", to);
+    return '/c/' + to.params.cmtyId + '/home'
+  },
   children: [
     {
       name: 'CmtyHome',
       path: 'home',
-      component: CmtyHome
+      component: CmtyHome,
+      meta: { hasTop: true }
     }
   ]
 }

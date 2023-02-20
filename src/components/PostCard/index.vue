@@ -6,15 +6,7 @@
             :key="post.postId"
             @click="$router.push(`/p/${post.postId}`)"
         >
-            <!-- 用户信息、帖子更新时间 -->
-            <div class="userInfo">
-                <PostMenu
-                    class="postMenu"
-                    :content="post.content"
-                    father="post"
-                    :postId="post.postId"
-                    @click.stop
-                />
+            <div class="leftPart">
                 <div class="iconWrapper">
                     <div class="icon">
                         <img
@@ -23,42 +15,44 @@
                         />
                     </div>
                 </div>
-                <div class="user">
-                    <div class="userName">
-                        <span>{{ post.username }}</span>
-                    </div>
-                    <div class="updateTime">
-                        <span>{{ post.updateTime }}</span>
-                    </div>
-                </div>
             </div>
-            <!-- 标题和正文 -->
-            <div class="TitleAndContent">
-                <div class="title">
-                    <h4>{{ post.postTitle }}</h4>
+            <!-- 用户信息、帖子更新时间 -->
+            <div class="rightPart">
+                <div class="userInfo">
+                    <PostMenu
+                        class="postMenu"
+                        :content="post.content"
+                        father="post"
+                        :postId="post.postId"
+                        @click.stop
+                    />
+                    <div class="user">
+                        <div class="userName">
+                            <span>{{ post.username }}</span>
+                        </div>
+                        <div class="updateTime">
+                            <span>{{ post.updateTime }}</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="content">
-                    <span>{{ post.content }}</span>
+                <!-- 标题和正文 -->
+                <div class="TitleAndContent">
+                    <div class="title">
+                        <h4>{{ post.postTitle }}</h4>
+                    </div>
+                    <div class="content">
+                        <span v-html="post.content"></span>
+                    </div>
                 </div>
-                <!-- 图片 -->
-                <!-- <div v-if="post.images" :class="{
-            imgDisplay:post.imgSrc.length ==1,
-            twoImgDisplay:post.imgSrc.length== 2,
-            threeImgDisplay:post.imgSrc.length== 3,
-        }">
-          <div class="img" v-for="img in post.imgSrc" :key="post.imgSrc.id">
-            <img :src="img.img">
-          </div>
-        </div> -->
+                <button
+                    class="bar"
+                    @click.stop="router.push(`/c/${post.cmtyId}`)"
+                    v-if="route.matched[0].name != 'C'"
+                >
+                    <span> {{ post.cmtyName }}吧 </span>
+                </button>
+                <Tools :postInfo="post" father="postCard" style="padding-right: 20px" />
             </div>
-            <button
-                class="bar"
-                @click.stop="router.push(`/c/${post.cmtyId}`)"
-                v-if="route.matched[0].name != 'C'"
-            >
-                <span> {{ post.cmtyName }}吧 </span>
-            </button>
-            <Tools />
         </div>
     </div>
 </template>
@@ -77,13 +71,16 @@ let postCardList = computed(() => {
 })
 let showMenu = ref(false)
 onMounted(() => {
-    console.log('postCardList', postCardList.value)
-    console.log('route:', route)
+    console.log('postCard组件')
+
+    //console.log('postCardList', postCardList.value)
+    //console.log('route:', route)
 })
 </script>
 
 <style scoped lang="scss">
 .post {
+    display: flex;
     position: relative;
     border-bottom: 1px solid #f1f1f1;
     transition: 0.1s;
@@ -92,22 +89,7 @@ onMounted(() => {
     &:hover {
         background-color: mix(#ff44aa, white, 10%);
     }
-
-    .userInfo {
-        position: relative;
-        display: flex;
-        align-items: center;
-        height: 90px;
-        width: 100%;
-        //padding-top: 15px;
-        .postMenu {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-
-        /* background-color: chartreuse; */
-
+    .leftPart {
         .iconWrapper {
             display: flex;
             justify-content: center;
@@ -127,109 +109,129 @@ onMounted(() => {
                 }
             }
         }
-
-        .user {
-            height: 50px;
-
-            /* background-color: blueviolet; */
-            .userName {
-                line-height: 25px;
-                height: 25px;
-
-                span {
-                    font-weight: bold;
-                }
+    }
+    .rightPart {
+        .userInfo {
+            position: relative;
+            display: flex;
+            align-items: center;
+            height: 90px;
+            width: 100%;
+            //padding-top: 15px;
+            .postMenu {
+                position: absolute;
+                top: 10px;
+                right: 10px;
             }
 
-            .updateTime {
-                height: 25px;
+            /* background-color: chartreuse; */
 
-                span {
+            .user {
+                height: 50px;
+
+                /* background-color: blueviolet; */
+                .userName {
                     line-height: 25px;
-                    color: $regularFont;
+                    height: 25px;
+
+                    span {
+                        font-weight: bold;
+                    }
                 }
-            }
-        }
-    }
 
-    .TitleAndContent {
-        padding-left: 20px;
-        padding-right: 20px;
-        height: 100%;
-        width: 100%;
+                .updateTime {
+                    height: 25px;
 
-        /* background-color: firebrick; */
-        .title {
-            font-weight: bold;
-        }
-
-        .content {
-            color: $regularFont;
-            margin-top: 10px;
-        }
-
-        .imgDisplay {
-            font-size: 0;
-            display: inline-block;
-            margin-top: 10px;
-            border-radius: 20px;
-            overflow: hidden;
-
-            .img {
-                img {
-                    max-width: 550px;
-                    max-height: 550px;
+                    span {
+                        line-height: 25px;
+                        color: $regularFont;
+                    }
                 }
             }
         }
 
-        .twoImgDisplay,
-        .threeImgDisplay {
-            font-size: 0;
-            display: inline-block;
-            margin-top: 10px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-sizing: content-box;
-            border: 1px solid #f1f1f1;
+        .TitleAndContent {
+            padding-right: 20px;
+            width: 608px;
+            margin-top: -10px;
+            /* background-color: firebrick; */
+            .title {
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
 
-            .img {
+            .content {
+                color: $regularFont;
+                word-break: break-all;
+                //width: 658px;
+                span {
+                    width: 658px;
+                }
+            }
+
+            .imgDisplay {
+                font-size: 0;
                 display: inline-block;
-                margin-left: 3px;
+                margin-top: 10px;
+                border-radius: 20px;
+                overflow: hidden;
 
-                &:first-child {
-                    margin-left: 0;
+                .img {
+                    img {
+                        max-width: 550px;
+                        max-height: 550px;
+                    }
                 }
+            }
 
-                img {
-                    width: 216px;
-                    height: 216px;
-                    object-fit: cover;
+            .twoImgDisplay,
+            .threeImgDisplay {
+                font-size: 0;
+                display: inline-block;
+                margin-top: 10px;
+                border-radius: 20px;
+                overflow: hidden;
+                box-sizing: content-box;
+                border: 1px solid #f1f1f1;
+
+                .img {
+                    display: inline-block;
+                    margin-left: 3px;
+
+                    &:first-child {
+                        margin-left: 0;
+                    }
+
+                    img {
+                        width: 216px;
+                        height: 216px;
+                        object-fit: cover;
+                    }
                 }
             }
         }
-    }
-    .bar {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 26px;
-        margin-left: 20px;
-        margin-top: 10px;
-        background-color: white;
-        border: $brandColor solid 1px;
-        border-radius: 50px;
-        cursor: pointer;
-        &:hover {
-            background-color: mix(#ff44aa, white, 20%);
-        }
+        .bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 26px;
+            margin-top: 10px;
+            background-color: white;
+            border: $brandColor solid 1px;
+            border-radius: 50px;
+            outline: none;
+            cursor: pointer;
+            &:hover {
+                background-color: $onHover20;
+            }
 
-        span {
-            padding: 0 10px;
-            font-size: 15px;
-            font-weight: bold;
-            color: $brandColor;
-            //line-height: 26px;
+            span {
+                padding: 0 10px;
+                font-size: 15px;
+                font-weight: bold;
+                color: $brandColor;
+                //line-height: 26px;
+            }
         }
     }
 }
