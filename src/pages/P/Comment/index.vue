@@ -58,7 +58,7 @@ let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997
 let comments = computed(() => {
     return postInfo.value.comment
 })
-console.log('comments:', comments)
+//console.log('comments:', comments)
 </script>
 <style scoped lang="scss">
 @import '@/assets/css/variable.scss';

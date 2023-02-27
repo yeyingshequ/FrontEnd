@@ -4,14 +4,12 @@
         <div class="item" @click="showEditor()">
             <i class="iconfont icon-pinglun"></i><span> {{ getCommentCount || '回复' }}</span>
         </div>
-        <!-- <div>
-        <i class="iconfont icon-lihe"></i><span></span>
-    </div> -->
+        <!-- <div><i class="iconfont icon-lihe"></i><span></span></div> -->
         <div class="item">
             <i class="iconfont icon-fenxiang"></i><span>{{ getShareCount || '分享' }}</span>
         </div>
         <div class="item">
-            <i class="iconfont icon-aixin" @click.stop="setLikeCount()"></i
+            <i class="iconfont" :class="getLikeStatus" @click.stop="setLikeCount()"></i
             ><span>{{ getLikeCount || '点赞' }}</span>
         </div>
         <CommentEditor
@@ -34,9 +32,11 @@ import CommentEditor from '@/components/Tools/CommentEditor/index.vue'
 import ReplyEditor from '@/components/Tools/ReplyEditor/index.vue'
 import useMainStore from '@/store/index'
 import {storeToRefs} from 'pinia'
-import {computed, onMounted, ref, toRefs} from 'vue'
+import {computed, nextTick, onMounted, onUpdated, ref, toRefs, watch} from 'vue'
 import usePostStore from '@/store/post'
 import {useRoute} from 'vue-router'
+import {updateUserPost, updateUserComment, updateUserReply} from '@/api'
+
 const route = useRoute()
 const postStore = usePostStore()
 /**************************************************************************/
@@ -49,130 +49,6 @@ let props = defineProps(['postInfo', 'father', 'commentInfo', 'replyInfo', 'isMa
 let father = computed(() => {
     return props.father
 })
-let isLiked = ref(false)
-let getLikeCount = computed(() => {
-    switch (father!.value) {
-        case 'postCard':
-        case 'postMain':
-            return postInfo.value.likeCount
-        case 'comment':
-        case 'commentMain':
-            return commentInfo.value.likeCount
-        case 'reply':
-            return replyInfo.value.likeCount
-    }
-})
-
-function setLikeCount() {
-    switch (father.value) {
-        case 'postCard':
-            switch (route.name) {
-                case 'Home':
-                    let iHome = postStore.homePostCardList.findIndex(
-                        (item) => item.postId === postInfo.value.postId
-                    )
-                    postStore.homePostCardList[iHome].likeCount++
-                    break
-                case 'Discover':
-                    let iDiscover = postStore.discoverPostCardList.findIndex(
-                        (item) => item.postId === postInfo.value.postId
-                    )
-                    postStore.discoverPostCardList[iDiscover].likeCount++
-                    break
-                case 'CmtyHome':
-                    let iCmty = postStore.cmtyPostCardList.findIndex(
-                        (item) => item.postId === postInfo.value.postId
-                    )
-                    postStore.cmtyPostCardList[iCmty].likeCount++
-                    break
-
-                case 'UserHome':
-                    let iUser = postStore.userPostCardList.findIndex(
-                        (item) => item.postId === postInfo.value.postId
-                    )
-                    postStore.userPostCardList[iUser].likeCount++
-                    break
-                case 'Saved':
-                    let iSaved = postStore.savedPostCardList.findIndex(
-                        (item) => item.postId === postInfo.value.postId
-                    )
-                    postStore.userPostCardList[iSaved].likeCount++
-                    break
-            }
-        case 'postMain':
-            postStore.postInfo.likeCount++
-            //console.log(postStore.postInfo)
-            break
-        case 'comment':
-            let iComment = postStore.postInfo.comment.findIndex(
-                (item) => item.commentId === commentInfo.value.commentId
-            )
-            //console.log(postStore.postInfo.comment[iComment])
-
-            postStore.postInfo.comment[iComment].likeCount++
-            //console.log(postStore.postInfo.comment[iComment].likeCount)
-            break
-        case 'reply':
-            switch (route.name) {
-                case 'P':
-                    let iReplyP = postStore.postInfo.comment.findIndex(
-                        (item) => item.commentId === replyInfo.value.commentId
-                    )
-                    //console.log('jReplyP', iReplyP)
-                    let jReplyP = postStore.postInfo.comment[iReplyP].reply.findIndex(
-                        (item) => item.replyId === replyInfo.value.replyId
-                    )
-                    //console.log('jReplyP:', jReplyP)
-
-                    postStore.postInfo.comment[iReplyP].reply[jReplyP].likeCount++
-                    break
-                case 'Comment':
-                    let iReplyC = postStore.commentInfo.reply.findIndex(
-                        (item) => item.replyId === replyInfo.value.replyId
-                    )
-                    postStore.commentInfo.reply[iReplyC].likeCount++
-                    //console.log(postStore.commentInfo.reply[iReplyC].likeCount)
-                    break
-            }
-        case 'commentMain':
-            postStore.commentInfo.likeCount++
-            console.log(postStore.commentInfo.likeCount)
-    }
-}
-
-let getCommentCount = computed(() => {
-    switch (father!.value) {
-        case 'postCard':
-        case 'postMain':
-            return postInfo.value.commentCount
-            break
-        case 'comment':
-            //console.log(commentInfo.value.repliesCount)
-
-            return commentInfo.value.repliesCount
-        case 'commentMain':
-    }
-})
-
-let getShareCount = computed(() => {
-    switch (father!.value) {
-        case 'postCard':
-        case 'postMain':
-            return postInfo.value.shareCount
-        default:
-            break
-    }
-})
-
-//打开评论和回复编辑器
-//let {showCommentEditor, showReplyEditor} = storeToRefs(mainStore)
-
-let showCommentEditor = ref(false)
-let showReplyEditor = ref(false)
-
-let isMain = computed(() => {
-    return props.isMain
-})
 
 let commentInfo = computed(() => {
     return props.commentInfo
@@ -181,10 +57,115 @@ let commentInfo = computed(() => {
 let postInfo = computed(() => {
     return props.postInfo
 })
-
 let replyInfo = computed(() => {
     return props.replyInfo
 })
+let info = computed(() => {
+    switch (father.value) {
+        case 'postCard':
+        case 'postMain':
+            return postInfo.value
+        case 'comment':
+        case 'commentMain':
+            return commentInfo.value
+        case 'reply':
+            return replyInfo.value
+    }
+})
+
+let isLiked = ref(false)
+watch(
+    info,
+    (ov, nv) => {
+        nextTick(() => {
+            //console.log('旧数据:', ov)
+            //console.log('新数据:', nv)
+
+            switch (father.value) {
+                case 'postCard':
+                case 'postMain':
+                    if (info.value.userPost) isLiked.value = info.value.userPost.isLiked
+                    break
+                case 'comment':
+                case 'commentMain':
+                    if (info.value.userComment) isLiked.value = info.value.userComment.isLiked
+                    break
+                case 'reply':
+                    if (info.value.userReply) isLiked.value = info.value.userReply.isLiked
+                    break
+            }
+            return false
+        })
+    },
+    {immediate: true /* , deep: true */}
+)
+
+//监听点赞情况,更换样式
+let getLikeStatus = computed(() => {
+    {
+        return isLiked.value ? 'iconfont icon-aixin_clicked' : 'iconfont icon-aixin'
+    }
+})
+
+//统计点赞数量
+let getLikeCount = computed(() => {
+    return info.value.likeCount
+})
+
+async function setLikeCount() {
+    //console.log('点赞的父组件是', father.value)
+    isLiked.value = !isLiked.value
+    let request
+    isLiked.value ? info.value.likeCount++ : info.value.likeCount--
+    isLiked.value ? (request = 'like') : (request = 'unLike')
+    switch (father.value) {
+        case 'postCard':
+        case 'postMain':
+            await updateUserPost({
+                request: request,
+                postId: info.value.postId,
+                likedContent: info.value.content
+            })
+            break
+        case 'comment':
+        case 'commentMain':
+            console.log()
+
+            await updateUserComment({
+                request: request,
+                commentId: info.value.commentId,
+                likedContent: info.value.content
+            })
+            break
+        case 'reply':
+            await updateUserReply({
+                request: request,
+                replyId: info.value.replyId,
+                likedContent: info.value.content
+            })
+            break
+    }
+}
+
+let getCommentCount = computed(() => {
+    switch (father.value) {
+        case 'postCard':
+        case 'postMain':
+            return info.value.commentCount
+        /* case 'comment':
+        case 'commentMain':
+            return info.value.repliesCount */
+    }
+})
+let getShareCount = computed(() => {
+    return info.value.shareCount
+})
+
+//打开评论和回复编辑器
+//let {showCommentEditor, showReplyEditor} = storeToRefs(mainStore)
+
+let showCommentEditor = ref(false)
+let showReplyEditor = ref(false)
 
 /**************************************************************************/
 //开启编辑器
@@ -225,7 +206,7 @@ function closeEditor(data: string) {
     }
 }
 onMounted(() => {
-    //console.log('father:', father!.value)
+    //console.log(info.value)
     /* setTimeout(() => {
         if (father.value == 'comment') {
             console.log('Tools中的commentInfo', commentInfo.value)
@@ -234,12 +215,16 @@ onMounted(() => {
 })
 </script>
 <style scoped lang="scss">
+.icon-aixin_clicked {
+    color: deeppink;
+}
+
 .tools {
     display: flex;
     align-items: center;
     width: 100%;
     height: 40px;
-
+    -webkit-user-select: none;
     /* background-color: hotpink; */
     .item {
         /* height: 40px; */

@@ -100,3 +100,10 @@ export const savePost = (params: object) => request({ url: '/updateuserpost', me
 
 //屏蔽帖子
 export const hidePost = (params: object) => request({ url: '/hidepost', method: 'post', data: params })
+
+//更新用户帖子关系表
+export const updateUserPost = (params: object) => request({ url: '/updateuserpost', method: 'post', data: params })
+//更新用户帖关系表
+export const updateUserComment = (params: object) => request({ url: '/updateusercomment', method: 'post', data: params })
+//更新用户帖关系表
+export const updateUserReply = (params: object) => request({ url: '/updateuserreply', method: 'post', data: params })

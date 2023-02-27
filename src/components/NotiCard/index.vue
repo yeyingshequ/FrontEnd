@@ -1,50 +1,106 @@
 <template>
     <div>
         <div class="notification" v-for="noti in notiCardList">
-            <div class="userInfo">
-                <div class="iconWrapper">
-                    <div class="icon">
-                        <img
-                            :src="noti.notiSender.avatar"
-                            @click.stop="$router.push(`/u/${noti.notiSender.userId}`)"
-                        />
+            <div v-if="parent == 'reply'" class="replyNoti">
+                <div class="userInfo">
+                    <div class="iconWrapper">
+                        <div class="icon">
+                            <img
+                                :src="noti.notiSender.avatar"
+                                @click.stop="$router.push(`/u/${noti.notiSender.userId}`)"
+                            />
+                        </div>
+                    </div>
+                    <div class="user">
+                        <div class="userName">
+                            <span
+                                >{{ noti.notiSender.username }}
+                                <span style="color: $regularFont">{{
+                                    noti.notiMessage
+                                }}</span></span
+                            >
+                        </div>
+                        <div class="updateTime">
+                            <span>{{ formatTime(noti.notiTime) }}</span>
+                        </div>
                     </div>
                 </div>
-                <div class="user">
-                    <div class="userName">
-                        <span
-                            >{{ noti.notiSender.username }}
-                            <span style="color: $regularFont">{{ noti.notiMessage }}</span></span
-                        >
-                    </div>
-                    <div class="updateTime">
-                        <span>{{ formatTime(noti.notiTime) }}</span>
+                <div class="reply">
+                    <div class="content">
+                        <span v-html="noti.content"></span>
                     </div>
                 </div>
-            </div>
-            <div class="reply">
-                <div class="content">
-                    <span v-html="noti.content"></span>
+                <div class="repliedContent" @click.stop="$router.push(`/p/${noti.postId}`)">
+                    <span v-html="noti.repliedContent || noti.postTitle || noti.postContent">
+                    </span>
+                    <div class="postContent" v-if="noti.repliedContent">
+                        <span v-html="noti.postTitle || noti.postContent"></span>
+                    </div>
                 </div>
+                <!-- <Tools style="padding: 0 20px" /> -->
             </div>
-            <div class="repliedContent" @click.stop="$router.push(`/p/${noti.postId}`)">
-                <span v-html="noti.repliedContent || noti.postTitle || noti.postContent"> </span>
-                <div class="postContent" v-if="noti.repliedContent">
-                    <span v-html="noti.postTitle || noti.postContent"></span>
+            <!-- <div class="likeNoti">
+            </div> -->
+            <div v-if="parent == 'like'" class="replyNoti">
+                <div class="userInfo">
+                    <div class="iconWrapper">
+                        <div class="icon">
+                            <img
+                                :src="noti.likeNotiSender.avatar"
+                                @click.stop="$router.push(`/u/${noti.notiSender.userId}`)"
+                            />
+                        </div>
+                    </div>
+                    <div class="user">
+                        <div class="userName">
+                            <span
+                                >{{ noti.likeNotiSender.username }}
+                                <!-- <span style="color: $regularFont">{{
+                                    noti.notiMessage
+                                }}</span> --></span
+                            >
+                        </div>
+                        <div class="updateTime">
+                            <span>{{ formatTime(noti.notiTime) }}</span>
+                        </div>
+                    </div>
                 </div>
+                <div class="reply">
+                    <div class="content">
+                        <span v-html="noti.notiMessage"></span>
+                    </div>
+                </div>
+                <div class="repliedContent" @click.stop="$router.push(`/p/${noti.postId}`)">
+                    <span v-html="noti.likedContent || noti.postTitle || noti.postContent"> </span>
+                    <div class="postContent" v-if="noti.likedContent">
+                        <span v-html="noti.postTitle || noti.postContent"></span>
+                    </div>
+                </div>
+                <!-- <Tools style="padding: 0 20px" /> -->
             </div>
-            <Tools style="padding: 0 20px" />
         </div>
     </div>
 </template>
 <script setup lang="ts">
 import formatTime from '@/tools/formatTime'
-import {computed, onMounted} from 'vue'
+import {nextTick} from 'process'
+import {computed, onMounted, watch} from 'vue'
 
 const props = defineProps(['notiCardList', 'parent'])
 let notiCardList = computed(() => {
     return props.notiCardList
 })
+watch(
+    notiCardList,
+    (ov, nv) => {
+        nextTick(() => {
+            console.log('更新')
+
+            console.log('notiCardList:', notiCardList)
+        })
+    },
+    {immediate: true}
+)
 
 let parent = computed(() => {
     return props.parent
@@ -167,9 +223,15 @@ onMounted(() => {
         margin-top: 0;
         padding: 15px 15px;
         background-color: $borderColor4;
-        -webkit-line-clamp: 3;
         border-radius: 10px;
+
         span {
+            /**********多行省略***************/
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
             color: $mainFont;
         }
         .postContent {
@@ -177,6 +239,12 @@ onMounted(() => {
             background-color: white;
             padding: 15px;
             border-radius: 10px;
+            /**********多行省略***************/
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
         }
     }
 }

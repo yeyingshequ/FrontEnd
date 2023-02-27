@@ -66,6 +66,7 @@ const route = useRoute()
 const router = useRouter()
 const routerStore = useRouterStore()
 const props = defineProps(['postCardList'])
+
 let postCardList = computed(() => {
     return props.postCardList
 })
@@ -161,11 +162,16 @@ onMounted(() => {
             }
 
             .content {
-                color: $regularFont;
+                color: $mainFont;
                 word-break: break-all;
                 //width: 658px;
                 span {
-                    width: 658px;
+                    /**********多行省略***************/
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 4;
+                    -webkit-box-orient: vertical;
                 }
             }
 

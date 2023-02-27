@@ -1,5 +1,6 @@
 <template>
-    <div class="tabs" ref="tabScroll" :class="{hasTop: checkHasTop() == true}">
+    <div class="tabs" ref="tabScroll">
+        <!-- :class="{hasTop: checkHasTop() == true}" -->
         <div v-for="tab in tabs" :key="tab.id" class="router" @click="router.push(tab.router)">
             <span :class="{actived: tab.routeName == route.name /* || tab.default */}"
                 >{{ tab.Name }}

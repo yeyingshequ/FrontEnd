@@ -1,6 +1,6 @@
 <template>
     <div>
-        <PostCard :postCardList="discoverPostCardList" />
+        <PostCard v-if="discoverPostCardList" :postCardList="discoverPostCardList" />
     </div>
 </template>
 <script setup lang="ts">

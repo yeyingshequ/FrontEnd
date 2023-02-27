@@ -1,6 +1,6 @@
 <template>
     <div>
-        <PostCard :postCardList="homePostCardList" />
+        <PostCard v-if="homePostCardList" :postCardList="homePostCardList" />
     </div>
 </template>
 <script setup lang="ts">
@@ -15,7 +15,7 @@ const postStore = usePostStore()
 let {homePostCardList} = storeToRefs(postStore)
 console.log('homePostCardList:', homePostCardList.value)
 async function reqGetHomePostCard() {
-    postStore.getHomePostCard()
+    postStore.getPostCard({type: 'home'})
 }
 emitter.on('regetHomeInfo', () => {
     reqGetHomePostCard()

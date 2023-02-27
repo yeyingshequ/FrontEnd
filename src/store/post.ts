@@ -51,10 +51,28 @@ interface IpostInfo {
                 userId: number,
                 username: string,
             },
+            userComment: {
+                isHidden: boolean,
+                isSaved: boolean,
+                lastVisitTime: boolean,
+                isLiked: boolean
+            }
             replyAuthorId: number,
             replyFloor: number,
-            replyId: number
-        }]
+            replyId: number,
+            userReply: {
+                isHidden: boolean,
+                isSaved: boolean,
+                lastVisitTime: boolean,
+                isLiked: boolean
+            }
+        }],
+        userComment: {
+            isHidden: boolean,
+            isSaved: boolean,
+            lastVisitTime: boolean,
+            isLiked: boolean
+        }
     }],
     postAuthor: {
         avatar: string,
@@ -66,6 +84,12 @@ interface IpostInfo {
         cmtyName: string,
         cmtyId: number
     },
+    userPost: {
+        isHidden: boolean,
+        isLiked: boolean,
+        isSaved: boolean,
+        lastVisitTim: boolean,
+    }
 
 }
 interface IcommentInfo {
@@ -149,6 +173,12 @@ interface IpostCard {
     username: string,
     cmtyAvatar: string,
     cmtyName: string,
+    userPost: {
+        isHidden: boolean,
+        isLiked: boolean,
+        isSaved: boolean,
+        lastVisitTim: boolean,
+    }
 }
 interface InotiCard {
     commentId: number,
@@ -194,31 +224,11 @@ const usePostStore = defineStore('postStore', {
     state() {
         return {
             //发现板块的帖子卡片信息
-            discoverPostCardList: [{} as IpostCard],
+            discoverPostCardList: [],
             //c路由的帖子卡片信息
             cmtyPostCardList: [{} as IpostCard],
             userPostCardList: [{} as IpostCard],
             homePostCardList: [
-                {
-                    postId: 0,
-                    postTitle: "",
-                    content: "",
-                    updateTime: "",
-                    pubTime: "",
-                    isDeleted: 0 || false,
-                    cmtyId: 0,
-                    postAuthorId: 0,
-                    commentCount: 0,
-                    likeCount: 0,
-                    giftCount: 0,
-                    shareCount: 0,
-                    topFloor: 0,
-                    avatar: "",
-                    userId: 0,
-                    username: "",
-                    cmtyAvatar: "",
-                    cmtyName: "",
-                } as IpostCard
             ],
             savedPostCardList: [
                 {} as IpostCard
@@ -275,6 +285,12 @@ const usePostStore = defineStore('postStore', {
                         replyAuthorId: 0,
                         replyFloor: 0,
                         replyId: 0
+                    },
+                    userComment: {
+                        isHidden: false,
+                        isSaved: false,
+                        lastVisitTime: false,
+                        isLiked: false
                     }
                 }],
                 postAuthor: {
@@ -287,6 +303,12 @@ const usePostStore = defineStore('postStore', {
                     cmtyName: "",
                     cmtyId: 0
                 },
+                userPost: {
+                    isHidden: false,
+                    isLiked: false,
+                    isSaved: false,
+                    lastVisitTim: false,
+                }
             } as IpostInfo,
             commentInfo: {
                 commentAuthor: {
@@ -349,7 +371,13 @@ const usePostStore = defineStore('postStore', {
                 },
                 replyAuthorId: 0,
                 replyFloor: 0,
-                replyId: 0
+                replyId: 0,
+                userReply: {
+                    isHidden: false,
+                    isSaved: false,
+                    lastVisitTime: false,
+                    isLiked: false
+                }
             } as Ireply,
             //通知
             replyNotiCardList: [
@@ -390,7 +418,25 @@ const usePostStore = defineStore('postStore', {
                     repliedId: 0,
                     cmtyName: "",
                     cmtyId: 0,
-                } as InotiCard]
+                } as InotiCard],
+            likeNotiCardList: [{
+                id: 0,
+                senderId: 0,
+                receiverId: 0,
+                postId: 0,
+                commentId: 0,
+                replyId: 0,
+                repliedId: 0,
+                notiType: '',
+                notiTime: '',
+                notiMessage: '',
+                content: '',
+                postTitle: '',
+                postContent: '',
+                repliedContent: '',
+                cmtyName: '',
+                cmtyId: 0
+            }]
 
         }
     },
@@ -421,6 +467,12 @@ const usePostStore = defineStore('postStore', {
             let result = await getPostCard(params)
             this.formatPostCard(result)
             switch (params.type) {
+                case "home":
+                    console.log(111);
+
+                    console.log(result.data);
+                    this.homePostCardList = result.data
+                    break;
                 case "user":
                     this.userPostCardList = result.data
                     break;
@@ -433,11 +485,6 @@ const usePostStore = defineStore('postStore', {
             }
 
 
-        },
-        async getHomePostCard() {
-            let result = await getHomePostCard()
-            this.formatPostCard(result)
-            this.homePostCardList = result.data
         },
         async getSavedPostCard() {
             let result = await getSavedPostCard()
@@ -452,7 +499,7 @@ const usePostStore = defineStore('postStore', {
                 result = result.data
                 //console.log(result);
                 /*****************result赋值到postInfo******************/
-                //console.log("帖子信息:", result)
+                console.log("帖子信息:", result)
                 this.postInfo = result
             }
         },
@@ -471,9 +518,13 @@ const usePostStore = defineStore('postStore', {
                     console.log(result.data);
                     this.replyNotiCardList = result.data
                     break;
+                case "like":
+                    console.log(result.data);
+                    this.likeNotiCardList = result.data
+                    break;
             }
 
-        }
+        },
     },
     getters: {
 

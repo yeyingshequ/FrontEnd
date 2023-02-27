@@ -13,6 +13,7 @@
                     </div>
                     <div class="content">
                         <!-- <p @input="setContent($event)" :contenteditable="true"></p> -->
+
                         <Editor
                             class="richEditorContent"
                             style="min-height: 230px,max-height:650px"
@@ -69,7 +70,7 @@ let params = {
     content: '',
     postContent: postInfo.value.content,
     postTitle: postInfo.value.postTitle,
-    cmtyId: postInfo.value.community.cmtyId,
+    cmtyId: Number(postInfo.value.community.cmtyId),
     cmtyName: postInfo.value.community.cmtyName
 }
 let message = ref('')
@@ -97,7 +98,7 @@ async function reqSendComment(params: {
     content: string
     postContent: string
     postTitle: string
-    cmtyId: string
+    cmtyId: number
     cmtyName: string
 }) {
     console.log(params)
