@@ -17,7 +17,7 @@ const router = useRouter()
 let {recentCmtyCardList} = storeToRefs(routerStore)
 
 async function reqGetRecentCmty() {
-    routerStore.getRecentCmty()
+    routerStore.getCmtyCard({type: 'recent'})
 }
 
 onMounted(() => {

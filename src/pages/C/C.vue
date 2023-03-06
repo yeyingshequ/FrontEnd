@@ -1,5 +1,6 @@
 <template>
     <div>
+        <Top :info="cmtyInfo" parent="community" />
         <div class="cover">
             <img :src="cmtyInfo.cmtyCover || defaultCover" alt="" />
         </div>
@@ -77,6 +78,7 @@ import {storeToRefs} from 'pinia'
 import useMainStore from '@/store/index'
 import useRouterStore from '@/store/community'
 import emitter from '@/tools/mitt'
+import Top from '@/components/Top/Top.vue'
 const router = useRouter()
 const routerStore = useRouterStore()
 const mainStore = useMainStore()

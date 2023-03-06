@@ -25,8 +25,8 @@ import {onMounted, reactive, watch} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import CmtyCard from '@/components/CmtyCard/index.vue'
 import {storeToRefs} from 'pinia'
-import useRouterStore from '@/store/community'
-const routerStore = useRouterStore()
+import useCmtyStore from '@/store/community'
+const cmtyStore = useCmtyStore()
 const route = useRoute()
 const router = useRouter()
 let categoryList = reactive([
@@ -46,10 +46,10 @@ let categoryList = reactive([
     {name: '战场', id: 14}
 ])
 
-let {cmtySquareCardList} = storeToRefs(routerStore)
+let {cmtySquareCardList} = storeToRefs(cmtyStore)
 
 async function reqGetCmtySquareCardList() {
-    routerStore.getCmtySquareCardList(route.params)
+    cmtyStore.getCmtyCard({type: 'cmtySquare', keyWords: route.params.category as string})
 }
 
 watch(route, (nv: any, ov: any) => {
@@ -57,7 +57,7 @@ watch(route, (nv: any, ov: any) => {
 })
 
 onMounted(() => {
-    router.push('/communities/square/全部')
+    //router.push('/communities/square/全部')
     reqGetCmtySquareCardList()
 })
 </script>

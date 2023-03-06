@@ -12,6 +12,7 @@ import Setting from '@/router/Setting'
 import Saved from "./Saved";
 import History from "./History";
 import Comment from '@/router/Comment'
+import Search from "@/router/Search";
 
 const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
@@ -29,6 +30,7 @@ const router = createRouter({
     P,
     U,
     Saved,
+    Search,
     History,
     Comment,
     //重定向,在项目跑起来的时候,访问/,立马让他指定到首页

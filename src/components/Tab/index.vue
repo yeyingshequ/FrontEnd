@@ -1,7 +1,7 @@
 <template>
-    <div class="tabs" ref="tabScroll">
+    <div class="tabs" ref="tabScroll" :style="{top: topHeight}">
         <!-- :class="{hasTop: checkHasTop() == true}" -->
-        <div v-for="tab in tabs" :key="tab.id" class="router" @click="router.push(tab.router)">
+        <div v-for="tab in tabs" :key="tab.id" class="router" @click="routeJump(tab.router)">
             <span :class="{actived: tab.routeName == route.name /* || tab.default */}"
                 >{{ tab.Name }}
                 <div v-show="tab.routeName == route.name /* || tab.default */"></div>
@@ -10,32 +10,63 @@
     </div>
 </template>
 <script setup lang="ts">
-import {computed, onMounted, ref, toRefs} from 'vue'
-import {useRoute, RouterLink, useRouter} from 'vue-router'
+import {computed, onMounted, ref, toRefs, watch} from 'vue'
+import {useRoute, RouterLink, useRouter, RouteLocationRaw} from 'vue-router'
 import useIndexStore from '@/store/index'
+import useMainStore from '@/store/index'
+const mainStore = useMainStore()
 const indexStore = useIndexStore()
 const router = useRouter()
-const props = defineProps(['tabs'])
-//console.log('tabs', props.tabs)
+const props = defineProps(['tabs', 'parentTop'])
 
-let {tabs} = toRefs(props)
+//console.log('tabs', props.tabs)
+let parentTop = computed(() => {
+    return props.parentTop
+})
+let tabs = computed(() => {
+    return props.tabs
+})
+watch(
+    props.tabs,
+    (nv) => {
+        console.log('tab nv', nv)
+    },
+    {deep: true}
+)
 
 let tabScroll = ref()
-
+let topHeight = ref('')
 //查询看否有top
 function checkHasTop(): boolean {
     return route.meta.hasTop ? true : false
 }
+function routeJump(link: string) {
+    console.log('路由连接:', link)
+
+    router.push(link)
+}
 
 const route = useRoute()
-onMounted(() => {
-    /* window.addEventListener('scroll', function () {
-        //console.log('tab:', tabScroll.value.getBoundingClientRect().top)
-        //indexStore.tabTop = tabScroll.value.getBoundingClientRect().top
-    }) */
-    //console.log("route.name", route.name);
-    //console.log("tabs", tabs);
-})
+let lastParentTop = ref(0)
+/* onMounted(() => {
+    if (route.meta.hasTop) {
+        window.addEventListener('scroll', function () {
+            let distance = tabScroll.value.getBoundingClientRect().top
+            //console.log('distance:', distance)
+            // console.log('parentTop:', mainStore.parentTop)
+            lastParentTop.value = mainStore.parentTop
+
+            if (distance <= 110) {
+                if (parentTop) indexStore.topScroll = `${distance - 50}px`
+                console.log('topScroll:', indexStore.topScroll)
+            } else {
+                indexStore.topScroll = '60px'
+            }
+        })
+    }
+
+    console.log('tab:', tabs.value)
+}) */
 </script>
 <style scoped lang="scss">
 .tabs {

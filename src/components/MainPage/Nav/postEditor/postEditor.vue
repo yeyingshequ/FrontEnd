@@ -36,18 +36,19 @@
                 </div>
             </div>
             <div class="tools">
-                <div
-                    class="chooseCommunity"
-                    ref="chooseCommunity"
-                    @click="showCmtyList = !showCmtyList"
-                >
+                <div class="chooseCommunity" ref="chooseCommunity" @click="reqShowCmtyList()">
                     <span>{{ filtCmtyName(cmtyName) || '选择社区' }}</span>
                     <span v-if="cmtyName">吧</span>
                 </div>
                 <div class="cmtyList" v-show="showCmtyList == true">
                     <div class="mask" @click="showCmtyList = !showCmtyList"></div>
-
-                    <div class="cmtyBox" ref="box">
+                    <div
+                        class="cmtyBox"
+                        ref="cmtyBox"
+                        :style="{
+                            left: cmtyBoxLeft
+                        }"
+                    >
                         <el-scrollbar max-height="400px" color="" class="scrollBar">
                             <div
                                 class="item"
@@ -59,6 +60,12 @@
                             </div>
                         </el-scrollbar>
                     </div>
+                    <div
+                        class="triangle"
+                        :style="{
+                            left: cmtyBoxLeft
+                        }"
+                    ></div>
                 </div>
                 <div class="submit">
                     <button type="submit" @click="reqSendPost(params)">发 帖</button>
@@ -70,7 +77,7 @@
 <script setup lang="ts">
 import scroll from '@/tools/scroll'
 import {sendPost} from '@/api/index'
-import {computed, onBeforeUnmount, onMounted, reactive, ref, shallowRef} from 'vue'
+import {computed, onBeforeUnmount, onMounted, reactive, ref, shallowRef, watch} from 'vue'
 import {useRoute} from 'vue-router'
 import useMainStore from '@/store/index'
 import usePostStore from '@/store/post'
@@ -82,6 +89,7 @@ import {Editor} from '@wangeditor/editor-for-vue'
 import '@wangeditor/editor/dist/css/style.css'
 import {QuillEditor} from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
+
 const userStore = useUserStore()
 const cmtyStore = useCmtyStore()
 const postStore = usePostStore()
@@ -117,13 +125,15 @@ onBeforeUnmount(() => {
     editor.destroy()
 })
 onMounted(() => {
+    scroll.stop()
     reqGetJoinedCmty()
 })
+
 let joinedCmtyCardList = computed(() => {
     return cmtyStore.joinedCmtyCardList
 })
 let {cmtyInfo} = storeToRefs(cmtyStore)
-let chooseCommunity = ref()
+
 function clearStyle(e: any) {
     console.log(222)
 
@@ -147,6 +157,19 @@ function clearStyle(e: any) {
             document.execCommand('insertText', false, text)
         }
     }
+}
+let chooseCommunity = ref()
+let cmtyBox = ref()
+let cmtyBoxLeft = ref('')
+
+function reqShowCmtyList() {
+    /* console.log(chooseCommunity.value.offsetLeft) */
+    //console.log(chooseCommunity.value.getBoundingClientRect().width)
+    let position =
+        chooseCommunity.value.offsetLeft + chooseCommunity.value.getBoundingClientRect().width / 2
+    //console.log('position:', position)
+    cmtyBoxLeft.value = position + 'px'
+    showCmtyList.value = true
 }
 const customPaste =
     (editor: {txt: {append: (arg0: any) => void}}) =>
@@ -200,14 +223,13 @@ async function reqSendPost(params: {postTitle: string; content: string}) {
     showMessage(message.value, result.status)
     //关闭编辑器
     if (result.message == '发送成功') {
-        postStore.formatPostCard(result)
         setTimeout(() => {
             close()
             message.value = ''
         }, 1000)
         switch (route.matched[0].path) {
             case '/home':
-                postStore.getHomePostCard()
+                /* postStore.getHomePostCard() */
                 break
             case '/discover':
                 postStore.getDiscoverPostCard()
@@ -379,7 +401,7 @@ async function reqGetJoinedCmty() {
                 }
                 .cmtyBox {
                     //min-width: 200px;
-                    width: 238px;
+                    //width: 238px;
                     max-height: 400px;
                     background-color: white;
                     border-radius: 20px;
@@ -387,9 +409,10 @@ async function reqGetJoinedCmty() {
                     overflow-y: scroll;
                     overflow-x: hidden;
                     position: absolute;
+                    transform: translateX(-50%);
                     //margin-left: 50%;
                     bottom: 0px;
-                    left: 19px;
+
                     z-index: 4;
                     .el-scrollbar__thumb {
                         //可设置滚动条颜色
@@ -414,6 +437,15 @@ async function reqGetJoinedCmty() {
                 //隐藏滚动条,但是可以滚动
                 .cmtyBox::-webkit-scrollbar {
                     display: none;
+                }
+                .triangle {
+                    position: absolute;
+                    left: 0;
+                    height: 0;
+                    width: 0;
+                    border: 6px solid transparent;
+                    transform: translateX(-50%);
+                    border-top: 6px solid white;
                 }
             }
             .submit {

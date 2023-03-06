@@ -12,13 +12,14 @@
                         <input
                             type="text"
                             placeholder="游客无需注册也可以发帖喔~~"
-                            v-model="inputText"
+                            v-model="content"
                             ref="searchInput"
                             @focus="searchOnFocus = true"
                             @blur="searchOnFocus = false"
+                            @keyup.enter="goSearch()"
                         />
                         <button @click="$refs.searchInput.focus()">
-                            <el-icon><Search /></el-icon>
+                            <el-icon><Search @click="goSearch()" /></el-icon>
                         </button>
                     </div>
                 </div>
@@ -29,12 +30,30 @@
 <script setup lang="ts">
 import useCmtyStore from '@/store/community'
 import {storeToRefs} from 'pinia'
-import {ref} from 'vue'
-import {useRouter} from 'vue-router'
-
+import {computed, ref, watch} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+import useMainStore from '@/store/index'
+let content = ref('')
+const mainStore = useMainStore()
+let keyWords = computed(() => {
+    return mainStore.searchKeyWord
+})
 const router = useRouter()
+const route = useRoute()
 const cmtyStore = useCmtyStore()
-let inputText = ref('')
+watch(route, () => {
+    /* if (route.meta.keepSearchKeyWords) {
+
+        mainStore.searchKeyWord = route.params.keyWords.toString()
+    } */
+    content.value = route.params.keyWords ? route.params.keyWords.toString() : ''
+    mainStore.searchKeyWord = route.params.keyWords ? route.params.keyWords.toString() : ''
+})
+
+function goSearch() {
+    mainStore.searchKeyWord = content.value
+    router.push(`/search/post/${keyWords.value}`)
+}
 let searchOnFocus = ref(false)
 </script>
 

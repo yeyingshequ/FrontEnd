@@ -1,11 +1,5 @@
 <template>
-    <div
-        class="topComponent"
-        :class="{
-            /* tabTouchedTop: indexStore.tabTop == 110 */
-        }"
-        ref="topScroll"
-    >
+    <div class="topComponent" :style="{top: topScroll}">
         <div class="return">
             <returnBtn />
         </div>
@@ -33,11 +27,13 @@
                 <span>查看所有评论</span>
             </div>
         </div>
+        <!-- 这里用于显示用户信息 -->
         <div v-if="parent == 'user'" class="userOrCmtyRouter">
             <div class="name">
                 <span>{{ info.username }}</span>
             </div>
         </div>
+
         <transition
             name="animate__animated animate__bounce"
             enter-active-class="animate__fadeIn"
@@ -53,6 +49,11 @@
                 />
             </div>
         </transition>
+        <div v-if="parent == 'community'" class="userOrCmtyRouter">
+            <div class="name">
+                <span>{{ info.cmtyName }}吧</span>
+            </div>
+        </div>
     </div>
 </template>
 <script setup lang="ts">
@@ -64,6 +65,8 @@ import useIndexStore from '@/store/index'
 import FollowBtn from '../littleComponents/FollowBtn/FollowBtn.vue'
 import SearchBtn from '../littleComponents/searchBtn/SearchBtn.vue'
 import useUserStore from '@/store/user'
+import useMainStore from '@/store/index'
+const mainStore = useMainStore()
 const userStore = useUserStore()
 const indexStore = useIndexStore()
 const route = useRoute()
@@ -74,7 +77,9 @@ let parent = computed(() => {
 let info = computed(() => {
     return props.info
 })
-let topScroll = ref()
+let topScroll = computed(() => {
+    return mainStore.topScroll
+})
 
 const router = useRouter()
 let showBottoms = ref()
@@ -102,7 +107,8 @@ onMounted(() => {
     background-color: white;
     width: 100%;
     height: 50px;
-    //border-bottom: 1px solid #f1f1f1;
+    border-bottom: 1px solid #f1f1f1;
+    cursor: pointer;
     z-index: 1;
     .return {
         position: absolute;

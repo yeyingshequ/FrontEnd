@@ -34,7 +34,7 @@
                             <span class="unit">关注者</span>
                         </div>
                         <div class="comments">
-                            <span class="number">{{ community.cmtyPostsCount }}</span>
+                            <span class="number">{{ community.cmtyPostCount }}</span>
                             <span class="unit">发言量</span>
                         </div>
                     </div>
@@ -46,16 +46,16 @@
                     class="goFavorite"
                     v-if="route.name == 'Joined' || route.name == 'Favorite'"
                     @click.stop="
-                        reqAddToFavoriteCmty({
+                        reqAddToFavoriteCmty(community, {
                             cmtyId: community.cmtyId,
-                            isFavorite: community.isFavorite
+                            isFavorite: isFavorite(community)
                         })
                     "
                 >
                     <i
                         class="iconfont"
                         :class="
-                            community.isFavorite ? [favoriteClass, favoriteIcon] : unfavoriteClass
+                            isFavorite(community) ? [favoriteClass, favoriteIcon] : unfavoriteClass
                         "
                     ></i>
                 </button>
@@ -82,27 +82,31 @@ let favoriteIcon = ref('favoriteIcon')
 /**后端响应的信息**/
 let joinCmtyMsg = ref('')
 let favoriteCmtyMsg = ref('')
+function checkUserCmty(cmty: {userCmty: object}) {
+    return cmty.userCmty ? cmty.userCmty : null
+}
 function regetRouteInfo() {
     emit('regetCmtyCard')
 }
-async function reqJoinCmty(params: {cmtyId: number; isJoined: number}) {
-    if (!params.isJoined) {
-        let result = await updateUserCmty({request: 'join', ...params})
-        joinCmtyMsg.value = result.data.message
-    } else {
-        let result = await updateUserCmty({request: 'unjoin', ...params})
-        joinCmtyMsg.value = result.data.message
-    }
-    regetRouteInfo()
+let isFavorite = (cmty: {userCmty: {isFavorite: any}}) => {
+    return cmty.userCmty ? cmty.userCmty.isFavorite : null
 }
-async function reqAddToFavoriteCmty(params: {cmtyId: number; isFavorite: number}) {
+
+async function reqAddToFavoriteCmty(
+    community: {isFavorite: boolean},
+    params: {cmtyId: number; isFavorite: number}
+) {
     if (!params.isFavorite) {
         let result = await updateUserCmty({request: 'addToFavorite', ...params})
         favoriteCmtyMsg.value = result.data.message
+
+        if (result.status == 0) community.isFavorite = true
     } else {
         let result = await updateUserCmty({request: 'removeFromFavorite', ...params})
         favoriteCmtyMsg.value = result.data.message
+        if (result.status == 0) community.isFavorite = false
     }
+
     regetRouteInfo()
 }
 onMounted(() => {

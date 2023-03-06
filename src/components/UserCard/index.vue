@@ -4,7 +4,7 @@
             class="user"
             v-for="user in userCardList"
             :key="user.userId"
-            @click="$router.push(`/U/${user.userId}`)"
+            @click="$router.push(`/u/${user.userId}`)"
         >
             <div class="userIcon">
                 <div>
@@ -34,17 +34,18 @@
             </div>
             <div class="aboutFollow">
                 <button
+                    v-if="user.userId != userStore.myInfo.userId"
                     class="follow"
-                    :class="{unFollow: user.isFollowing}"
+                    :class="{unFollow: checkIsFollowing(user)}"
                     @click.stop="
                         reqFollowUser({
                             objUserId: Number(user.userId),
-                            isFollowing: Number(user.isFollowing),
+                            isFollowing: checkIsFollowing(user),
                             userId: Number(route.params.uid)
                         })
                     "
                 >
-                    {{ user.isFollowing ? '正在关注' : '关 注' }}
+                    {{ checkIsFollowing(user) ? '正在关注' : '关 注' }}
                 </button>
             </div>
         </div>
@@ -54,6 +55,8 @@
 import {updateUserCmty, updateUserUser} from '@/api'
 import {computed, onMounted, ref, toRefs, watch} from 'vue'
 import {useRoute} from 'vue-router'
+import useUserStore from '@/store/user'
+const userStore = useUserStore()
 
 const route = useRoute()
 const props = defineProps(['userCardList'])
@@ -61,7 +64,7 @@ let userCardList = computed(() => {
     return props.userCardList
 })
 let message = ref('')
-async function reqFollowUser(params: {objUserId: number; isFollowing: number; userId: number}) {
+async function reqFollowUser(params: {objUserId: number; isFollowing: boolean; userId: number}) {
     if (!params.isFollowing) {
         let result = await updateUserUser({request: 'follow', objUserId: params.objUserId})
         message.value = result.data.message
@@ -74,6 +77,13 @@ async function reqFollowUser(params: {objUserId: number; isFollowing: number; us
     } else {
         userStore.userInfo.isFollowing = 1
     } */
+}
+function checkIsFollowing(user: {objUser: {isFollowing: any}}) {
+    if (user.objUser) {
+        return user.objUser.isFollowing ? true : false
+    } else {
+        return false
+    }
 }
 onMounted(() => {
     //console.log("onMounted的props:", props.cmtyCardList)

@@ -3,7 +3,7 @@
         <div class="wrapper">
             <div class="borderline"></div>
             <div class="Mainpart" ref="viewPage" style="height: 100%">
-                <router-view></router-view>
+                <router-view :key="mainStore.topLevelRouteKey"></router-view>
                 <!-- <Home v-if="route.path == '/'" /> -->
             </div>
             <Nav></Nav>
@@ -12,15 +12,29 @@
 </template>
 <script setup lang="ts">
 import Nav from '@/components/MainPage/Nav/Nav.vue'
-import {ref} from 'vue'
-import {RouterView, useRoute} from 'vue-router'
+import {ref, watch} from 'vue'
+import {RouterView, useRoute, useRouter} from 'vue-router'
 import Home from '@/pages/Home/index.vue'
+import useMainStore from '@/store/index'
+const mainStore = useMainStore()
+const router = useRouter()
 const route = useRoute()
 let showLogout = ref(true)
 
 function isNotShowLogout(e: any) {
     console.log(e)
 }
+watch(
+    () => route.params,
+    (nv, ov) => {
+        console.log('ov:', Object.values(ov)[0])
+        //Object.values(nv)[0] == Object.values(ov)[0] ? console.log('true') : console.log(false)
+        if (Object.values(nv)[0] !== Object.values(ov)[0]) {
+            console.log('不同params')
+            mainStore.topLevelRouteKey++
+        }
+    }
+)
 </script>
 <style scoped lang="scss">
 .box {

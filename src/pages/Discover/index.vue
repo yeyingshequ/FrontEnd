@@ -7,12 +7,17 @@
 import {onMounted} from 'vue'
 import usePostStore from '@/store/post'
 import {storeToRefs} from 'pinia'
+import {useRoute} from 'vue-router'
+const route = useRoute()
 const postStore = usePostStore()
 let {discoverPostCardList} = storeToRefs(postStore)
 console.log('discoverPostCardList:', discoverPostCardList)
 
 function reqGetDiscoverPostCard() {
-    postStore.getPostCard({type: 'discover'})
+    postStore.getPostCard({
+        type: 'discover',
+        userId: undefined
+    })
 }
 onMounted(() => {
     reqGetDiscoverPostCard()

@@ -18,18 +18,19 @@ const route = useRoute()
 let {joinedCmtyCardList} = storeToRefs(routerStore)
 
 async function reqGetJoinedCmty() {
-    routerStore.getJoinedCmty()
+    routerStore.getCmtyCard({type: 'joined'})
 }
-watch(route, (nv: any, ov: any) => {
+/* watch(route, (nv: any, ov: any) => {
     reqGetJoinedCmty()
-})
+}) */
 onMounted(() => {
     //如果没有登录就跳转到社区广场
-    if (!storage.get('token')) {
+    /* if (!storage.get('token')) {
         router.push('/communities/square/全部')
     } else {
         reqGetJoinedCmty()
-    }
+    } */
+    reqGetJoinedCmty()
 })
 </script>
 <style scoped lang="scss"></style>

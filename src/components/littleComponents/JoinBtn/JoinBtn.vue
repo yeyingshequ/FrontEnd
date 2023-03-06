@@ -10,8 +10,13 @@
     >
         <button
             class="goJoin"
-            :class="{unJoin: cmtyInfo.isJoined}"
-            @click.stop="reqJoinCmty({cmtyId: cmtyInfo.cmtyId, isJoined: cmtyInfo.isJoined})"
+            :class="{unJoin: checkUserCmty(cmtyInfo.userCmty)}"
+            @click.stop="
+                reqJoinCmty({
+                    cmtyId: cmtyInfo.cmtyId,
+                    isJoined: checkUserCmty(cmtyInfo.userCmty) as boolean
+                })
+            "
         >
             {{ cmtyInfo.isJoined ? '已加入' : '加入' }}
         </button>
@@ -32,7 +37,10 @@ let size = computed(() => {
 let parent = computed(() => {
     return props.parent
 })
-async function reqJoinCmty(params: {cmtyId: number; isJoined: number}) {
+function checkUserCmty(userCmty: {isJoined: boolean}) {
+    return userCmty ? userCmty.isJoined : null
+}
+async function reqJoinCmty(params: {cmtyId: number; isJoined: boolean}) {
     console.log(params)
 
     if (!params.isJoined) {

@@ -23,7 +23,7 @@
                             class="nameAndPswd"
                         />
                         <input type="submit" value="Login" class="submit" @click="reqLogin" />
-                        <span class="message">{{ loginMessage }}</span>
+                        <span class="message"><!-- {{ loginMessage }} --></span>
                     </div>
                     <div class="fn">
                         <span @click="isLogin = false"> 注册账号 </span>
@@ -77,7 +77,7 @@
                             @keyup.enter="reqRegister(registerParams)"
                             @click="reqRegister(registerParams)"
                         />
-                        <span class="message">{{ registerMessage }}</span>
+                        <span class="message"><!-- {{ registerMessage }} --></span>
                     </div>
                     <div class="fn">
                         <span @click="isLogin = true"> 登录账号 </span>
@@ -99,6 +99,7 @@ import useLoginStore from '@/store/login'
 import useMainStore from '@/store/index'
 import {storeToRefs} from 'pinia'
 import useUserStore from '@/store/user'
+import {showMessage} from '@/tools'
 const userStore = useUserStore()
 const store = useLoginStore()
 const mainStore = useMainStore()
@@ -118,16 +119,15 @@ function close() {
 }
 function reqLogin() {
     store.login(loginParams).then(async (result) => {
-        loginMessage.value = result.message
+        console.log('result:', result)
+        showMessage(result.message, result.status)
         cookie.setCookie('UID', result.userId, 730)
         console.log('loginMessage', loginMessage.value)
         //关闭登录框
-        if (loginMessage.value == '登录成功') {
+        if (!result.status) {
             console.log('账号登录成功')
             setTimeout(() => {
-                console.log('111')
                 close()
-                loginMessage.value = ''
             }, 1000)
             router.go(0)
         }
@@ -144,10 +144,10 @@ let registerParams = reactive({
 async function reqRegister(params: any) {
     console.log('注册的params:', params)
 
-    let result = await registerApi(registerMessage)
+    let result = await registerApi(registerParams)
     //console.log(result.message)
-    registerMessage.value = result.message
-    if (registerMessage.value == '注册成功') {
+    showMessage(result.message, result.status)
+    if (!result.status) {
         setTimeout(() => {
             isLogin.value = true
             for (let key in registerParams) {
@@ -156,6 +156,7 @@ async function reqRegister(params: any) {
             }
             registerMessage.value = ''
         }, 1000)
+        router.go(0)
     }
 }
 </script>

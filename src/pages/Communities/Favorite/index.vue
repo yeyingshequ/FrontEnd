@@ -15,7 +15,7 @@ const router = useRouter()
 const route = useRoute()
 let {favoriteCmtyCardList} = storeToRefs(routerStore)
 async function reqGetFavoriteCmty() {
-    routerStore.getFavoriteCmty()
+    routerStore.getCmtyCard({type: 'favorite'})
 }
 watch(route, (nv: any, ov: any) => {
     reqGetFavoriteCmty()

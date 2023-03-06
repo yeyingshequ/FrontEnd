@@ -1,4 +1,4 @@
-import { getCmtyInfo, getCmtyPosts, getCmtySquareCardList, getDiscoverPostCard, getFavoriteCmty, getHomePostCard, getJoinedCmty, getPostInfo, getRecentCmty, getSavedPostCard, getUserCmty } from "@/api"
+import { getCmtyCard, getCmtyInfo, getCmtyPosts, getCmtySquareCardList, getDiscoverPostCard, getFavoriteCmty, getHomePostCard, getJoinedCmty, getPostInfo, getRecentCmty, getSavedPostCard, getUserCmty } from "@/api"
 import formatTime from "@/tools/formatTime"
 import rename from "@/tools/rename";
 import { isNumber } from "lodash";
@@ -54,6 +54,7 @@ const useCmtyStore = defineStore('cmtyStore', {
       cmtySquareCardList: [],
       recentCmtyCardList: [],
       favoriteCmtyCardList: [],
+      searchCmtyCardList: []
     }
   },
   actions: {
@@ -76,42 +77,36 @@ const useCmtyStore = defineStore('cmtyStore', {
 
       return result.message
     },
-    /** 获取<社区>导航板块的社区卡片信息 **/
-    async getRecentCmty() {
-      let result: any = await getRecentCmty()
-      console.log("result:", result);
-      if (result.status == 0) {
-        this.recentCmtyCardList = result.data
-      }
-    },
-    async getJoinedCmty() {
-      let result: any = await getJoinedCmty()
-      if (result.status == 0) {
-        this.joinedCmtyCardList = result.data
-      }
-    },
     async getUserCmty(params: { userId: Number }) {
       let result: any = await getUserCmty(params)
       if (result.status == 0) {
         this.userCmtyCardList = result.data
       }
     },
-    async getCmtySquareCardList(params: {
-      //category: string | string[]
-    }) {
-      let result: any = await getCmtySquareCardList(params)
-      if (result.status == 0) {
-        this.cmtySquareCardList = result.data
-        console.log("cmtySquareCardList:", this.cmtySquareCardList);
+    async getCmtyCard(params: { type: string, userId?: number, keyWords?: string }) {
+      console.log("getCmtyCard");
+
+      let result = await getCmtyCard(params);
+      console.log(result.data);
+      switch (params.type) {
+        case "searchCmty":
+          this.searchCmtyCardList = result.data;
+          break;
+        case "cmtySquare":
+          this.cmtySquareCardList = result.data
+          break;
+        case "joined":
+          this.joinedCmtyCardList = result.data
+          break;
+        case "favorite":
+          this.favoriteCmtyCardList = result.data
+          break;
+        case "recent":
+          this.recentCmtyCardList = result.data
+          break;
 
       }
-    },
-    async getFavoriteCmty() {
-      let result = await getFavoriteCmty();
-      if (result.status == 0) {
-        this.favoriteCmtyCardList = result.data;
-        console.log("favoriteCmtyCardList:", this.favoriteCmtyCardList);
-      }
+
     },
   },
 

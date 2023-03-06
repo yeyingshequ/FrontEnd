@@ -1,4 +1,4 @@
-import { getCmtyPosts, getCommentInfo, getDiscoverPostCard, getHomePostCard, getNotiCard, getPostCard, getPostInfo, getSavedPostCard } from "@/api"
+import { getCmtyPosts, getCommentInfo, getDiscoverPostCard, getNotiCard, getPostCard, getPostInfo } from "@/api"
 import formatTime from "@/tools/formatTime"
 import rename from "@/tools/rename"
 import { defineStore } from "pinia"
@@ -230,6 +230,7 @@ const usePostStore = defineStore('postStore', {
             userPostCardList: [{} as IpostCard],
             homePostCardList: [
             ],
+            searchPostCardList: [{} as IpostCard],
             savedPostCardList: [
                 {} as IpostCard
             ],
@@ -441,16 +442,6 @@ const usePostStore = defineStore('postStore', {
         }
     },
     actions: {
-        formatPostCard(result: { status: number; data: any }) {
-            if (result.status === 0) {
-                for (let i = 0; i < result.data.length; i++) {
-                    result.data[i] = Object.assign(result.data[i], result.data[i].user, result.data[i].community)
-                    result.data[i] = rename.toHump(result.data[i])
-                    result.data[i].updateTime = formatTime(result.data[i].updateTime)
-                }
-                console.log(result.data)
-            }
-        },
         /** 获取导航路由的信息 **/
         async getDiscoverPostCard() {
             let result = await getDiscoverPostCard()
@@ -459,18 +450,13 @@ const usePostStore = defineStore('postStore', {
         },
         async getCmtyPosts(params: { cmtyId: number }) {
             let result = await getCmtyPosts(params)
-            this.formatPostCard(result)
             this.cmtyPostCardList = result.data
 
         },
-        async getPostCard(params: { type: string, userId?: number }) {
+        async getPostCard(params: { type: string, userId?: number, keyWords?: string }) {
             let result = await getPostCard(params)
-            this.formatPostCard(result)
             switch (params.type) {
                 case "home":
-                    console.log(111);
-
-                    console.log(result.data);
                     this.homePostCardList = result.data
                     break;
                 case "user":
@@ -482,14 +468,10 @@ const usePostStore = defineStore('postStore', {
                 case "community":
                     this.cmtyPostCardList = result.data
                     break;
+                case "search":
+                    this.searchPostCardList = result.data
+                    break;
             }
-
-
-        },
-        async getSavedPostCard() {
-            let result = await getSavedPostCard()
-            this.formatPostCard(result)
-            this.savedPostCardList = result.data
         },
         async getPostInfo(params: any) {
             //console.log('开始发送访问帖子信息的请求');

@@ -2,12 +2,14 @@
 import Head from '@/components/Head/index.vue'
 import MainPage from '@/components/MainPage/index.vue'
 import LoginAndRegister from '@/components/LoginAndRegister/index.vue'
+import useMainStore from '@/store/index'
+const mainStore = useMainStore()
 </script>
 <template>
     <div class="app">
         <LoginAndRegister></LoginAndRegister>
         <Head></Head>
-        <MainPage></MainPage>
+        <MainPage :key="mainStore.mainPageKey"></MainPage>
         <!-- <div class="bg"></div> -->
     </div>
 </template>

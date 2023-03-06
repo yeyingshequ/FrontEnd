@@ -26,6 +26,9 @@ export const getUserCard = (params: object) => request({ url: '/usercard', metho
 //获取社区的信息
 export const getCmtyInfo = (params: object) => request({ url: '/cmtyinfo', method: 'get', params })
 
+//获取用户的帖子卡片
+export const getCmtyCard = (params: object) => request({ url: '/cmtycard', method: 'get', params })
+
 //获取社区广场信息
 export const getCmtySquareCardList = (params: object) =>
   request({ url: '/cmtysquarecard', method: 'get', params })
@@ -75,14 +78,9 @@ export const getPostCard = (params: object) => request({ url: '/postcard', metho
 //获取社区帖子信息
 export const getCmtyPosts = (params: object) => request({ url: '/cmtyposts', method: 'get', params })
 
-//获取首页导航信息
-export const getHomePostCard = () => request({ url: '/homepostcard', method: 'get' })
-
 //获取发现板块信息
 export const getDiscoverPostCard = () => request({ url: '/discoverpostcard', method: 'get' })
 
-//获取收藏导航板块信息
-export const getSavedPostCard = () => request({ url: '/savedpostcard', method: 'get' })
 //查询通知
 export const getNotiCard = (params: object) => request({ url: '/noticard', method: 'get', params })
 

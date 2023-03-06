@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div ref="wrapper">
         <Top :info="userInfo" parent="user" />
         <div class="cover"></div>
         <!-- 当搜索的用户不存在时,展示这个 -->
@@ -57,6 +57,7 @@
             :tabs="tabs"
         />
         <Tab
+            ref="tab"
             v-if="
                 (status == 0 && route.path == `/u/${route.params.uid}/following`) ||
                 route.path == `/u/${route.params.uid}/followers`
@@ -83,19 +84,16 @@ import emitter from '@/tools/mitt'
 import yyReturn from '@/components/littleComponents/yy-button/yy-return.vue'
 import FollowBtn from '@/components/littleComponents/FollowBtn/FollowBtn.vue'
 import SearchBtn from '@/components/littleComponents/searchBtn/SearchBtn.vue'
+import useMainStore from '@/store/index'
+const mainStore = useMainStore()
 const router = useRouter()
 const userStore = useUserStore()
 const route = useRoute()
-
-//interface IuserInfo {
-//    avatar: string
-//    username: string
-//    userId: number | string
-//    followerCount: number
-//    followingCount: number
-//    bio: string
-//    isFollowing: number
-//}
+const wrapper = ref()
+const tab = ref()
+const topStyle = computed(() => {
+    return mainStore.topScroll
+})
 
 const tabs = [
     {
@@ -178,9 +176,13 @@ let UID = computed(() => {
         reqGetUserInfo(params)
     }
 }) */
+let parentTop = ref('')
 onMounted(() => {
+    window.addEventListener('scroll', function () {
+        //console.log('wrapper:', wrapper.value.getBoundingClientRect().top)
+        //mainStore.parentTop = wrapper.value.getBoundingClientRect().top
+    })
     //console.log('userInfo:', userInfo)
-    //router.push(`/u/${route.params.uid}/home`)
     reqGetUserInfo(params)
     //前端个人主页
     emitter.on('regetUserInfo', () => {
