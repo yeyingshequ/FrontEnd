@@ -7,26 +7,32 @@
                         <i class="iconfont icon-guanbi1"></i>
                     </div>
                     <h2>编辑个人信息</h2>
-                    <div class="save">
+                    <button class="save" @click.stop="reqUpdateUserInfo()">
                         <span> 保 存 </span>
-                    </div>
+                    </button>
                 </div>
                 <div class="userInfo">
                     <div class="cover">
-                        <img src="@/images/二次元壁纸樱花.jpg" alt="" />
+                        <img :src="userStore.myInfo.cover" alt="" />
                     </div>
                     <div class="icon">
                         <div class="iconWrapper">
                             <div class="mask"></div>
-                            <img src="@/images/1_BigPic.png" alt="" />
+                            <img :src="userStore.myInfo.avatar" alt="" />
                         </div>
                     </div>
                     <div class="form" ref="form">
-                        <div prop="oldPassword">
+                        <div class="param" prop="oldPassword">
                             <input v-model="updateparams.username" placeholder="用户名" />
                         </div>
-                        <div prop="bio">
-                            <input v-model="updateparams.boi" placeholder="简介" />
+                        <div class="param" prop="bio">
+                            <input v-model="updateparams.bio" placeholder="简介" />
+                        </div>
+                        <div class="param" prop="bio">
+                            <input v-model="updateparams.avatar" placeholder="头像" />
+                        </div>
+                        <div class="param" prop="bio">
+                            <input v-model="updateparams.cover" placeholder="封面" />
                         </div>
                     </div>
                 </div>
@@ -39,20 +45,27 @@ import scroll from '@/tools/scroll'
 import {onMounted, reactive} from 'vue'
 import useUserStore from '@/store/user'
 import {storeToRefs} from 'pinia'
+import {updateUserInfo} from '@/api'
+import {showMessage} from '@/tools'
+import router from '@/router'
 const userStore = useUserStore()
 const emit = defineEmits(['closeUpdate'])
 let {showUpdateInfo} = storeToRefs(userStore)
 function close() {
     emit('closeUpdate')
-    scroll.move()
 }
-let updateparams: {username: string; boi: string} = reactive({
+let updateparams = reactive({
     username: userStore.myInfo.username,
-    boi: userStore.myInfo.boi
+    bio: userStore.myInfo.boi,
+    avatar: userStore.myInfo.avatar,
+    cover: userStore.myInfo.cover
 })
-onMounted(() => {
-    scroll.stop()
-})
+async function reqUpdateUserInfo() {
+    let result = await updateUserInfo(updateparams)
+    showMessage(result.message, result.status)
+    if (!result.status) router.go(0)
+}
+onMounted(() => {})
 </script>
 
 <style scoped lang="scss">
@@ -90,6 +103,7 @@ $wrapperWidth: 621px;
                 width: 604px;
                 height: 60px;
                 border-top-left-radius: 20px;
+                z-index: 3;
 
                 .close {
                     position: absolute;
@@ -129,6 +143,8 @@ $wrapperWidth: 621px;
                     align-items: center;
                     right: 20px;
                     top: 10px;
+                    border: none;
+                    outline: none;
                     height: 40px;
                     padding: 20px;
                     background-color: $brandColor;
@@ -136,6 +152,7 @@ $wrapperWidth: 621px;
                     cursor: pointer;
 
                     span {
+                        font-size: 17px;
                         color: white;
                         font-weight: bold;
                     }
@@ -179,7 +196,7 @@ $wrapperWidth: 621px;
                             position: absolute;
                             width: 100px;
                             height: 100px;
-                            z-index: 2;
+                            /* z-index: 2; */
                             border-radius: 50%;
                             cursor: pointer;
                             transition: 0.1s;
@@ -204,15 +221,23 @@ $wrapperWidth: 621px;
                 .form {
                     padding: 20px;
 
-                    input {
+                    .param {
+                        //width: 100%;
                         height: 65px;
-                        width: 100%;
-                        font-size: 20px;
-                        outline: none;
-                        padding: 0 20px;
-                        margin-bottom: 30px;
-                        border-radius: 5px;
                         border: 1px solid $placeholderFont;
+                        border-radius: 50px;
+                        margin-bottom: 15px;
+                        margin-left: 20px;
+                        margin-right: 20px;
+                        input {
+                            width: 100%;
+                            line-height: 65px;
+                            font-size: 20px;
+                            padding: 0 20px;
+                            background-color: transparent;
+                            border: none;
+                            outline: none;
+                        }
                     }
                 }
             }

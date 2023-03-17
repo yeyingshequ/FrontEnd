@@ -5,8 +5,6 @@
 </template>
 <script setup lang="ts">
 import {storeToRefs} from 'pinia'
-import {getHomePostCard} from '@/api'
-import rename from '@/tools/rename'
 import formatTime from '@/tools/formatTime'
 import {onMounted, onUnmounted} from 'vue'
 import emitter from '@/tools/mitt'

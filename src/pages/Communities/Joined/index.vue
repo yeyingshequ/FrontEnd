@@ -4,8 +4,6 @@
     </div>
 </template>
 <script setup lang="ts">
-import rename from '@/tools/rename'
-import {getJoinedCmty} from '@/api'
 import storage from '@/tools/storage'
 import {onMounted, reactive, watch} from 'vue'
 import {useRoute, useRouter} from 'vue-router'

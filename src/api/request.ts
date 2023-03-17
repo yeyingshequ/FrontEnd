@@ -1,7 +1,10 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError, AxiosPromise } from "axios";
 import useLoginStore from '@/store/login'
 import pinia from "@/store/store";
+import useMainStore from '@/store/index'
+const mainStore = useMainStore(pinia)
 const loginStore = useLoginStore(pinia)
+import storage from "@/tools/storage"
 
 interface successType<T = any> {
     code: number,
@@ -44,6 +47,16 @@ request.interceptors.request.use((config) => {
 
 //响应拦截器
 request.interceptors.response.use((res) => {
+    console.log("响应拦截器:", res);
+    console.log("message:", res.data.message);
+    if (res.data.message == "身份认证失败") {
+        storage.remove('token')
+
+
+
+    }
+
+
     return res.data
 }, (error) => {
     //回响应失败的会回调案例

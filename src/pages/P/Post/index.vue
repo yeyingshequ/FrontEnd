@@ -41,7 +41,7 @@
                     <h4>{{ post.postTitle }}</h4>
                 </div>
                 <div class="bodyText" v-show="true /* post.bodyText */">
-                    <span v-html="post.content"></span>
+                    <div v-html="toRichText(post.content)"></div>
                 </div>
                 <!-- 图片 -->
                 <!-- <div class="imgDisplay">
@@ -63,6 +63,8 @@ import PostMenu from '@/components/PostMenu/index.vue'
 import usePostStore from '@/store/post'
 import Tools from '@/components/Tools/index.vue'
 import formatTime from '@/tools/formatTime'
+import {toRichText} from '@/tools/postTools'
+
 const postStore = usePostStore()
 let {postInfo} = storeToRefs(postStore)
 let post = computed(() => {
@@ -82,7 +84,7 @@ let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997
         transition: 0.1s;
         cursor: pointer;
 
-        &:hover {
+        &:hover:not(:has(.menu)) {
             background-color: mix($brandColor, white, 10%);
         }
 
@@ -181,6 +183,9 @@ let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997
 
             .bodyText {
                 color: $mainFont;
+                .postStyle {
+                    white-space: pre-wrap;
+                }
             }
 
             .imgDisplay {

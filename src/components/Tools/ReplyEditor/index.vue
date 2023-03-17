@@ -74,7 +74,8 @@ let params: Iparams = reactive({
     commentId: 0,
     commentAuthorId: 0,
     content: '',
-    repliedContent: ''
+    repliedContent: '',
+    cmtyId: ''
 })
 function setContent(content: any /* content: {target: {innerHTML: string}} */) {
     console.log('content:', content.target.innerHTML)
@@ -84,7 +85,7 @@ function close() {
     //mainStore.showReplyEditor = false
     console.log('关闭回复编辑器')
     emit('closeEditor', 'replyEditor')
-    scroll.move()
+
     message.value = ''
 }
 function showMessage(message: string, type: undefined) {
@@ -95,14 +96,18 @@ function showMessage(message: string, type: undefined) {
     })
 }
 
-async function reqSendReply(params: Iparams) {
+async function reqSendReply(params: any) {
     switch (father.value) {
         case 'comment':
+        case 'commentMain':
+            console.log('开始赋值')
+
             params.postId = commentInfo.value.postId
             params.postAuthorId = commentInfo.value.postAuthorId
             params.commentId = commentInfo.value.commentId
             params.commentAuthorId = commentInfo.value.commentAuthorId
             params.repliedContent = commentInfo.value.content
+            params.cmtyId = Number(commentInfo.value.cmtyId)
             break
         case 'reply':
             params.postId = replyInfo.value.postId
@@ -112,6 +117,7 @@ async function reqSendReply(params: Iparams) {
             params.commentId = replyInfo.value.commentId
             params.commentAuthorId = replyInfo.value.commentAuthorId
             params.repliedContent = replyInfo.value.content
+            params.cmtyId = Number(replyInfo.value.cmtyId)
             console.log('replyInfo:', replyInfo.value)
             break
     }
@@ -141,7 +147,7 @@ onMounted(() => {
     if (father.value == 'reply') {
         replyTo.value = `回复${replyInfo.value.username || ''} :`
     }
-    scroll.stop()
+
     console.log('props的comment', commentInfo.value)
 })
 </script>

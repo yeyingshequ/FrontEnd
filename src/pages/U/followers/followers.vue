@@ -9,6 +9,8 @@ import useUserStore from '@/store/user'
 import {storeToRefs} from 'pinia'
 import {onMounted, reactive} from 'vue'
 import {useRoute} from 'vue-router'
+import useMainStore from '@/store/index'
+const mainStore = useMainStore()
 const route = useRoute()
 const userStore = useUserStore()
 let {followers} = storeToRefs(userStore)
@@ -18,6 +20,7 @@ let params = reactive({
 })
 
 async function reqGetFollowers() {
+
     userStore.getUserCard(params)
 }
 onMounted(() => {

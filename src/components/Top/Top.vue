@@ -84,17 +84,16 @@ let topScroll = computed(() => {
 const router = useRouter()
 let showBottoms = ref()
 onMounted(() => {
-    window.addEventListener('scroll', function () {
-        //console.log('top:', topScroll.value.getBoundingClientRect().bottom)
-        //indexStore.topBottom = topScroll.value.getBoundingClientRect().bottom
-        //indexStore.topBottom == indexStore.tabTop ? console.log('true') : console.log('false')
-        //console.log('文档:', document.documentElement.scrollTop)
+    //console.log('topInfo:', info)
+    /* window.addEventListener('scroll', function () {
+        indexStore.topBottom == indexStore.tabTop ? console.log('true') : console.log('false')
+        console.log('文档:', document.documentElement.scrollTop)
         if (document.documentElement.scrollTop >= 420) {
             showBottoms.value = true
         } else {
             showBottoms.value = false
         }
-    })
+    }) */
 })
 </script>
 <style lang="scss" scoped>
@@ -110,6 +109,17 @@ onMounted(() => {
     border-bottom: 1px solid #f1f1f1;
     cursor: pointer;
     z-index: 1;
+    &::before {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+    }
     .return {
         position: absolute;
         height: 40px;
@@ -174,6 +184,7 @@ onMounted(() => {
         -webkit-user-select: none;
     }
 }
+
 .tabTouchedTop {
     position: sticky;
     top: 10px;

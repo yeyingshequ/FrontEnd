@@ -9,6 +9,7 @@ export const registerApi = (params: object) => request({ url: '/register', metho
 
 //获取用户信息'/u'
 export const getUserInfo = (params: object) => request({ url: '/userinfo', method: 'get', params: params })
+export const getUserInfoForV = (params: object) => request({ url: '/userinfoforv', method: 'get', params: params })
 
 //更新用户用户关系表
 export const updateUserUser = (params: object) => request({ url: '/updateuseruser', method: 'post', data: params })
@@ -19,19 +20,21 @@ export const getMyInfo = () => request.get('/myinfo')
 //修改密码接口
 export const updatePasswordApi = (params: object) =>
   request({ url: '/updatepassword', method: 'post', data: params })
+
+//更新用户信息
+export const updateUserInfo = (params: object) => request({ url: '/updateuserinfo', method: 'post', data: params })
 //获取用户卡片
 export const getUserCard = (params: object) => request({ url: '/usercard', method: 'get', params: params })
+export const getUserCardForV = (params: object) => request({ url: '/usercardforv', method: 'get', params: params })
 /******************************社区相关的接口******************************/
 
 //获取社区的信息
 export const getCmtyInfo = (params: object) => request({ url: '/cmtyinfo', method: 'get', params })
+export const getCmtyInfoForV = (params: object) => request({ url: '/cmtyinfoforv', method: 'get', params })
 
 //获取用户的帖子卡片
 export const getCmtyCard = (params: object) => request({ url: '/cmtycard', method: 'get', params })
-
-//获取社区广场信息
-export const getCmtySquareCardList = (params: object) =>
-  request({ url: '/cmtysquarecard', method: 'get', params })
+export const getCmtyCardForV = (params: object) => request({ url: '/cmtycardforv', method: 'get', params })
 
 //创建社区
 export const createCmty = (params: object) => request({ url: '/createcmty', method: 'post', data: params })
@@ -51,30 +54,27 @@ export const favoriteCmty = (params: object) => request({ url: '/favoritecmty', 
 //取消特别关注
 export const unFavoriteCmty = (params: object) => request({ url: '/unfavoritecmty', method: 'post', data: params })
 
-//查询加入的社区
-export const getJoinedCmty = () => request({ url: '/getjoinedcmty', method: 'get' })
 
-//查询特别关注的社区
-export const getFavoriteCmty = () => request({ url: '/getfavoritecmty', method: 'get' })
 
-//查询最近逛过的社区
-export const getRecentCmty = () => request({ url: '/getrecentcmty', method: 'get' })
-
-//查询用户的社区
-export const getUserCmty = (params: object) => request({ url: '/getusercmty', method: 'get', params })
 
 
 /******************************帖子相关的接口******************************/
 
 //获取帖子的信息
 export const getPostInfo = (params: object) => request({ url: '/postinfo', method: 'get', params })
+export const getPostInfoForV = (params: object) => request({ url: '/postinfoforv', method: 'get', params })
 
 //获取评论的信息
 export const getCommentInfo = (params: object) => request({ url: '/commentinfo', method: 'get', params })
+export const getCommentInfoForV = (params: object) => request({ url: '/commentinfoforv', method: 'get', params })
 
 //获取用户的帖子卡片
 export const getPostCard = (params: object) => request({ url: '/postcard', method: 'get', params })
+export const getPostCardForV = (params: object) => request({ url: '/postcardforv', method: 'get', params })
 
+//获取评论/回复卡片
+export const getCommentCard = (params: object) => request({ url: '/commentcard', method: 'get', params })
+export const getCommentCardForV = (params: object) => request({ url: '/commentcardforv', method: 'get', params })
 //获取社区帖子信息
 export const getCmtyPosts = (params: object) => request({ url: '/cmtyposts', method: 'get', params })
 

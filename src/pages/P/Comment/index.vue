@@ -73,7 +73,7 @@ $containerWidth: 698px;
     .commentWrapper {
         display: flex;
         cursor: pointer;
-        &:hover {
+        &:hover:not(:has(.menu)) {
             background-color: mix(#ff44aa, white, 10%);
         }
 

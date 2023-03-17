@@ -7,6 +7,7 @@
                 <!-- <Home v-if="route.path == '/'" /> -->
             </div>
             <Nav></Nav>
+            <CmtyCreator v-show="mainStore.showCmtyCreator" />
         </div>
     </div>
 </template>
@@ -14,8 +15,10 @@
 import Nav from '@/components/MainPage/Nav/Nav.vue'
 import {ref, watch} from 'vue'
 import {RouterView, useRoute, useRouter} from 'vue-router'
+import CmtyCreator from '@/components/CmtyCreator/index.vue'
 import Home from '@/pages/Home/index.vue'
 import useMainStore from '@/store/index'
+import {storeToRefs} from 'pinia'
 const mainStore = useMainStore()
 const router = useRouter()
 const route = useRoute()
@@ -27,10 +30,10 @@ function isNotShowLogout(e: any) {
 watch(
     () => route.params,
     (nv, ov) => {
-        console.log('ov:', Object.values(ov)[0])
+        //console.log('ov:', Object.values(ov)[0])
         //Object.values(nv)[0] == Object.values(ov)[0] ? console.log('true') : console.log(false)
         if (Object.values(nv)[0] !== Object.values(ov)[0]) {
-            console.log('不同params')
+            //console.log('不同params')
             mainStore.topLevelRouteKey++
         }
     }
@@ -62,6 +65,11 @@ watch(
             border-top: 0;
             border-bottom: 0;
         }
+    }
+}
+@media (max-width: 1000px) {
+    .box {
+        width: 800px;
     }
 }
 </style>

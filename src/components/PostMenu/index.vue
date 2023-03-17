@@ -14,7 +14,7 @@
                     <i class="iconfont icon-saved"></i>
                     <span>收藏帖子</span>
                 </div>
-                <div class="items" @click="reqHidePost({postId: postId})">
+                <!-- <div class="items" @click="reqHidePost({postId: postId})">
                     <i class="iconfont icon-blockPost"></i>
                     <span>屏蔽</span>
                 </div>
@@ -29,7 +29,7 @@
                 <div class="items" @click="touchCopy()">
                     <i class="iconfont icon-report"></i>
                     <span>举报</span>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>

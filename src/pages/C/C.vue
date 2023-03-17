@@ -1,20 +1,22 @@
 <template>
     <div>
-        <Top :info="cmtyInfo" parent="community" />
+        <Top :info="cmtyInfo" parent="community" v-if="message == '获取信息成功'" />
         <div class="cover">
             <img :src="cmtyInfo.cmtyCover || defaultCover" alt="" />
         </div>
         <div class="profile" v-if="message !== '获取信息成功'">
-            <div class="iconWrapper">
-                <div class="icon">
-                    <img :src="defaultAvatar" alt="" />
+            <div class="unFind">
+                <div class="iconWrapper">
+                    <div class="icon">
+                        <img :src="defaultAvatar" alt="" />
+                    </div>
                 </div>
-            </div>
-            <div class="uncreatedCmty">
-                <h1>{{ message }}</h1>
-            </div>
-            <div class="addCmty">
-                <button @click="showCmtyCreator = true">创建社区</button>
+                <div class="uncreatedCmty">
+                    <h1>这个是个未创建的社区</h1>
+                </div>
+                <div class="addCmty">
+                    <button @click="mainStore.showCmtyCreator = true">创建社区</button>
+                </div>
             </div>
         </div>
         <div class="profile" v-if="message == '获取信息成功'">
@@ -33,13 +35,16 @@
                         <span class="unit"> 成员</span>
                     </div>
                     <div class="comments">
-                        <span class="number">{{ cmtyInfo.cmtyPostsCount || 0 }}</span>
+                        <span class="number">{{
+                            cmtyInfo.postCount + cmtyInfo.commentCount + cmtyInfo.cmtyReplyCount ||
+                            0
+                        }}</span>
                         <span class="unit"> 发言量</span>
                     </div>
                 </div>
             </div>
             <div class="introduction">
-                <span>{{ cmtyInfo.cmtyBio }}</span>
+                <span>{{ cmtyInfo.cmtyDescription }}</span>
             </div>
             <div class="joinAndFavorite">
                 <JoinBtn :cmtyInfo="cmtyInfo" size="large" parent="C" />
@@ -65,12 +70,12 @@
         </ul>
     </div> -->
         <router-view></router-view>
-        <CmtyCreator v-if="showCmtyCreator" />
+        <!--        <CmtyCreator v-if="showCmtyCreator" />-->
     </div>
 </template>
 <script setup lang="ts">
 import JoinBtn from '@/components/littleComponents/JoinBtn/JoinBtn.vue'
-import CmtyCreator from '@/pages/C/CmtyCreator/index.vue'
+import CmtyCreator from '@/components/CmtyCreator/index.vue'
 import {updateUserCmty} from '@/api'
 import {onMounted, onUnmounted, reactive, ref} from 'vue'
 import {useRoute, RouterView, useRouter} from 'vue-router'
@@ -89,25 +94,19 @@ const tabs = reactive([
     {routeName: '', Name: '精品贴', id: 2, router: '/communities/favorite'},
     {routeName: '', Name: '本吧详情', id: 3, router: '/communities/square'}
 ])
-
+let gotResponse = ref(false)
 let params = reactive({cmtyId: Number(route.params.cmtyId)})
 
 let {cmtyInfo} = storeToRefs(routerStore)
 let defaultAvatar = ref('https://i.pinimg.com/564x/ba/5e/67/ba5e6704f5805a32f036b382265d71a4.jpg')
 let defaultCover = ref('https://i.328888.xyz/2023/02/20/XSyxy.jpeg')
 let message = ref('')
-let {showCmtyCreator} = storeToRefs(mainStore)
-let joinCmtyMsg = ref('')
-let favoriteCmtyMsg = ref('')
-/**特别关注的图标类型以及颜色**/
-let favoriteClass = ref('icon-favorite')
-let unfavoriteClass = ref('icon-unfavorite')
-let favoriteIcon = ref('favoriteIcon')
 
 //获取社区信息
 async function reqGetCmtyInfo(params: {cmtyId: number}) {
     routerStore.getCmtyInfo(params).then((res) => {
         message.value = res
+        if (res.status) gotResponse.value = true
     })
 }
 
@@ -138,31 +137,46 @@ div {
         width: 100%;
         height: 110px;
 
-        .uncreatedCmty {
-            padding: 100px 189px;
-        }
+        .unFind {
+            position: relative;
+            display: flex;
+            height: 400px;
 
-        .addCmty {
-            padding: 0 289px;
-
-            button {
+            .uncreatedCmty {
+                position: absolute;
+                top: 0;
+                left: 0;
+                transform: translate(50%, 400%);
                 display: flex;
                 justify-content: center;
-                align-items: center;
-                height: 50px;
-                padding: 20px;
-                font-size: 20px;
-                outline: none;
-                border: 0;
-                color: white;
-                background-color: $brandColor;
-                border-radius: 50px;
-                font-weight: bold;
-                cursor: pointer;
-                transition: 0.1s;
+                align-content: center;
+            }
 
-                &:hover {
-                    background-color: $onHoverDark;
+            .addCmty {
+                position: absolute;
+                bottom: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+
+                button {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 50px;
+                    padding: 20px;
+                    font-size: 20px;
+                    outline: none;
+                    border: 0;
+                    color: white;
+                    background-color: $brandColor;
+                    border-radius: 50px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    transition: 0.1s;
+
+                    &:hover {
+                        background-color: $onHoverDark;
+                    }
                 }
             }
         }

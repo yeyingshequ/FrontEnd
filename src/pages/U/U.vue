@@ -1,7 +1,9 @@
 <template>
     <div ref="wrapper">
         <Top :info="userInfo" parent="user" />
-        <div class="cover"></div>
+        <div class="cover">
+            <img :src="userInfo.cover || ''" alt="" />
+        </div>
         <!-- 当搜索的用户不存在时,展示这个 -->
         <div class="uncreated" v-if="message == '这是一个不存在的用户'">
             <div class="iconWrapper">
@@ -72,7 +74,6 @@ import Post from '../../components/PostCard/index.vue'
 import updateUserInfo from '@/pages/U/updateUserInfo/index.vue'
 import {getUserInfo, updateUserUser} from '@/api'
 import cookie from '@/tools/cookie'
-import rename from '@/tools/rename'
 import Tab from '@/components/Tab/index.vue'
 import {computed, onMounted, onUnmounted, reactive, ref, watch} from 'vue'
 import {RouterView, useRoute, useRouter} from 'vue-router'
@@ -180,7 +181,7 @@ let parentTop = ref('')
 onMounted(() => {
     window.addEventListener('scroll', function () {
         //console.log('wrapper:', wrapper.value.getBoundingClientRect().top)
-        //mainStore.parentTop = wrapper.value.getBoundingClientRect().top
+        mainStore.parentTop = wrapper.value.getBoundingClientRect().top
     })
     //console.log('userInfo:', userInfo)
     reqGetUserInfo(params)
@@ -195,7 +196,8 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
-div {
+.wrapper {
+    position: relative;
     .cover {
         width: 100%;
         height: 233px;

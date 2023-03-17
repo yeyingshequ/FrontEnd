@@ -4,8 +4,6 @@
     </div>
 </template>
 <script setup lang="ts">
-import {getRecentCmty} from '@/api/index'
-import rename from '@/tools/rename'
 import storage from '@/tools/storage'
 import {onMounted, reactive} from 'vue'
 import {useRouter} from 'vue-router'

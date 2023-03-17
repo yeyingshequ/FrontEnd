@@ -4,7 +4,7 @@
             <div class="iconAndSearch">
                 <div class="webicon">
                     <div class="logoWrapper" @click="router.push('/home')">
-                        <img src="./images/weblogo.png" alt="" />
+                        <img src="https://i.328888.xyz/2023/03/17/LVYgp.png" alt="" />
                     </div>
                 </div>
                 <div class="searchPart">
@@ -18,7 +18,7 @@
                             @blur="searchOnFocus = false"
                             @keyup.enter="goSearch()"
                         />
-                        <button @click="$refs.searchInput.focus()">
+                        <button @click="searchInput.focus()">
                             <el-icon><Search @click="goSearch()" /></el-icon>
                         </button>
                     </div>
@@ -38,6 +38,7 @@ const mainStore = useMainStore()
 let keyWords = computed(() => {
     return mainStore.searchKeyWord
 })
+let searchInput = ref()
 const router = useRouter()
 const route = useRoute()
 const cmtyStore = useCmtyStore()
@@ -63,11 +64,11 @@ let searchOnFocus = ref(false)
     justify-content: center;
     position: fixed;
     top: 0;
-    width: 102%;
+    width: 100%;
     height: 60px;
     background-color: #ffffff;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
-    z-index: 2;
+    z-index: 100;
 
     .headNav {
         width: 1000px;
@@ -182,5 +183,12 @@ let searchOnFocus = ref(false)
     background: rgba(0, 0, 0, 0);
     border-radius: 50px;
     transition: 0.1s;
+}
+@media (max-width: 1000px) {
+    .head {
+        .headNav {
+            width: 800px;
+        }
+    }
 }
 </style>

@@ -16,7 +16,7 @@ let params = reactive({
     userId: Number(route.params.uid)
 })
 async function reqGetUserCmty(params: {userId: Number}) {
-    cmtyStore.getUserCmty(params)
+    cmtyStore.getCmtyCard({type: 'user', userId: parseInt(route.params.uid as string)})
 }
 watch(route, (nv: any, ov: any) => {
     reqGetUserCmty(params)

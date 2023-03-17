@@ -1,6 +1,6 @@
 <template>
     <div>
-        <PostCard :postCardList="userPostCardList" />
+        <PostCard v-if="postStore.userPostCardList" :postCardList="userPostCardList" />
     </div>
 </template>
 <script setup lang="ts">

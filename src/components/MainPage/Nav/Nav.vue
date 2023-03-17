@@ -1,5 +1,5 @@
 <template>
-    <div class="profile">
+    <div class="profile regularLayout">
         <div class="userInfo">
             <div class="userInfoWrapper">
                 <!--登录后的个人信息框-->
@@ -22,7 +22,12 @@
                 </div>
                 <div class="loginAndRegister" @click="reqShowLoginScreen" v-else>
                     <div class="userIcon" @click="reqShowLoginScreen">
-                        <img src="./1_BigPic.png" alt="" class="pic" @click="reqShowLoginScreen" />
+                        <img
+                            src="https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg"
+                            alt=""
+                            class="pic"
+                            @click="reqShowLoginScreen"
+                        />
                     </div>
                     <div class="message">登 录 或 注 册</div>
                 </div>
@@ -37,7 +42,7 @@
                 enter-active-class="animate__fadeIn"
                 leave-active-class="animate__fadeOut"
             >
-                <div v-show="showLogout" class="logoutWrapper animate__faster" key="1">
+                <div v-show="showLogout" class="logoutWrapper animate__faster">
                     <div class="triangle"></div>
                     <div class="userLogout" @click="goLogout">
                         <span> 退出账号 </span>
@@ -72,6 +77,61 @@
             <div>
                 <span>发 帖</span>
             </div>
+        </div>
+        <postEditor v-if="showPostEditor" />
+        <!--回到顶部按钮-->
+        <el-backtop>
+            <div>UP</div>
+        </el-backtop>
+    </div>
+    <div class="profile smallLayout">
+        <div class="userInfo">
+            <div class="userInfoWrapper">
+                <!--登录后的个人信息框-->
+                <div
+                    class="userInfoWrapperInside"
+                    v-if="isLogin"
+                    @click="$router.push(`/u/${myInfo.userId}`).catch((data) => {})"
+                >
+                    <div class="userIcon">
+                        <img :src="myInfo.avatar" alt="" class="pic" />
+                    </div>
+                </div>
+                <div class="loginAndRegister" @click="reqShowLoginScreen" v-else>
+                    <div class="userIcon" @click="reqShowLoginScreen">
+                        <img
+                            src="https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg"
+                            alt=""
+                            class="pic"
+                            @click="reqShowLoginScreen"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="usernav">
+            <div
+                v-for="(nav, index) in navList"
+                :key="nav.id"
+                class="navRouter"
+                :class="{active: nav.pathName === currentNav}"
+                @click="junpNav(nav.path)"
+            >
+                <div class="mask">
+                    <i :class="nav.icon"></i>
+                </div>
+            </div>
+            <!--更多导航-->
+            <div class="navRouter" @click="showMoreNav = true">
+                <div class="mask">
+                    <i class="iconfont icon-gengduo"></i>
+                </div>
+            </div>
+            <MoreNav v-if="showMoreNav" />
+        </div>
+        <div class="sendpost" @click="showPostEditor = true">
+            <div><i class="iconfont icon-chuangzuo"></i></div>
         </div>
         <postEditor v-if="showPostEditor" />
         <!--回到顶部按钮-->
@@ -162,7 +222,7 @@ let isLogin = computed(() => {
 //当前的路由地址
 let currentNav = ref('')
 watch(route, (nv: any, ov: any) => {
-    currentNav.value = nv.matched[0].path || null
+    currentNav.value = nv.name
 })
 
 //跳转路由
@@ -188,7 +248,6 @@ function reqGetUserInfo() {
 
 onMounted(() => {
     console.log('route:', route)
-
     reqGetUserInfo()
 })
 </script>
@@ -477,6 +536,80 @@ onMounted(() => {
             line-height: 40px;
             color: $brandColor;
         }
+    }
+}
+//
+@media (max-width: 1000px) {
+    .regularLayout {
+        display: none;
+    }
+    .smallLayout {
+        width: 100px;
+
+        .userInfo {
+            margin-left: 0;
+            .userInfoWrapper {
+                width: 65px;
+                .userInfoWrapperInside {
+                    position: relative;
+                    height: 50px;
+                    width: 50px;
+                    border-radius: 50px;
+                }
+                .loginAndRegister {
+                    position: relative;
+                    height: 50px;
+                    width: 50px;
+                    border-radius: 50px;
+                }
+            }
+        }
+        .usernav {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            .navRouter {
+                padding-left: 0px;
+                .mask {
+                    width: 55px;
+                    height: 55px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 50px;
+                    transition: 0.2s;
+                }
+            }
+            .iconfont {
+                padding-left: 0;
+                margin-left: 0px;
+                margin-right: 0px;
+                font-size: 30px;
+                vertical-align: -2px;
+            }
+        }
+        .sendpost {
+            margin-top: 0;
+
+            div {
+                width: 55px;
+                height: 55px;
+            }
+            .iconfont {
+                padding-left: 0;
+                margin-left: 0px;
+                margin-right: 0px;
+                font-size: 30px;
+                vertical-align: -2px;
+                //font-weight: bold;
+                color: white;
+            }
+        }
+    }
+}
+@media only screen and (min-width: 1000px) {
+    .smallLayout {
+        display: none;
     }
 }
 </style>

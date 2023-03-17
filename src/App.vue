@@ -26,7 +26,10 @@ body {
     overflow-y: scroll;
     overflow-x: hidden;
     -webkit-tap-highlight-color: transparent;
-    padding-left: calc(100vw - 100%);
+    //padding-left: calc(100vw - 100%);
+}
+body.no-scroll {
+    padding-right: 15px; /* 滚动条的宽度 */
 }
 
 /* a标签初始化 */

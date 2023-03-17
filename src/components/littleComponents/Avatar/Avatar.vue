@@ -25,13 +25,13 @@ let Avatar = computed(() => {
 })
 
 function pushRouter() {
-    switch (type.value) {
+    switch (Type.value) {
         case 'community':
-            router.push(`/c/${id}`)
+            router.push(`/c/${Id}`)
             break
 
         case 'user':
-            router.push(`/u/${id}`)
+            router.push(`/u/${Id}`)
     }
 }
 </script>

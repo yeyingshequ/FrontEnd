@@ -1,6 +1,6 @@
-import { getCmtyPosts, getCommentInfo, getDiscoverPostCard, getNotiCard, getPostCard, getPostInfo } from "@/api"
+import { getCmtyPosts, getCommentCard, getCommentCardForV, getCommentInfo, getDiscoverPostCard, getNotiCard, getPostCard, getPostCardForV, getPostInfo, getPostInfoForV } from "@/api"
 import formatTime from "@/tools/formatTime"
-import rename from "@/tools/rename"
+import storage from "@/tools/storage"
 import { defineStore } from "pinia"
 interface IpostInfo {
     postId: number,
@@ -31,7 +31,7 @@ interface IpostInfo {
         postAuthorId: number,
         postId: number,
         pubTime: string,
-        repliesCount: number,
+        replyCount: number,
         reply: [{
             commentAuthorId: number,
             commentId: number,
@@ -107,7 +107,7 @@ interface IcommentInfo {
     postAuthorId: number,
     postId: number,
     pubTime: string,
-    repliesCount: number,
+    replyCount: number,
     reply: {
         commentAuthorId: number,
         commentId: number,
@@ -226,14 +226,14 @@ const usePostStore = defineStore('postStore', {
             //发现板块的帖子卡片信息
             discoverPostCardList: [],
             //c路由的帖子卡片信息
-            cmtyPostCardList: [{} as IpostCard],
-            userPostCardList: [{} as IpostCard],
+            cmtyPostCardList: [],
+            userPostCardList: [],
             homePostCardList: [
             ],
-            searchPostCardList: [{} as IpostCard],
-            savedPostCardList: [
-                {} as IpostCard
-            ],
+            searchPostCardList: [],
+            savedPostCardList: [],
+            searchCommentCardList: [],
+            userCommentCardList: [],
             //p路由中的帖子信息
             postInfo: {
                 postId: 0,
@@ -264,7 +264,7 @@ const usePostStore = defineStore('postStore', {
                     postAuthorId: 0,
                     postId: 0,
                     pubTime: "",
-                    repliesCount: 0,
+                    replyCount: 0,
                     reply: {
                         commentAuthorId: 0,
                         commentId: 0,
@@ -310,7 +310,7 @@ const usePostStore = defineStore('postStore', {
                     isSaved: false,
                     lastVisitTim: false,
                 }
-            } as IpostInfo,
+            } /* as IpostInfo */,
             commentInfo: {
                 commentAuthor: {
                     avatar: "",
@@ -326,7 +326,7 @@ const usePostStore = defineStore('postStore', {
                 postAuthorId: 0,
                 postId: 0,
                 pubTime: "",
-                repliesCount: 0,
+                replyCount: 0,
                 reply: [{
                     commentAuthorId: 0,
                     commentId: 0,
@@ -442,11 +442,12 @@ const usePostStore = defineStore('postStore', {
         }
     },
     actions: {
-        /** 获取导航路由的信息 **/
-        async getDiscoverPostCard() {
-            let result = await getDiscoverPostCard()
-            this.formatPostCard(result)
-            this.discoverPostCardList = result.data
+        toRichText(content: string) {
+            let lines = content.split('\n')
+            content = lines.map((line: any) => `<p class="postStyle">${line}</p>`).join('')
+            content = content.replace(/\s{1,}/g, ' ')
+            console.log(content)
+            return content
         },
         async getCmtyPosts(params: { cmtyId: number }) {
             let result = await getCmtyPosts(params)
@@ -454,28 +455,72 @@ const usePostStore = defineStore('postStore', {
 
         },
         async getPostCard(params: { type: string, userId?: number, keyWords?: string }) {
-            let result = await getPostCard(params)
+            let result
+            if (storage.get("token")) {
+
+                result = await getPostCard(params)
+            } else {
+                result = await getPostCardForV(params)
+            }
+            let postCard = result.data
+            for (let i = 0; i < postCard.length; i++) {
+                postCard[i].userPost
+                    ? (postCard[i].userPost = postCard[i].userPost[0])
+                    : (postCard[i].userPost = null)
+            }
+            console.log(postCard);
+
             switch (params.type) {
                 case "home":
-                    this.homePostCardList = result.data
+                    this.homePostCardList = postCard
                     break;
                 case "user":
-                    this.userPostCardList = result.data
+                    this.userPostCardList = postCard
                     break;
                 case "discover":
-                    this.discoverPostCardList = result.data
+                    this.discoverPostCardList = postCard
                     break;
                 case "community":
-                    this.cmtyPostCardList = result.data
+                    this.cmtyPostCardList = postCard
                     break;
                 case "search":
-                    this.searchPostCardList = result.data
+                    this.searchPostCardList = postCard
+                    break;
+            }
+        },
+        async getCommentCard(params: { type: string, userId?: number, keyWords?: string }) {
+            let result
+            if (storage.get("token")) {
+                result = await getCommentCard(params)
+            } else {
+                result = await getCommentCardForV(params)
+            }
+            let commentCard = result.data
+            for (let i = 0; i < commentCard.length; i++) {
+                commentCard[i].userPost
+                    ? (commentCard[i].userComment = commentCard[i].userComment[0])
+                    : (commentCard[i].userComment = null)
+            }
+
+            switch (params.type) {
+                case "user":
+                    this.userCommentCardList = commentCard
+                    break;
+                case "search":
+                    this.searchCommentCardList = commentCard
                     break;
             }
         },
         async getPostInfo(params: any) {
             //console.log('开始发送访问帖子信息的请求');
-            let result = await getPostInfo(params)
+            let result
+            if (storage.get("token")) {
+
+                result = await getPostInfo(params)
+            } else {
+                result = await getPostInfoForV(params)
+            }
+
             if (result.status == 0) {
                 //console.log('已经请求到帖子信息');
                 result = result.data

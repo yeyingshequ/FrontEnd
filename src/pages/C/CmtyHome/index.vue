@@ -18,7 +18,7 @@ let params = reactive({
 
 let {cmtyPostCardList} = storeToRefs(postStore)
 function reqGetCmtyPosts(params: {type: string; cmtyId: number}) {
-    console.log('cmtyId:', typeof params.cmtyId)
+    //console.log('cmtyId:', typeof params.cmtyId)
     postStore.getPostCard(params)
 }
 onMounted(() => {

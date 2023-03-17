@@ -1,6 +1,7 @@
 <template>
-    <div>
+    <div v-if="postCardList">
         <div
+            v-if="postCardList"
             class="post"
             v-for="post in postCardList"
             :key="post.postId"
@@ -10,7 +11,7 @@
                 <div class="iconWrapper">
                     <div class="icon">
                         <img
-                            :src="post.avatar"
+                            :src="post.postAuthor.avatar"
                             @click.stop="router.push(`/u/${post.postAuthorId}`)"
                         />
                     </div>
@@ -28,10 +29,10 @@
                     />
                     <div class="user">
                         <div class="userName">
-                            <span>{{ post.username }}</span>
+                            <span>{{ post.postAuthor.username }}</span>
                         </div>
                         <div class="updateTime">
-                            <span>{{ post.updateTime }}</span>
+                            <span>{{ formatTime(post.updateTime) }}</span>
                         </div>
                     </div>
                 </div>
@@ -41,7 +42,7 @@
                         <h4>{{ post.postTitle }}</h4>
                     </div>
                     <div class="content">
-                        <span v-html="post.content"></span>
+                        <span v-html="toRichText(post.content)"></span>
                     </div>
                 </div>
                 <button
@@ -49,7 +50,7 @@
                     @click.stop="router.push(`/c/${post.cmtyId}`)"
                     v-if="route.matched[0].name != 'C'"
                 >
-                    <span> {{ post.cmtyName }}吧 </span>
+                    <span> {{ post.community.cmtyName }}吧 </span>
                 </button>
                 <Tools :postInfo="post" father="postCard" style="padding-right: 20px" />
             </div>
@@ -62,6 +63,13 @@ import useRouterStore from '@/store/community'
 import {storeToRefs} from 'pinia'
 import PostMenu from '@/components/PostMenu/index.vue'
 import {useRoute, useRouter} from 'vue-router'
+import {formatDate} from '@vueuse/shared'
+import formatTime from '@/tools/formatTime'
+import usePostStore from '@/store/post'
+import Tools from '@/components/Tools/index.vue'
+import {toRichText} from '@/tools/postTools'
+
+const postStore = usePostStore()
 const route = useRoute()
 const router = useRouter()
 const routerStore = useRouterStore()
@@ -72,9 +80,8 @@ let postCardList = computed(() => {
 })
 let showMenu = ref(false)
 onMounted(() => {
-    console.log('postCard组件')
-
-    //console.log('postCardList', postCardList.value)
+    //console.log('postCard组件')
+    console.log('postCardList', postCardList.value)
     //console.log('route:', route)
 })
 </script>
@@ -87,7 +94,7 @@ onMounted(() => {
     transition: 0.1s;
     cursor: pointer;
 
-    &:hover {
+    &:hover:not(:has(.menu)) {
         background-color: mix(#ff44aa, white, 10%);
     }
     .leftPart {

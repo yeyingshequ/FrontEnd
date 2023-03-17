@@ -23,7 +23,7 @@
                             </span>
                         </div>
                         <span style="font-weight: bold; color: #606266; padding-right: 7px">:</span>
-                        <span class="text">{{ reply.content }}</span>
+                        <span v-html="reply.content" class="text"></span>
                     </div>
                 </div>
                 <div class="bottom">
@@ -35,9 +35,9 @@
                     </div>
                 </div>
             </div>
-            <div class="moreReply" v-if="commentInfo.repliesCount > 5">
+            <div class="moreReply" v-if="commentInfo.replyCount > 5">
                 <span @click="router.push(`/comment/${commentInfo.commentId}`)"
-                    >点击查看全部{{ commentInfo.repliesCount }}条回复</span
+                    >点击查看全部{{ commentInfo.replyCount }}条回复</span
                 >
             </div>
         </div>

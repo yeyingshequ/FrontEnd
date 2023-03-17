@@ -12,16 +12,11 @@
                         </div>
                     </div>
                     <div class="content">
-                        <!-- <p @input="setContent($event)" :contenteditable="true"></p> -->
-
-                        <Editor
-                            class="richEditorContent"
-                            style="min-height: 230px,max-height:650px"
-                            v-model="valueHtml"
-                            :defaultConfig="editorConfig"
-                            mode="default"
-                            @onCreated="handleCreated"
-                        />
+                        <p
+                            :contenteditable="true"
+                            @input="updateContent($event)"
+                            @paste="pasteContent($event)"
+                        ></p>
                     </div>
                 </div>
                 <div class="submit">
@@ -47,29 +42,24 @@ const route = useRoute()
 const postStore = usePostStore()
 const mainStore = useMainStore()
 let {postInfo} = toRefs(postStore)
-/**************************** 关于编辑器 ****************************/
-
-const editorRef = shallowRef() // 编辑器实例，必须用 shallowRef
-const valueHtml = ref('ni') // 内容 HTML
-const toolbarConfig = {}
-const editorConfig = {placeholder: '正文'}
-const handleCreated = (editor: any) => {
-    editorRef.value = editor // 记录 editor 实例，重要！
+function updateContent(e: any) {
+    params.content = e.target.innerText.trim()
+    let lines = params.content.split('\n')
+    params.content = lines.map((line) => `<p class="postStyle">${line}</p>`).join('')
+    params.content = params.content.replace(/\s{1,}/g, ' ')
+    console.log(params.content)
 }
-
-/**************************** 关于编辑器 ****************************/
-// 组件销毁时，也及时销毁编辑器
-onBeforeUnmount(() => {
-    const editor = editorRef.value
-    if (editor == null) return
-    editor.destroy()
-})
+function pasteContent(e: any) {
+    e.preventDefault()
+    const text = e.clipboardData.getData('text/plain')
+    const plainText = text.replace(/(<([^>]+)>)/gi, '')
+    // 将清除样式后的文本重新插入到contenteditable元素中
+    document.execCommand('insertHTML', false, plainText)
+}
 let params = {
     postId: postInfo.value.postId,
     postAuthorId: postInfo?.value.postAuthorId,
     content: '',
-    postContent: postInfo.value.content,
-    postTitle: postInfo.value.postTitle,
     cmtyId: Number(postInfo.value.community.cmtyId),
     cmtyName: postInfo.value.community.cmtyName
 }
@@ -85,22 +75,17 @@ function showMessage(message: string, type: undefined) {
 function close() {
     //mainStore.showCommentEditor = false
     emit('closeEditor', 'commentEditor')
-    scroll.move()
+
     message.value = ''
 }
 function setContent(content: any /* content: {target: {innerHTML: string}} */) {
-    console.log('content:', content.target.innerHTML)
-    params.content = content.target.innerHTML
+    console.log(e.target.innerText)
+    params.content = e.target.innerText
+    let lines = params.content.split('\n')
+    params.content = lines.map((line) => `<p class="postStyle">${line}</p>`).join('')
+    console.log(params.content)
 }
-async function reqSendComment(params: {
-    postId: number
-    postAuthorId: number
-    content: string
-    postContent: string
-    postTitle: string
-    cmtyId: number
-    cmtyName: string
-}) {
+async function reqSendComment(params: object) {
     console.log(params)
     let result = await sendComment(params)
     message.value = result.message
@@ -123,7 +108,6 @@ async function reqSendComment(params: {
     }
 }
 onMounted(() => {
-    scroll.stop()
     console.log('props的postInfo', postInfo.value)
 })
 </script>
@@ -202,18 +186,18 @@ onMounted(() => {
                     //background-color: red;
                     //border-bottom: 1px solid #f1f1f1;
 
-                    /* p {
+                    p {
                         padding-left: 10px;
                         font-size: 20px;
                         width: 550px;
                         min-height: 230px;
                         max-height: 650px;
                         background-color: white;
-                        color: $regularFont;
+                        color: $mainFont;
                         outline: none;
                         overflow-y: scroll;
                         cursor: auto;
-                    } */
+                    }
                     .richEditorContent {
                         padding-left: 10px;
                         font-size: 20px;

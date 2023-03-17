@@ -82,7 +82,7 @@ onMounted(() => {
         transition: 0.1s;
         cursor: pointer;
 
-        &:hover {
+        &:hover:not(:has(.menu)) {
             background-color: mix($brandColor, white, 10%);
         }
 

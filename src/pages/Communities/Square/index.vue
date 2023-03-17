@@ -19,8 +19,6 @@
     </div>
 </template>
 <script setup lang="ts">
-import {getCmtySquareCardList} from '@/api'
-import rename from '@/tools/rename'
 import {onMounted, reactive, watch} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import CmtyCard from '@/components/CmtyCard/index.vue'
@@ -57,7 +55,6 @@ watch(route, (nv: any, ov: any) => {
 })
 
 onMounted(() => {
-    //router.push('/communities/square/全部')
     reqGetCmtySquareCardList()
 })
 </script>

@@ -1,6 +1,6 @@
 <template>
-    <div class="tabs" ref="tabScroll" :style="{top: topHeight}">
-        <!-- :class="{hasTop: checkHasTop() == true}" -->
+    <div class="tabs" ref="tabScroll">
+        <!--  :class="{hasTop: checkHasTop() == true}" -->
         <div v-for="tab in tabs" :key="tab.id" class="router" @click="routeJump(tab.router)">
             <span :class="{actived: tab.routeName == route.name /* || tab.default */}"
                 >{{ tab.Name }}
@@ -35,7 +35,7 @@ watch(
 )
 
 let tabScroll = ref()
-let topHeight = ref('')
+let tabStyle = ref()
 //查询看否有top
 function checkHasTop(): boolean {
     return route.meta.hasTop ? true : false
@@ -48,30 +48,38 @@ function routeJump(link: string) {
 
 const route = useRoute()
 let lastParentTop = ref(0)
-/* onMounted(() => {
-    if (route.meta.hasTop) {
+onMounted(() => {
+    /* if (route.meta.hasTop) {
         window.addEventListener('scroll', function () {
             let distance = tabScroll.value.getBoundingClientRect().top
-            //console.log('distance:', distance)
-            // console.log('parentTop:', mainStore.parentTop)
+            console.log('distance:', distance)
+            console.log('parentTop:', mainStore.parentTop)
+            let direct = mainStore.parentTop - lastParentTop.value
+             if (direct > 0) {
+                console.log('往上')
+                tabStyle.value = {position: 'relative'}
+            } else {
+                console.log('往下')
+                tabStyle.value = {top: '60px', position: 'stiky'}
+            }
             lastParentTop.value = mainStore.parentTop
 
             if (distance <= 110) {
                 if (parentTop) indexStore.topScroll = `${distance - 50}px`
-                console.log('topScroll:', indexStore.topScroll)
+                //console.log('topScroll:', indexStore.topScroll)
             } else {
                 indexStore.topScroll = '60px'
-            }
+            } 
         })
-    }
+    } */
 
     console.log('tab:', tabs.value)
-}) */
+})
 </script>
 <style scoped lang="scss">
 .tabs {
-    position: sticky;
-    top: 60px;
+    /* position: sticky;
+    top: 60px; */
     display: flex;
     justify-content: center;
     width: 100%;

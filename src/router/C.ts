@@ -6,7 +6,7 @@ export default {
   path: '/c/:cmtyId',
   component: C,
   redirect: (to: any) => {
-    console.log("to:", to);
+    //console.log("to:", to);
     return '/c/' + to.params.cmtyId + '/home'
   },
   children: [

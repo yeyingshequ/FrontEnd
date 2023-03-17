@@ -12,7 +12,7 @@ let {savedPostCardList} = storeToRefs(postStore)
 console.log('savedPostCardList:', savedPostCardList)
 
 function reqGetSavedPostCard() {
-    postStore.getSavedPostCard()
+    /* postStore.getSavedPostCard() */
 }
 onMounted(() => {
     reqGetSavedPostCard()

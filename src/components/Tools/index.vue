@@ -151,10 +151,10 @@ let getCommentCount = computed(() => {
     switch (father.value) {
         case 'postCard':
         case 'postMain':
-            return info.value.commentCount
+            return info.value.totalCommentingCount
         /* case 'comment':
         case 'commentMain':
-            return info.value.repliesCount */
+            return info.value.replyCount */
     }
 })
 let getShareCount = computed(() => {

@@ -3,12 +3,25 @@ import Joined from '@/pages/Communities/Joined/index.vue'
 import Square from '@/pages/Communities/Square/index.vue'
 import Favorite from '@/pages/Communities/Favorite/index.vue'
 import Recent from '@/pages/Communities/Recent/index.vue'
+import storage from '@/tools/storage'
+
 /* 社区 */
 export default {
   name: 'Communities',
   path: '/communities',
   component: Communities,
-  redirect: '/communities/joined',
+  redirect: (to: any) => {
+    console.log("to:", to);
+    let user = storage.get('token')
+    console.log("user:", user);
+    if (user) {
+      return '/communities/joined'
+    } else {
+      return '/communities/square/全部'
+    }
+
+
+  },
   children: [
     {
       name: 'Joined',
@@ -19,7 +32,7 @@ export default {
       /* 社区广场 */
       name: 'Square',
       path: 'square/:category?',
-      component: Square,
+      component: Square
     },
     {
       /* 特别关注 */

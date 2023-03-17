@@ -33,20 +33,7 @@
                 </div>
             </div>
             <div class="aboutFollow">
-                <button
-                    v-if="user.userId != userStore.myInfo.userId"
-                    class="follow"
-                    :class="{unFollow: checkIsFollowing(user)}"
-                    @click.stop="
-                        reqFollowUser({
-                            objUserId: Number(user.userId),
-                            isFollowing: checkIsFollowing(user),
-                            userId: Number(route.params.uid)
-                        })
-                    "
-                >
-                    {{ checkIsFollowing(user) ? '正在关注' : '关 注' }}
-                </button>
+                <FollowBtn :userInfo="user" size="default" parent="userCard" />
             </div>
         </div>
     </div>
@@ -56,6 +43,7 @@ import {updateUserCmty, updateUserUser} from '@/api'
 import {computed, onMounted, ref, toRefs, watch} from 'vue'
 import {useRoute} from 'vue-router'
 import useUserStore from '@/store/user'
+import FollowBtn from '../littleComponents/FollowBtn/FollowBtn.vue'
 const userStore = useUserStore()
 
 const route = useRoute()

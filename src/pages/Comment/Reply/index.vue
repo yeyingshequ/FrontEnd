@@ -36,7 +36,9 @@
                         >回复</span
                     >
                     <div v-if="reply.repliedAuthorId" class="replyto">
-                        <span> {{ reply.repliedAuthor.username }} </span>
+                        <span @click="router.push(`/u/${reply.repliedAuthor.userId}`)">
+                            {{ reply.repliedAuthor.username }}
+                        </span>
                     </div>
                     <span
                         v-if="reply.repliedAuthorId"
@@ -61,6 +63,8 @@ import usePostStore from '@/store/post'
 import {storeToRefs} from 'pinia'
 import Tools from '@/components/Tools/index.vue'
 import formatTime from '@/tools/formatTime'
+import {useRouter} from 'vue-router'
+const router = useRouter()
 const postStore = usePostStore()
 let {commentInfo} = storeToRefs(postStore)
 let replies = computed(() => {
@@ -82,7 +86,7 @@ $containerWidth: 698px;
         display: flex;
         cursor: pointer;
 
-        &:hover {
+        &:hover:not(:has(.menu)) {
             background-color: mix(#ff44aa, white, 10%);
         }
 

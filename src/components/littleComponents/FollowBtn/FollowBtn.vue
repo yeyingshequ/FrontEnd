@@ -1,5 +1,6 @@
 <template>
     <div
+        v-if="userInfo.userId != userStore.myInfo.userId"
         class="followContainer"
         :class="{
             small: size == 'small',
@@ -10,16 +11,16 @@
     >
         <button
             class="follow"
-            :class="{unFollow: userInfo.isFollowing}"
+            :class="{unFollow: userInfo.objUser?.isFollowing}"
             @click.stop="
                 reqFollowUser({
                     objUserId: Number(userInfo.userId),
-                    isFollowing: Number(userInfo.isFollowing),
+                    isFollowing: userInfo.objUser?.isFollowing,
                     userId: Number(route.params.uid)
                 })
             "
         >
-            {{ userInfo.isFollowing ? '正在关注' : '关 注' }}
+            {{ userInfo.objUser?.isFollowing ? '正在关注' : '关 注' }}
         </button>
     </div>
 </template>
@@ -28,6 +29,8 @@ import {updateUserUser} from '@/api'
 import emitter from '@/tools/mitt'
 import {computed, onMounted} from 'vue'
 import {useRoute} from 'vue-router'
+import useUserStore from '@/store/user'
+const userStore = useUserStore()
 const route = useRoute()
 let props = defineProps(['userInfo', 'size', 'parent'])
 let userInfo = computed(() => {
@@ -41,12 +44,14 @@ let parent = computed(() => {
     return props.parent
 })
 async function reqFollowUser(params: {objUserId: number; isFollowing: number; userId: number}) {
+    //console.log('params:', params)
+    userInfo.value.objUser?.isFollowing
     if (!params.isFollowing) {
         await updateUserUser({request: 'follow', objUserId: params.objUserId})
-        //message.value = result.data.message
+        userInfo.value.objUser.isFollowing = true
     } else {
         await updateUserUser({request: 'unFollow', objUserId: params.objUserId})
-        //message.value = result.data.message
+        userInfo.value.objUser.isFollowing = false
     }
     switch (parent.value) {
         case 'user':
@@ -54,9 +59,11 @@ async function reqFollowUser(params: {objUserId: number; isFollowing: number; us
         case 'userCard':
             emitter.emit('regetUserCard')
     }
-    emitter.emit('regetUserInfo')
+    /* emitter.emit('regetUserInfo') */
 }
-onMounted(() => {})
+onMounted(() => {
+    console.log('userInfo:', userInfo.value)
+})
 </script>
 <style lang="scss" scoped>
 .followContainer {

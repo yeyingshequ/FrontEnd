@@ -50,7 +50,7 @@ function reqGetPostInfo(params: any) {
     postStore.getPostInfo(params)
 }
 onMounted(() => {
-    postStore.postInfo = {
+    /* postStore.postInfo = {
         postId: 0,
         postTitle: '',
         content: '',
@@ -79,7 +79,7 @@ onMounted(() => {
                 postAuthorId: 0,
                 postId: 0,
                 pubTime: '',
-                repliesCount: 0,
+                replyCount: 0,
                 reply: {
                     commentAuthorId: 0,
                     commentId: 0,
@@ -114,7 +114,7 @@ onMounted(() => {
             cmtyName: '',
             cmtyId: 0
         }
-    }
+    } */
     reqGetPostInfo(params)
 })
 onMounted(() => {

@@ -7,26 +7,26 @@ import * as path from "path";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-      vue()
+    vue()
   ],
   resolve: {
     // Vite路径别名配置
     alias: {
-      '@': path.resolve(__dirname,'./src'),
+      '@': path.resolve(__dirname, './src'),
     },
     extensions: ['.js', '.json', '.ts', '.vue']
   },
 
   css: {
-    preprocessorOptions:{
+    preprocessorOptions: {
       scss: {
         additionalData: `@import "@/assets/css/variable.scss";`,
       },
     }
   },
-  server:{
-    host:'localhost',
-    port:3000,
+  server: {
+    host: 'localhost',
+    port: 3000,
     proxy: {
       '/api': {
         target: 'http://localhost:3005/',

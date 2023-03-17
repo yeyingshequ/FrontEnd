@@ -1,5 +1,5 @@
 //配置路由的地方
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
 
 import Home from '@/router/Home'
 import Discover from '@/router/Discover'
@@ -19,7 +19,7 @@ const router = createRouter({
     // 始终滚动到顶部
     return { top: 0 }
   },
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes: [
     Home,
     Discover,
@@ -37,7 +37,8 @@ const router = createRouter({
     {
       path: '/',
       redirect: 'home',
-    }
+    },
+
   ],
 })
 

@@ -115,14 +115,12 @@ let {showLoginScreen} = storeToRefs(mainStore)
 function close() {
     mainStore.showLoginScreen = false
     //console.log(this.showLoginScreen)
-    scroll.move()
 }
 function reqLogin() {
     store.login(loginParams).then(async (result) => {
         console.log('result:', result)
         showMessage(result.message, result.status)
         cookie.setCookie('UID', result.userId, 730)
-        console.log('loginMessage', loginMessage.value)
         //关闭登录框
         if (!result.status) {
             console.log('账号登录成功')
@@ -130,6 +128,7 @@ function reqLogin() {
                 close()
             }, 1000)
             router.go(0)
+            //mainStore.mainPageKey++
         }
     })
 }
@@ -207,7 +206,7 @@ async function reqRegister(params: any) {
             height: 100%;
             width: 290px;
             background-color: #cf3a33;
-            background-image: url('@/images/魔道学者.jpg');
+            background-image: url('https://i.328888.xyz/2023/03/10/o63u3.jpeg');
             background-size: cover;
             background-position: -10px;
         }

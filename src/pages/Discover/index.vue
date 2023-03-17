@@ -1,17 +1,29 @@
 <template>
     <div>
-        <PostCard v-if="discoverPostCardList" :postCardList="discoverPostCardList" />
+        <PostCard :postCardList="discoverPostCardList" />
     </div>
 </template>
 <script setup lang="ts">
-import {onMounted} from 'vue'
+import {onMounted, watch} from 'vue'
 import usePostStore from '@/store/post'
 import {storeToRefs} from 'pinia'
 import {useRoute} from 'vue-router'
+import PostCard from '@/components/PostCard/index.vue'
+import {nextTick} from 'process'
 const route = useRoute()
 const postStore = usePostStore()
 let {discoverPostCardList} = storeToRefs(postStore)
-console.log('discoverPostCardList:', discoverPostCardList)
+watch(
+    discoverPostCardList,
+    (ov, nv) => {
+        nextTick(() => {
+            console.log('更新')
+
+            console.log('discoverPostCardList:', discoverPostCardList.value)
+        })
+    },
+    {immediate: true}
+)
 
 function reqGetDiscoverPostCard() {
     postStore.getPostCard({
