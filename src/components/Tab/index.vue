@@ -78,8 +78,8 @@ onMounted(() => {
 </script>
 <style scoped lang="scss">
 .tabs {
-    /* position: sticky;
-    top: 60px; */
+    position: sticky;
+    top: 60px;
     display: flex;
     justify-content: center;
     width: 100%;
@@ -94,7 +94,7 @@ onMounted(() => {
         justify-content: center;
         flex: 1;
         height: 100%;
-        width: 698px;
+        //width: 698px;
         transition: 0.1s;
         cursor: pointer;
 

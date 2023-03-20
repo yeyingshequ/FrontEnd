@@ -183,7 +183,6 @@ async function reqRegister(params: any) {
         border-radius: 20px;
         overflow: hidden;
         box-shadow: 10px 5px 5px #ffecf7;
-
         i {
             position: absolute;
             color: $brandColor;

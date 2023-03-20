@@ -25,7 +25,7 @@ const mainStore = useMainStore()
 body {
     overflow-y: scroll;
     overflow-x: hidden;
-    -webkit-tap-highlight-color: transparent;
+    /*-webkit-tap-highlight-color: transparent;*/
     //padding-left: calc(100vw - 100%);
 }
 body.no-scroll {

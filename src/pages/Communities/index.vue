@@ -1,7 +1,7 @@
 <template>
-    <div>
-        <Tab :tabs="tabs" style="position: fixed; width: 698px" />
-        <router-view style="padding-top: 55px"></router-view>
+    <div class="communitiesPage">
+        <Tab :tabs="tabs" />
+        <router-view></router-view>
     </div>
 </template>
 <script setup lang="ts">
@@ -42,4 +42,9 @@ onMounted(() => {
     } */
 })
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.communitiesPage {
+    position: relative;
+    width: 100%;
+}
+</style>

@@ -98,6 +98,7 @@ onMounted(() => {
         background-color: mix(#ff44aa, white, 10%);
     }
     .leftPart {
+        flex-shrink: 0;
         .iconWrapper {
             display: flex;
             justify-content: center;
@@ -119,8 +120,11 @@ onMounted(() => {
         }
     }
     .rightPart {
+        flex-grow: 1;
+        width: 100%;
         .userInfo {
             position: relative;
+            justify-content: left;
             display: flex;
             align-items: center;
             height: 90px;
@@ -160,7 +164,7 @@ onMounted(() => {
 
         .TitleAndContent {
             padding-right: 20px;
-            width: 608px;
+            //width: 608px;
             margin-top: -10px;
             /* background-color: firebrick; */
             .title {

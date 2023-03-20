@@ -41,7 +41,7 @@ const useCmtyStore = defineStore('cmtyStore', {
           lastVisitTime: "",
         }
       ],
-      joinedCmtyCardList: [],
+      joinedCmtyCardList: [{ cmtyId: 0, cmtyName: '' }],
       cmtySquareCardList: [],
       recentCmtyCardList: [],
       favoriteCmtyCardList: [],

@@ -64,12 +64,23 @@ watch(
             border: 1px #f1f1f1 solid;
             border-top: 0;
             border-bottom: 0;
+            @media (max-width: 717px) {
+                width: 98vw;
+            }
         }
     }
 }
 @media (max-width: 1000px) {
     .box {
         width: 800px;
+    }
+}
+@media (max-width: 717px) {
+    .box {
+        .wrapper {
+            .Mainpart {
+            }
+        }
     }
 }
 </style>

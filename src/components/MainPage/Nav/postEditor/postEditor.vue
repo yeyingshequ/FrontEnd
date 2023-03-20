@@ -91,12 +91,11 @@ onMounted(() => {
     reqGetJoinedCmty()
 })
 
-let joinedCmtyCardList = computed(() => {
-    return cmtyStore.joinedCmtyCardList
-})
+let {joinedCmtyCardList} = storeToRefs(cmtyStore)
 let {cmtyInfo} = storeToRefs(cmtyStore)
 function updateContent(e: any) {
     params.content = e.target.innerText.trim()
+
     let lines = params.content.split('\n')
     params.content = lines.map((line) => `<p class="postStyle">${line}</p>`).join('')
     params.content = params.content.replace(/\s{1,}/g, ' ')

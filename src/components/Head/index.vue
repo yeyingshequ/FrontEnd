@@ -11,7 +11,7 @@
                     <div class="search" :class="{searchOnFocus: searchOnFocus === true}">
                         <input
                             type="text"
-                            placeholder="游客无需注册也可以发帖喔~~"
+                            placeholder="本站官方qq群:123280905"
                             v-model="content"
                             ref="searchInput"
                             @focus="searchOnFocus = true"
@@ -22,6 +22,9 @@
                             <el-icon><Search @click="goSearch()" /></el-icon>
                         </button>
                     </div>
+                </div>
+                <div class="navMenu">
+                    <i class="iconfont icon-navMenu"></i>
                 </div>
             </div>
         </div>
@@ -73,6 +76,9 @@ let searchOnFocus = ref(false)
     .headNav {
         width: 1000px;
         height: 100%;
+        @media (max-width: 1000px) {
+            width: 800px;
+        }
 
         /* background-color:blueviolet; */
         .iconAndSearch {
@@ -80,7 +86,12 @@ let searchOnFocus = ref(false)
             align-items: center;
             width: 700px;
             height: 100%;
-
+            @media (max-width: 817px) {
+                width: 700px;
+            }
+            @media (max-width: 717px) {
+                width: 98vw;
+            }
             .webicon {
                 display: flex;
                 justify-content: center;
@@ -89,10 +100,9 @@ let searchOnFocus = ref(false)
                 height: 50px;
                 line-height: 52px;
                 cursor: pointer;
-                /* background-color:purple; */
                 -webkit-user-select: none;
                 transition: 0.5s;
-
+                flex-shrink: 0;
                 .logoWrapper {
                     display: flex;
                     justify-content: center;
@@ -118,11 +128,11 @@ let searchOnFocus = ref(false)
 
             .searchPart {
                 display: flex;
+                flex-wrap: wrap;
                 align-items: center;
                 justify-content: center;
-                width: 625px;
                 height: 100%;
-
+                flex-grow: 1;
                 /* background-color: green; */
 
                 .search,
@@ -130,7 +140,8 @@ let searchOnFocus = ref(false)
                     display: flex;
                     overflow: hidden;
                     align-items: center;
-                    width: 600px;
+                    //width: 600px;
+                    flex-grow: 1;
                     height: 50px;
                     border-radius: 50px;
                     background-color: white;
@@ -141,18 +152,19 @@ let searchOnFocus = ref(false)
                         justify-content: center;
                         align-items: center;
                         height: 50px;
-                        flex: 2;
+                        width: 65px;
                         font-size: 25px;
                         border: 0px;
                         background-color: $onHover;
                         outline-style: none;
                         cursor: pointer;
+                        flex-shrink: 0;
                     }
 
                     input {
-                        padding-left: 50px;
+                        padding-left: 40px;
                         height: 50px;
-                        flex: 15;
+                        width: 100%;
                         outline-style: none;
                         border: 0px;
                         font-size: 20px;
@@ -172,6 +184,23 @@ let searchOnFocus = ref(false)
                     }
                 }
             }
+            .navMenu {
+                cursor: pointer;
+                margin-left: 20px;
+                margin-right: 20px;
+                display: none;
+                flex-shrink: 0;
+
+                i {
+                    font-size: 30px;
+                }
+                &:hover {
+                    color: $brandColor;
+                }
+                @media (max-width: 817px) {
+                    display: block;
+                }
+            }
         }
     }
 }
@@ -183,12 +212,5 @@ let searchOnFocus = ref(false)
     background: rgba(0, 0, 0, 0);
     border-radius: 50px;
     transition: 0.1s;
-}
-@media (max-width: 1000px) {
-    .head {
-        .headNav {
-            width: 800px;
-        }
-    }
 }
 </style>

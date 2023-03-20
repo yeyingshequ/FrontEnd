@@ -538,12 +538,15 @@ onMounted(() => {
         }
     }
 }
-//
+.smallLayout {
+    display: none;
+}
 @media (max-width: 1000px) {
     .regularLayout {
         display: none;
     }
     .smallLayout {
+        display: block;
         width: 100px;
 
         .userInfo {
@@ -607,7 +610,8 @@ onMounted(() => {
         }
     }
 }
-@media only screen and (min-width: 1000px) {
+
+@media only screen and (max-width: 817px) {
     .smallLayout {
         display: none;
     }
