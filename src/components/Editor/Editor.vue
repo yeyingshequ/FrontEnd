@@ -133,39 +133,7 @@ function convertImageToBase64(file: Blob, callback: any) {
     reader.readAsDataURL(file)
 }
 
-const uploadFile = (imgList: any) => {
-    const promises = imgList.map((img: any) => {
-        return new Promise((resolve, reject) => {
-            var cos = new COS({
-                SecretId: 'AKIDJRRWLuGPJwKSLzOZtypPjpgKmzxf9tQi',
-                SecretKey: '82h6GAoDNI97zgyCLHzUknfMo36uSltq'
-            })
-            cos.putObject(
-                {
-                    Bucket: 'yeying-1317878245',
-                    Region: 'ap-nanjing',
-                    Key: generateUniqueFileName(),
-                    StorageClass: 'STANDARD',
-                    Body: img,
-                    onProgress: (progressData) => {
-                        //console.log(progressData)
-                    }
-                },
-                (err: any, data: any) => {
-                    if (err) {
-                        //console.log('err:', err)
-                        reject(err)
-                    } else {
-                        //console.log('data:', data)
-                        resolve(data.Location)
-                    }
-                }
-            )
-        })
-    })
 
-    return Promise.all(promises)
-}
 
 /******************************* */
 function updateContent(e: any) {
