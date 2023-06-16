@@ -1,16 +1,15 @@
-import Setting from '@/pages/Setting/index.vue'
-import Password from '@/pages/Setting/Password/index.vue'
+
 /* import Account from '@/pages/Setting/Account/index.vue' */
 
 export default {
   name: 'Setting',
   path: '/setting',
-  component: Setting,
+  component: () => import('@/pages/Setting/index.vue'),
   children: [
     {
       name: 'Password',
       path: 'password',
-      component: Password,
+      component: () => import('@/pages/Setting/Password/index.vue'),
     },
     /* {
       name: 'Account',

@@ -1,0 +1,244 @@
+<template>
+    <div class="editorContainer">
+        <div class="editorWrapper">
+            <div class="close" @click="close">
+                <i class="iconfont icon-guanbi1"></i>
+            </div>
+            <div class="text">
+                <div class="left">
+                    <div class="iconWrapper">
+                        <img :src="userStore.myInfo.avatar || mainStore.defaultAvatar" alt="" />
+                    </div>
+                </div>
+                <div class="right">
+                    <p
+                        :contenteditable="true"
+                        @input="updateContent($event)"
+                        @paste="pasteContent($event)"
+                    ></p>
+                    <div class="tools">
+                        <button type="submit" @click="reqSendComment(params)">发 送</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script setup lang="ts">
+import scroll from '@/tools/scroll'
+import {sendComment, sendCommentForV} from '@/api'
+import {onBeforeUnmount, onMounted, ref, shallowRef, toRefs} from 'vue'
+import useMainStore from '@/store'
+import {storeToRefs} from 'pinia'
+import emitter from '@/tools/mitt'
+import usePostStore from '@/store/post'
+import {useRoute} from 'vue-router'
+import {ElMessage} from 'element-plus'
+import {checkCharLimit} from '@/tools/postTools'
+import useUserStore from '@/store/user'
+import storage from '@/tools/storage'
+const userStore = useUserStore()
+const route = useRoute()
+const postStore = usePostStore()
+const mainStore = useMainStore()
+let {postInfo} = toRefs(postStore)
+function updateContent(e: any) {
+    params.content = e.target.innerText.trim()
+    params.plainText = e.target.innerText.trim()
+    //console.log(params.content)
+}
+function pasteContent(e: any) {
+    e.preventDefault()
+    const text = e.clipboardData.getData('text/plain')
+    const plainText = text.replace(/(<([^>]+)>)/gi, '')
+    // 将清除样式后的文本重新插入到contenteditable元素中
+    document.execCommand('insertHTML', false, plainText)
+}
+let params = {
+    postId: postInfo.value.postId,
+    postAuthorId: postInfo?.value.postAuthorId,
+    plainText: '',
+    content: '',
+    postContent: postInfo.value.content,
+    postTitle: postInfo.value.postTitle,
+    cmtyId: Number(postInfo.value.community.cmtyId),
+    cmtyName: postInfo.value.community.cmtyName
+}
+let message = ref('')
+let emit = defineEmits(['closeEditor'])
+function showMessage(message: string, type: undefined) {
+    ElMessage({
+        grouping: true,
+        message: message,
+        type: type == 0 ? 'success' : 'error'
+    })
+}
+function close() {
+    mainStore.close('commentEditor')
+    message.value = ''
+}
+
+async function reqSendComment(params: {content: string; plainText: string}) {
+    //console.log('发表评论的参数', params)
+    params.content = params.content.trim()
+    params.plainText = params.plainText.trim()
+    let lines = params.content.split('\n')
+    params.content = lines.map((line: any) => `<p>${line}</p>`).join('')
+    params.content = params.content.replace(/\s{1,}/g, ' ')
+    if (checkCharLimit(params.plainText, 'comment')) {
+        let result = storage.get('token')
+            ? await sendComment(params)
+            : await sendCommentForV(params)
+        showMessage(result.message, result.status)
+        //关闭编辑器
+        if (!result.status) {
+            close()
+            switch (route.name) {
+                case 'P':
+                    postStore.postInfo.comment.push(result.data)
+                    break
+            }
+        }
+    }
+}
+onMounted(() => {
+    //console.log('props的postInfo', postInfo.value)
+    mainStore.isScrollingStopped = true
+})
+</script>
+
+<style scoped lang="scss">
+.editorContainer {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(mix($brandColor, black, 10%), 0.1);
+    z-index: 998;
+
+    .editorWrapper {
+        margin: 0 20px;
+        position: relative;
+        width: 700px;
+        margin-top: 50px;
+        //height: 410px;
+        padding: 20px;
+        border-radius: 20px;
+        background-color: white;
+
+        .close {
+            position: absolute;
+            @extend .flexCentreGSC;
+            top: 10px;
+            left: 10px;
+
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: 0.1s;
+            cursor: pointer;
+
+            i {
+                font-size: 25px;
+            }
+
+            &:hover {
+                background-color: mix($brandColor, white, 15%);
+            }
+        }
+
+        .text {
+            display: flex;
+            margin-left: 20px;
+            margin-top: 20px;
+
+            .left {
+                width: 70px;
+                margin-right: 10px;
+                flex-shrink: 0;
+
+                .iconWrapper {
+                    position: absolute;
+                    top: 40px;
+                    @extend .flexCentreGSC;
+                    width: 70px;
+                    height: 70px;
+                    img {
+                        height: 50px;
+                        width: 50px;
+                        border-radius: 50%;
+                    }
+                }
+            }
+
+            .right {
+                margin-top: 30px;
+                //background-color: red;
+                flex-grow: 1;
+                display: block;
+
+                p {
+                    display: block;
+                    width: 100%;
+                    padding-left: 10px;
+                    font-size: 20px;
+                    height: 280px;
+                    background-color: white;
+                    color: $mainFont;
+                    outline: none;
+                    cursor: auto;
+                    border-bottom: 1px solid #f1f1f1;
+                    overflow-y: scroll;
+                    white-space: pre-wrap;
+                    word-wrap: break-word;
+                    word-break: break-all;
+                    /* div {
+                        margin: 3px 0;
+                    } */
+                    p {
+                        margin: 0 0;
+                        font-size: 20px;
+                    }
+                }
+                .tools {
+                    display: block;
+                    position: relative;
+                    width: 100%;
+                    height: 60px;
+                    margin-bottom: -20px;
+                    display: flex;
+                    align-items: center;
+
+                    button {
+                        position: absolute;
+                        right: 10px;
+                        height: 40px;
+                        padding: 0 20px;
+                        font-size: 20px;
+                        font-weight: bold;
+                        color: white;
+                        border-radius: 50px;
+                        outline: none;
+                        border: 0;
+                        background-color: $brandColor;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+    }
+}
+@media (max-width: 717px) {
+    .editorContainer {
+        .text {
+            .left {
+                display: none;
+            }
+        }
+    }
+}
+</style>

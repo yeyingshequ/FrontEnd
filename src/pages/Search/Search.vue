@@ -1,7 +1,7 @@
 <template>
     <div>
-        <Tab :tabs="tabs" style="position: fixed; width: 698px" />
-        <router-view style="padding-top: 55px"></router-view>
+        <Tab :tabs="tabs" />
+        <router-view></router-view>
     </div>
 </template>
 <script setup lang="ts">
@@ -16,7 +16,7 @@ watch(route, () => {
 
         mainStore.searchKeyWord = route.params.keyWords.toString()
     } */
-    console.log('search的keyWord:', keyWords.value)
+    //console.log('search的keyWord:', keyWords.value)
 
     mainStore.searchKeyWord = route.params.keyWords ? (route.params.keyWords as string) : ''
 })
@@ -53,7 +53,7 @@ const tabs = ref([
 watch(keyWords, (newVal) => {
     tabs.value.forEach((item) => {
         const segments = item.router.split('/')
-        console.log('segments:', segments)
+        //console.log('segments:', segments)
         item.router = `/search/${segments[2]}/${newVal}`
     })
 })

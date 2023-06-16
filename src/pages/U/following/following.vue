@@ -1,6 +1,6 @@
 <template>
     <div>
-        <UserCard :userCardList="following" />
+        <UserCard parent="followers" :userCardList="following" />
     </div>
 </template>
 <script setup lang="ts">
@@ -14,7 +14,7 @@ const userStore = useUserStore()
 let {following} = storeToRefs(userStore)
 let params = reactive({
     type: route.name!.toString(),
-    userId: Number(route.params.uid)
+    userId: Number(route.params.userId)
 })
 
 async function reqGetFollowers() {

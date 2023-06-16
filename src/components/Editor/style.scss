@@ -1,0 +1,183 @@
+.topFromEditorSC {
+    position: sticky;
+    top: 0;
+    display: flex;
+    align-items: center;
+    @extend .whiteGlassGSC;
+    width: 100%;
+    height: 50px;
+    z-index: 2;
+    .close {
+        position: absolute;
+        @extend .flexCentreGSC;
+        left: 20px;
+
+        @extend .whiteGlassGSC;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        transition: 0.1s;
+        cursor: pointer;
+        i {
+            font-size: 22px;
+        }
+        &:hover {
+            background-color: mix($brandColor, white, 15%);
+        }
+    }
+}
+.EditorContainerSC {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    margin: 50px 20px 0 20px;
+    width: 700px;
+    max-height: 580px;
+}
+.editorWrapperSC {
+    background-color: white;
+    overflow-y: scroll;
+    height: 400px;
+    max-height: 580px;
+    width: 100%;
+}
+.editorAvatarPartSC {
+    width: 70px;
+    margin-right: 10px;
+    flex-shrink: 0;
+    .iconWrapper {
+        position: absolute;
+        top: 40px;
+        @extend .flexCentreGSC;
+        width: 70px;
+        height: 70px;
+        img {
+            height: 50px;
+            width: 50px;
+            border-radius: 50%;
+        }
+    }
+}
+.editorRightSC {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .title {
+        display: block;
+        color: $mainFont;
+        height: 50px;
+        width: 100%;
+        padding-left: 10px;
+        font-size: 20px;
+        font-weight: bold;
+        outline: none;
+        border: 0;
+        border-bottom: 1px solid #f1f1f1;
+    }
+    .richEditorContentWrapper {
+        position: relative;
+        .richEditorContent {
+            //display: block;
+            padding-left: 10px;
+            margin-top: 10px;
+            font-size: 20px;
+            min-height: 280px;
+            background-color: white;
+            word-wrap: break-word;
+            word-break: break-all;
+            color: $mainFont;
+            outline: none;
+            cursor: auto;
+            //overflow-y: scroll;
+            white-space: pre-wrap;
+
+            p {
+                margin: 0 0;
+                font-size: 20px;
+            }
+
+            .w-e-text-placeholder {
+                top: 3px;
+                font-size: 20px;
+                color: gray;
+                font-style: normal;
+            }
+        }
+        .placeholder {
+            position: absolute;
+            top: 0;
+            //display: block;
+            padding-left: 4.5px;
+            margin-top: 10px;
+            font-size: 20px;
+            background-color: transparent;
+            word-wrap: break-word;
+            word-break: break-all;
+            color: $mainFont;
+            outline: none;
+            cursor: auto;
+            //overflow-y: scroll;
+            white-space: pre-wrap;
+            color: #797979;
+            -webkit-user-select: none;
+            cursor: text;
+        }
+    }
+
+    .images {
+        margin-bottom: 10px;
+        margin-right: 0;
+        /* :deep(.imgFor1) {
+            max-height: 330px;
+        } */
+    }
+    .tools {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        width: 100%;
+        height: 60px;
+        margin-bottom: -20px;
+        .otherTools {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+            flex-grow: 1;
+            .insertImg {
+                margin-right: 10px;
+                input {
+                    display: none;
+                }
+                label {
+                    @extend .whiteBtnGSC;
+
+                    outline: none;
+                }
+            }
+        }
+        .submit {
+            display: flex;
+            flex-shrink: 0;
+            align-items: center;
+            button {
+                height: 40px;
+                width: 90px;
+                //padding: 0 20px;
+                font-size: 20px;
+                font-weight: bold;
+                color: white;
+                border-radius: 50px;
+                outline: none;
+                border: 0;
+                background-color: $brandColor;
+                cursor: pointer;
+                &:hover {
+                    background-color: mix($brandColor, black, 90%);
+                }
+            }
+        }
+    }
+}

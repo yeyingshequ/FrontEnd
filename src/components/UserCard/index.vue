@@ -6,36 +6,41 @@
             :key="user.userId"
             @click="$router.push(`/u/${user.userId}`)"
         >
-            <div class="userIcon">
-                <div>
-                    <img
-                        :src="
-                            user.avatar ||
-                            'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg'
-                        "
-                        alt=""
-                    />
+            <div class="leftPanel">
+                <div class="leftPanel">
+                    <div class="iconWrapper">
+                        <Avatar
+                            type="user"
+                            :id="user.userId"
+                            :avatar="user.avatar || mainStore.defaultAvatar"
+                        />
+                    </div>
                 </div>
             </div>
-            <div class="aboutUser">
+
+            <div class="rightPanel">
                 <div class="nameAndInfo">
-                    <div class="userName">
-                        <div class="name">
-                            <span>{{ user.username }}</span>
+                    <div>
+                        <div class="userName">
+                            <div class="name">
+                                <span>{{ user.username }}</span>
+                            </div>
+                        </div>
+                        <div class="userId">
+                            <span>UID: {{ user.userId }}</span>
                         </div>
                     </div>
-                    <div class="userId">
-                        <span>@{{ user.userId }}</span>
+                    <div class="aboutFollow">
+                        <FollowBtn :userInfo="user" size="default" parent="userCard" />
                     </div>
                 </div>
+
                 <div class="bio">
                     <span>{{ user.bio }}</span>
                 </div>
             </div>
-            <div class="aboutFollow">
-                <FollowBtn :userInfo="user" size="default" parent="userCard" />
-            </div>
         </div>
+        <BottomLoading :parent="parent" :list="userCardList" />
     </div>
 </template>
 <script setup lang="ts">
@@ -44,13 +49,15 @@ import {computed, onMounted, ref, toRefs, watch} from 'vue'
 import {useRoute} from 'vue-router'
 import useUserStore from '@/store/user'
 import FollowBtn from '../littleComponents/FollowBtn/FollowBtn.vue'
+import useMainStore from '@/store/index'
+import BottomLoading from '../littleComponents/Loading/bottomLoading.vue'
+const mainStore = useMainStore()
 const userStore = useUserStore()
 
 const route = useRoute()
-const props = defineProps(['userCardList'])
-let userCardList = computed(() => {
-    return props.userCardList
-})
+const props = defineProps(['userCardList', 'parent'])
+
+let {parent, userCardList} = toRefs(props)
 let message = ref('')
 async function reqFollowUser(params: {objUserId: number; isFollowing: boolean; userId: number}) {
     if (!params.isFollowing) {
@@ -74,14 +81,13 @@ function checkIsFollowing(user: {objUser: {isFollowing: any}}) {
     }
 }
 onMounted(() => {
-    //console.log("onMounted的props:", props.cmtyCardList)
-    //console.log("cmtyCardList:", cmtyCardList);
+    //console.log('onMounted的props:', props.cmtyCardList)
+    //console.log('cmtyCardList:', cmtyCardList)
 })
 </script>
 <style scoped lang="scss">
 .userCardContainer {
     position: relative;
-
     .user {
         position: relative;
         display: flex;
@@ -95,112 +101,76 @@ onMounted(() => {
             background-color: mix(#ff44aa, white, 10%);
         }
 
-        .userIcon {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100px;
-            width: 100px;
+        .leftPanel {
+            flex-shrink: 0;
             /*           background-color: blueviolet; */
 
-            div {
-                width: 60px;
-                height: 60px;
+            .iconWrapper {
+                @extend .flexCentreGSC;
+                width: 90px;
+                height: 90px;
                 /* background-color: red; */
-
-                img {
-                    width: inherit;
-                    height: inherit;
-                    border-radius: 50%;
-                }
             }
         }
 
-        .aboutUser {
+        .rightPanel {
             position: relative;
             margin-top: 20px;
             margin-left: 10px;
             padding-right: 20px;
             height: 100%;
-            width: 698px-90px;
+            position: relative;
+            /* width: 698px-90px; */
             /* background-color: darkblue; */
+            flex-grow: 1;
 
             .nameAndInfo {
-                /* background-color: pink; */
+                display: flex;
                 height: 50px;
+                width: 100%;
+                > div:first-child {
+                    width: 100%;
+                    .userName {
+                        display: flex;
+                        height: 25px;
 
-                .userName {
-                    display: flex;
-                    height: 25px;
+                        .name {
+                            margin-right: 20px;
+                            word-break: break-all;
+                            span {
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                display: -webkit-box;
+                                -webkit-line-clamp: 1;
+                                -webkit-box-orient: vertical;
+                                font-size: large;
+                                font-weight: bold;
+                            }
+                        }
+                    }
 
-                    .name {
-                        margin-right: 20px;
-
+                    .userId {
+                        display: flex;
+                        align-items: baseline;
+                        height: 24px;
                         span {
-                            font-size: large;
-                            font-weight: bold;
+                            color: $regularFont;
                         }
                     }
                 }
-
-                .userId {
-                    display: flex;
-                    align-items: baseline;
-                    height: 24px;
-                    span {
-                        color: $regularFont;
-                    }
-                }
             }
+            .aboutFollow {
+                display: flex;
 
-            .bio {
-                margin-bottom: 15px;
-                /* background-color: blueviolet; */
+                /* position: absolute; */
+                right: 20px;
+                top: 21px;
             }
         }
 
-        .aboutFollow {
-            position: absolute;
-            right: 20px;
-            top: 21px;
-
-            /* background-color: steelblue; */
-            .follow {
-                height: 35px;
-                outline: none;
-                border: 0;
-                border-radius: 50px;
-                cursor: pointer;
-
-                &:hover {
-                    background-color: mix($brandColor, black, 10%);
-                }
-            }
-
-            .follow {
-                font-size: 15px;
-                background-color: $brandColor;
-                color: white;
-                font-weight: bold;
-                vertical-align: middle;
-                text-align: center;
-                transition: 0.1s;
-                padding: 0 15px;
-
-                &:hover {
-                    background-color: mix($brandColor, black, 90%);
-                }
-            }
-
-            .unFollow {
-                background-color: white;
-                color: $mainFont;
-                border: 1px solid $placeholderFont;
-                padding: 0 15px;
-                &:hover {
-                    background-color: $button;
-                }
-            }
+        .bio {
+            margin-bottom: 15px;
+            /* background-color: blueviolet; */
         }
     }
 }

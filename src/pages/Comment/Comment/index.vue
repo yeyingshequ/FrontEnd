@@ -1,56 +1,6 @@
 <template>
     <div class="container">
-        <div class="poster">
-            <!-- 用户信息、帖子更新时间 -->
-            <div class="userInfo">
-                <PostMenu
-                    class="postMenu"
-                    :content="commentInfo.content"
-                    father="comment"
-                    :postId="commentInfo.postId"
-                />
-                <div class="iconWrapper">
-                    <div class="icon">
-                        <img
-                            @click="$router.push(`/u/${commentInfo.postAuthorId}`)"
-                            :src="commentInfo.commentAuthor.avatar || defaultAvatar"
-                        />
-                    </div>
-                </div>
-                <div class="user">
-                    <div class="userName">
-                        <span>{{ commentInfo.commentAuthor.username }}</span>
-                    </div>
-
-                    <div class="timeAndFloor">
-                        <div class="floor">
-                            <span>{{ commentInfo.floor }}楼</span>
-                        </div>
-                        <div class="dot">
-                            <span>·</span>
-                        </div>
-                        <div class="updateTime">
-                            <span>{{ formatTime(commentInfo.pubTime) }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- 标题和正文 -->
-            <div class="content">
-                <div class="bodyText" v-show="true /* post.bodyText */">
-                    <span>{{ commentInfo.content }}</span>
-                </div>
-                <!-- 图片 -->
-                <div class="imgDisplay">
-                    <!-- <div class="img" v-for="img in post.imgSrc" :key="post.imgSrc.id">
-                  <img :src="img.img">
-              </div> -->
-                </div>
-            </div>
-            <div class="toolWrapper">
-                <Tools :commentInfo="commentInfo" father="commentMain" />
-            </div>
-        </div>
+        <MainFloor :MainFloorInfo="commentInfo" parent="comment" />
     </div>
 </template>
 <script setup lang="ts">
@@ -58,16 +8,18 @@ import {storeToRefs} from 'pinia'
 import {computed, onMounted, reactive, ref} from 'vue'
 import PostMenu from '@/components/PostMenu/index.vue'
 import usePostStore from '@/store/post'
-import {useRoute} from 'vue-router'
+import {toRichText} from '@/tools/postTools'
+import {useRoute, useRouter} from 'vue-router'
 import Tools from '@/components/Tools/index.vue'
 import formatTime from '@/tools/formatTime'
-
+import useMainStore from '@/store/index'
+import MainFloor from '@/components/Floor/MainFloor.vue'
+const router = useRouter()
+const mainStore = useMainStore()
 const props = defineProps(['commentInfo'])
 const route = useRoute()
 const postStore = usePostStore()
 let {commentInfo} = storeToRefs(postStore)
-let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg'
-
 onMounted(() => {
     //console.log('route:', route.name)
     //console.log(route.params)
@@ -95,16 +47,14 @@ onMounted(() => {
 
             .postMenu {
                 position: absolute;
-                top: 0;
+                top: 10px;
                 right: 10px;
             }
 
             /* background-color: chartreuse; */
 
             .iconWrapper {
-                display: flex;
-                justify-content: center;
-                align-items: center;
+                @extend .flexCentreGSC;
                 width: 90px;
                 height: 70px;
 
@@ -181,6 +131,9 @@ onMounted(() => {
                 margin-top: 10px;
                 color: $mainFont;
                 word-break: break-all;
+                :deep(p) {
+                    margin-bottom: 20px;
+                }
             }
 
             .imgDisplay {
@@ -209,7 +162,7 @@ onMounted(() => {
         }
 
         .toolWrapper {
-            width: 608px;
+            width: calc(100% - 90px);
             margin-left: 90px;
         }
     }

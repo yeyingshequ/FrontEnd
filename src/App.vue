@@ -3,11 +3,12 @@ import Head from '@/components/Head/index.vue'
 import MainPage from '@/components/MainPage/index.vue'
 import LoginAndRegister from '@/components/LoginAndRegister/index.vue'
 import useMainStore from '@/store/index'
+import {watch} from 'vue'
+import scroll from './tools/scroll'
 const mainStore = useMainStore()
 </script>
 <template>
     <div class="app">
-        <LoginAndRegister></LoginAndRegister>
         <Head></Head>
         <MainPage :key="mainStore.mainPageKey"></MainPage>
         <!-- <div class="bg"></div> -->
@@ -20,16 +21,17 @@ const mainStore = useMainStore()
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    outline: none;
+    border: 0;
 }
 
 body {
-    overflow-y: scroll;
+    position: relative;
+    //overflow-y: scroll;
     overflow-x: hidden;
-    /*-webkit-tap-highlight-color: transparent;*/
-    //padding-left: calc(100vw - 100%);
-}
-body.no-scroll {
-    padding-right: 15px; /* 滚动条的宽度 */
+    font-family: Arial;
+    -webkit-tap-highlight-color: transparent;
+    padding-left: calc(100vw - 100%);
 }
 
 /* a标签初始化 */
@@ -46,22 +48,12 @@ a {
 }
 
 .app {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @extend .flexCentreGSC;
 }
-
+/* ::-webkit-scrollbar {
+    display: none;
+} */
 /* 背景图片样式 */
-.bg {
-    position: fixed;
-    left: 0;
-    top: 60px;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background: url(@/components/MainPage/background.png) no-repeat;
-    background-size: cover;
-}
 
 //.vue-html5-editor [contenteditable='true']:empty:before {
 //    content: attr(placeholder);
@@ -70,14 +62,18 @@ a {
 //    color: grey;
 //    display: block;
 //}
-
-/* 暗幕 */
-.onhover {
-    background-color: mix(#ff44aa, white, 10%);
+//解决谷歌浏览器记住密码——导致Input组件出现特殊样式的修改
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+    -webkit-text-fill-color: $mainFont !important; //这个地方的颜色是字体颜色，可以根据实际情况修改
+    -webkit-box-shadow: 0 0 0 1000px transparent inset !important; //设置input输入框的背景颜色为透明色
+    background-color: transparent; //设置input输入框的背景颜色为透明色
+    background-image: none;
+    transition: background-color 50000s ease-in-out 0s;
 }
 
-.beforehover {
-    background-color: mix(#ff44aa, white, 0%);
-    transition: 0.1s;
+input {
+    background-color: transparent; //设置input输入框的背景颜色为透明色
 }
 </style>

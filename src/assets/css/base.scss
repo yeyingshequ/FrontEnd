@@ -1,48 +1,46 @@
-/* 初始化 */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  /* a标签初始化 */
-  a {
-    text-decoration: none;
-    color: #303133;
-  
-  }
+.whiteGlassGSC {
+    background: rgba(255, 255, 255, 0.85);
 
-
-  
-
-  
-  .post .articlePart img {
-    margin-top: 15px;
-    width: 80%;
-    height: 80%;
-    border-radius: 20px;
-  }
-  
-  .app {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+.whiteBtnGSC {
+    @extend .flexCentreGSC;
+    max-width: 125px;
+    height: 26px;
+    padding: 0 7px;
+    border: $brandColor solid 1px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: 0.1s;
+    &:hover {
+        background-color: $onHover;
+    }
+    > span {
+        font-size: 15px;
+        line-height: 20px;
+        font-weight: bold;
+        color: $brandColor;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        font-weight: bold;
+    }
+}
+.darkMaskGSC {
+    @extend .flexCentreGSC;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(mix($brandColor, black, 10%), 0.3);
+    z-index: 998;
+}
+.flexCentreGSC {
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-  /* 背景图片样式 */
-  .bg {
-    position: fixed;
-    left: 0;
-    top: 60px;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background: url(@/components/MainPage/background.png) no-repeat;
-    background-size: cover;
-  }
-/* 暗幕 */
-  .onhover {
-    background-color: mix(#ff44aa, white, 10%);
-  }
-  .beforehover {
-    background-color: mix(#ff44aa, white, 0%);
-    transition: .1s;
-  }
+}

@@ -1,20 +1,19 @@
-import Notifications from '@/pages/Notifications/index.vue'
-import Reply from '@/pages/Notifications/Reply/index.vue'
+
+
 /* import At from '@/pages/Notifications/At/index.vue' */
-import Like from '@/pages/Notifications/Like/index.vue'
 /* import System from '@/pages/Notifications/System/index.vue' */
 
 /* 通知 */
 export default {
   name: 'Notifications',
   path: '/notifications',
-  component: Notifications,
+  component: () => import('@/pages/Notifications/index.vue'),
   redirect: '/notifications/reply',
   children: [
     {
       name: 'Reply',
       path: 'reply',
-      component: Reply,
+      component: () => import('@/pages/Notifications/Reply/index.vue'),
     },
     /* {
       name: 'At',
@@ -24,12 +23,12 @@ export default {
     {
       name: 'Like',
       path: 'like',
-      component: Like,
+      component: () => import('@/pages/Notifications/Like/index.vue'),
     },
-    /* {
-      name: 'System',
-      path: 'system',
-      component: System,
-    }, */
+    /*     {
+          name: 'System',
+          path: 'system',
+          component: System,
+        }, */
   ],
 }

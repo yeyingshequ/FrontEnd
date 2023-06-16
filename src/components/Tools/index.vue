@@ -1,48 +1,51 @@
 <template>
     <!-- 回复、转发、收藏、点赞 -->
-    <div class="tools">
+    <div class="tools" ref="tools">
         <div class="item" @click="showEditor()">
-            <i class="iconfont icon-pinglun"></i><span> {{ getCommentCount || '回复' }}</span>
+            <i class="iconfont icon-pinglun"></i
+            ><span v-show="width > 220"> {{ getCommentCount || '回复' }}</span>
         </div>
         <!-- <div><i class="iconfont icon-lihe"></i><span></span></div> -->
-        <div class="item">
-            <i class="iconfont icon-fenxiang"></i><span>{{ getShareCount || '分享' }}</span>
-        </div>
+
         <div class="item">
             <i class="iconfont" :class="getLikeStatus" @click.stop="setLikeCount()"></i
-            ><span>{{ getLikeCount || '点赞' }}</span>
+            ><span v-show="width > 220">{{ getLikeCount || '点赞' }}</span>
+        </div>
+        <div class="item">
+            <i class="iconfont icon-fenxiang"></i
+            ><span v-show="width > 220">{{ getShareCount || '分享' }}</span>
         </div>
         <CommentEditor
             v-if="showCommentEditor"
-            @closeEditor="closeEditor"
             :postInfo="postInfo"
             :father="father"
+            @setEditor="setEditor"
         />
         <ReplyEditor
             v-if="showReplyEditor"
-            @closeEditor="closeEditor"
             :commentInfo="commentInfo"
             :replyInfo="replyInfo"
             :father="father"
+            @setEditor="setEditor"
         />
     </div>
 </template>
 <script setup lang="ts">
-import CommentEditor from '@/components/Tools/CommentEditor/index.vue'
-import ReplyEditor from '@/components/Tools/ReplyEditor/index.vue'
-import useMainStore from '@/store/index'
-import {storeToRefs} from 'pinia'
-import {computed, nextTick, onMounted, onUpdated, ref, toRefs, watch} from 'vue'
-import usePostStore from '@/store/post'
-import {useRoute} from 'vue-router'
+import CommentEditor from '@/components/Editor/CommentEditor/index.vue'
+import ReplyEditor from '@/components/Editor/ReplyEditor/index.vue'
+import {computed, nextTick, onMounted, onUnmounted, ref, watch, watchEffect} from 'vue'
 import {updateUserPost, updateUserComment, updateUserReply} from '@/api'
-
-const route = useRoute()
-const postStore = usePostStore()
-/**************************************************************************/
-//主容器
+import useMainStore from '@/store/index'
+import emitter from '@/tools/mitt'
 const mainStore = useMainStore()
 //父传子
+function setEditor(type: string) {
+    if (type == 'comment') {
+        showCommentEditor.value = false
+    } else if (type == 'reply') {
+        showReplyEditor.value = false
+    }
+}
 let props = defineProps(['postInfo', 'father', 'commentInfo', 'replyInfo', 'isMain'])
 
 //父组件的组件名
@@ -72,11 +75,19 @@ let info = computed(() => {
             return replyInfo.value
     }
 })
-
+let tools = ref()
+let width = ref(0)
+const resizeObserver = new ResizeObserver((entries) => {
+    entries.forEach((entry) => {
+        if (entry.target === tools.value) {
+            width.value = entry.contentRect.width
+        }
+    })
+})
 let isLiked = ref(false)
 watch(
     info,
-    (ov, nv) => {
+    () => {
         nextTick(() => {
             //console.log('旧数据:', ov)
             //console.log('新数据:', nv)
@@ -100,7 +111,7 @@ watch(
     {immediate: true /* , deep: true */}
 )
 
-//监听点赞情况,更换样式
+//当点赞或取消点赞时,更换样式
 let getLikeStatus = computed(() => {
     {
         return isLiked.value ? 'iconfont icon-aixin_clicked' : 'iconfont icon-aixin'
@@ -114,14 +125,14 @@ let getLikeCount = computed(() => {
 
 async function setLikeCount() {
     //console.log('点赞的父组件是', father.value)
-    isLiked.value = !isLiked.value
     let request
-    isLiked.value ? info.value.likeCount++ : info.value.likeCount--
-    isLiked.value ? (request = 'like') : (request = 'unLike')
+    let result
+    //console.log('isLiked.value:', isLiked.value)
+    isLiked.value ? (request = 'unLike') : (request = 'like')
     switch (father.value) {
         case 'postCard':
         case 'postMain':
-            await updateUserPost({
+            result = await updateUserPost({
                 request: request,
                 postId: info.value.postId,
                 likedContent: info.value.content
@@ -129,22 +140,28 @@ async function setLikeCount() {
             break
         case 'comment':
         case 'commentMain':
-            console.log()
+            //console.log()
 
-            await updateUserComment({
+            result = await updateUserComment({
                 request: request,
                 commentId: info.value.commentId,
                 likedContent: info.value.content
             })
             break
         case 'reply':
-            await updateUserReply({
+            result = await updateUserReply({
                 request: request,
                 replyId: info.value.replyId,
                 likedContent: info.value.content
             })
             break
     }
+    //console.log('result:', result)
+    if (!result.status) {
+        isLiked.value = !isLiked.value
+        isLiked.value ? info.value.likeCount++ : info.value.likeCount--
+    }
+    mainStore.setShowLoginScreen(result)
 }
 
 let getCommentCount = computed(() => {
@@ -170,10 +187,10 @@ let showReplyEditor = ref(false)
 /**************************************************************************/
 //开启编辑器
 function showEditor() {
-    console.log('father:', father.value)
+    //console.log('father:', father.value)
     switch (father.value) {
         case 'postCard':
-            console.log('post in tools:', postInfo?.value)
+            //console.log('post in tools:', postInfo?.value)
             showCommentEditor.value = true
             break
         case 'postMain':
@@ -186,32 +203,26 @@ function showEditor() {
             showReplyEditor.value = true
             break
         case 'reply':
-            console.log(11)
             showReplyEditor.value = true
             break
     }
 }
-
-//关闭 编辑器
-function closeEditor(data: string) {
-    //console.log('data:', data)
-    switch (data) {
-        case 'commentEditor':
-            showCommentEditor.value = false
-
-            break
-        case 'replyEditor':
-            showReplyEditor.value = false
-            break
+emitter.on('showEditor', (type) => {
+    //console.log(father.value)
+    //console.log(type)
+    if (type == 'post' && father.value == 'postMain') {
+        showCommentEditor.value = true
+    } else if (type == 'comment' && father.value == 'commentMain') {
+        showReplyEditor.value = true
     }
-}
+})
 onMounted(() => {
-    //console.log(info.value)
-    /* setTimeout(() => {
-        if (father.value == 'comment') {
-            console.log('Tools中的commentInfo', commentInfo.value)
-        }
-    }, 300) */
+    resizeObserver.observe(tools.value)
+})
+
+onUnmounted(() => {
+    resizeObserver.disconnect()
+    //emitter.off('showEditor')
 })
 </script>
 <style scoped lang="scss">

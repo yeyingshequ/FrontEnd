@@ -1,7 +1,7 @@
 <template>
-    <div class="yy-returnContainer">
+    <div class="yy-returnContainer" @click="back">
         <button class="return">
-            <i class="iconfont icon-fanhui" @click="back"></i>
+            <i class="iconfont icon-fanhui"></i>
         </button>
     </div>
 </template>
@@ -16,9 +16,7 @@ function back() {
 <style lang="scss" scoped>
 .yy-returnContainer {
     position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @extend .flexCentreGSC;
     border-radius: 50%;
     border: 0;
     .return {

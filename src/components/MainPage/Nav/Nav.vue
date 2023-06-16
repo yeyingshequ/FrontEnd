@@ -20,10 +20,10 @@
                         <i class="iconfont icon-qita"></i>
                     </div>
                 </div>
-                <div class="loginAndRegister" @click="reqShowLoginScreen" v-else>
+                <div v-if="!isLogin" class="loginAndRegister" @click="reqShowLoginScreen">
                     <div class="userIcon" @click="reqShowLoginScreen">
                         <img
-                            src="https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg"
+                            :src="mainStore.defaultAvatar"
                             alt=""
                             class="pic"
                             @click="reqShowLoginScreen"
@@ -32,23 +32,22 @@
                     <div class="message">登 录 或 注 册</div>
                 </div>
             </div>
-        </div>
-        <!--退出、切换账号 选项-->
-
-        <div class="logoutFn">
-            <div class="mask" v-show="showLogout" @click="showLogout = false"></div>
-            <transition
-                name="animate__animated animate__bounce"
-                enter-active-class="animate__fadeIn"
-                leave-active-class="animate__fadeOut"
-            >
-                <div v-show="showLogout" class="logoutWrapper animate__faster">
-                    <div class="triangle"></div>
-                    <div class="userLogout" @click="goLogout">
-                        <span> 退出账号 </span>
+            <!--退出、切换账号 选项-->
+            <div class="logoutFn">
+                <Mask v-show="showLogout" @click="showLogout = false" />
+                <transition
+                    name="animate__animated animate__bounce"
+                    enter-active-class="animate__fadeIn"
+                    leave-active-class="animate__fadeOut"
+                >
+                    <div v-show="showLogout" class="logoutWrapper animate__faster">
+                        <div class="triangle"></div>
+                        <div class="userLogout" @click="goLogout">
+                            <span> 退出账号 </span>
+                        </div>
                     </div>
-                </div>
-            </transition>
+                </transition>
+            </div>
         </div>
 
         <div class="usernav">
@@ -56,8 +55,8 @@
                 v-for="(nav, index) in navList"
                 :key="nav.id"
                 class="navRouter"
-                :class="{active: nav.path === currentNav}"
-                @click="junpNav(nav.path)"
+                :class="{active: checkNavActive(nav.pathName as unknown as unknown as string)}"
+                @click="pushRoute(nav.path)"
             >
                 <div class="mask">
                     <i :class="nav.icon"></i>
@@ -65,7 +64,7 @@
                 </div>
             </div>
             <!--更多导航-->
-            <div class="navRouter" @click="showMoreNav = true">
+            <div class="navRouter" v-if="userStore.myInfo.userId" @click="showMoreNav = true">
                 <div class="mask">
                     <i class="iconfont icon-gengduo"></i>
                     <span>更多</span>
@@ -78,12 +77,13 @@
                 <span>发 帖</span>
             </div>
         </div>
-        <postEditor v-if="showPostEditor" />
+
         <!--回到顶部按钮-->
         <el-backtop>
             <div>UP</div>
         </el-backtop>
     </div>
+    <!-- 宽度小于1000px时的导航 -->
     <div class="profile smallLayout">
         <div class="userInfo">
             <div class="userInfoWrapper">
@@ -100,7 +100,7 @@
                 <div class="loginAndRegister" @click="reqShowLoginScreen" v-else>
                     <div class="userIcon" @click="reqShowLoginScreen">
                         <img
-                            src="https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg"
+                            :src="mainStore.defaultAvatar"
                             alt=""
                             class="pic"
                             @click="reqShowLoginScreen"
@@ -115,8 +115,8 @@
                 v-for="(nav, index) in navList"
                 :key="nav.id"
                 class="navRouter"
-                :class="{active: nav.pathName === currentNav}"
-                @click="junpNav(nav.path)"
+                :class="{active: checkNavActive(nav.pathName as unknown as unknown as string)}"
+                @click="pushRoute(nav.path)"
             >
                 <div class="mask">
                     <i :class="nav.icon"></i>
@@ -133,18 +133,113 @@
         <div class="sendpost" @click="showPostEditor = true">
             <div><i class="iconfont icon-chuangzuo"></i></div>
         </div>
-        <postEditor v-if="showPostEditor" />
         <!--回到顶部按钮-->
         <el-backtop>
             <div>UP</div>
         </el-backtop>
     </div>
+    <!-- 宽度小于800px时的导航 -->
+    <transition
+        class="miniLayout"
+        name="animate__animated animate__bounce"
+        enter-active-class="animate__fadeInRight"
+        leave-active-class="animate__fadeOutRight"
+    >
+        <div v-if="showNav" class="profile animate__faster">
+            <Mask @click="showNav = false" />
+            <div class="userInfo">
+                <div class="userInfoWrapper">
+                    <!--登录后的个人信息框-->
+                    <div
+                        class="userInfoWrapperInside"
+                        v-if="isLogin"
+                        @click="pushRoute(`/u/${myInfo.userId}`)"
+                    >
+                        <div class="userIcon">
+                            <img :src="myInfo.avatar" alt="" class="pic" />
+                        </div>
+                        <div class="userNameAndUid">
+                            <span class="userName">{{ myInfo.username }}</span
+                            ><br />
+                            <span class="UID">UID: {{ myInfo.userId }}</span>
+                        </div>
+                        <div class="qita" @click.stop="showLogout = true">
+                            <i class="iconfont icon-qita"></i>
+                        </div>
+                    </div>
+                    <div class="loginAndRegister" @click="reqShowLoginScreen" v-else>
+                        <div class="userIcon" @click="reqShowLoginScreen">
+                            <img
+                                :src="mainStore.defaultAvatar"
+                                alt=""
+                                class="pic"
+                                @click="reqShowLoginScreen"
+                            />
+                        </div>
+                        <div class="message">登 录 或 注 册</div>
+                    </div>
+                </div>
+                <!--退出、切换账号 选项-->
+
+                <div class="logoutFn">
+                    <Mask v-show="showLogout" @click="showLogout = false" />
+                    <transition
+                        name="animate__animated animate__bounce"
+                        enter-active-class="animate__fadeIn"
+                        leave-active-class="animate__fadeOut"
+                    >
+                        <div v-show="showLogout" class="logoutWrapper animate__faster">
+                            <div class="triangle"></div>
+                            <div class="userLogout" @click="goLogout">
+                                <span> 退出账号 </span>
+                            </div>
+                        </div>
+                    </transition>
+                </div>
+            </div>
+
+            <div class="usernav">
+                <div
+                    v-for="(nav, index) in navList"
+                    :key="nav.id"
+                    class="navRouter"
+                    :class="{active: checkNavActive(nav.pathName as unknown as unknown as string)}"
+                    @click="pushRoute(nav.path)"
+                >
+                    <div class="mask">
+                        <i :class="nav.icon"></i>
+                        <span>{{ nav.name }}</span>
+                    </div>
+                </div>
+                <!--更多导航-->
+                <div class="navRouter" @click="showMoreNav = true">
+                    <div class="mask">
+                        <i class="iconfont icon-gengduo"></i>
+                        <span>更多</span>
+                    </div>
+                </div>
+                <MoreNav v-if="showMoreNav" />
+            </div>
+            <div class="sendpost" @click="showPostEditor = true">
+                <div>
+                    <span>发 帖</span>
+                </div>
+            </div>
+
+            <!--回到顶部按钮-->
+            <el-backtop>
+                <div>UP</div>
+            </el-backtop>
+        </div></transition
+    >
+
+    <PostEditor v-if="showPostEditor" />
 </template>
 
 <script setup lang="ts">
 import 'animate.css'
-import postEditor from '@/components/MainPage/Nav/postEditor/postEditor.vue'
-import {computed, onMounted, ref, watch} from 'vue'
+import PostEditor from '@/components/Editor/PostEditor/PostEditor.vue'
+import {computed, onMounted, ref, watch, onBeforeUnmount} from 'vue'
 import {RouterLink, useRoute, useRouter} from 'vue-router'
 import useMainStore from '@/store/index'
 import {storeToRefs} from 'pinia'
@@ -153,52 +248,54 @@ import cookie from '@/tools/cookie'
 import useUserStore from '@/store/user'
 import {ElBacktop} from 'element-plus'
 import MoreNav from '@/components/MoreNav/index.vue'
-import pinia from '@/store/store'
+import Mask from '@/components/littleComponents/Mask.vue'
+import emitter from '@/tools/mitt'
+
 const userStore = useUserStore()
 const mainStore = useMainStore()
 const router = useRouter()
 const route = useRoute()
 
-interface list {
+/* interface list {
     name: string
     id: number
     path: string
     pathName: string
     icon: string
-}
-const navList: list[] = [
+} */
+const navList = [
     {
         name: '首页',
         id: 1,
-        pathName: 'Home',
+        pathName: ['Home'],
         path: '/home',
         icon: 'iconfont icon-shouye'
     },
     {
         name: '发现',
         id: 2,
-        pathName: 'Discover',
+        pathName: ['Discover'],
         path: '/discover',
         icon: 'iconfont icon-sousuo'
     },
     {
         name: '社区',
         id: 3,
-        pathName: 'Communities',
+        pathName: ['Communities', 'Joined', 'Square', 'Favorite', 'Recent'],
         path: '/communities',
         icon: 'iconfont icon-shequ'
     },
     {
         name: '通知',
         id: 4,
-        pathName: 'Ntifications',
+        pathName: ['Ntifications', 'Reply', 'Like'],
         path: '/notifications',
         icon: 'iconfont icon-xiaoxizhongxin'
     },
     {
         name: '聊天',
         id: 5,
-        pathName: 'Chat',
+        pathName: ['Chat'],
         path: '/chat',
         icon: 'iconfont icon-wode'
     }
@@ -216,18 +313,59 @@ let {showLogout, showPostEditor, showLoginScreen, showMoreNav} = storeToRefs(mai
 let {myInfo} = storeToRefs(userStore)
 //判断是否登录
 let isLogin = computed(() => {
-    return storage.get('token')
+    return userStore.myInfo.userId ? true : false
 })
+
+watch(
+    isLogin,
+    (nv) => {
+        //console.log('登录状态为:', nv)
+    },
+    {immediate: true}
+)
+
+let screenWidth = ref(document.body.clientWidth)
+window.onresize = () => {
+    return (() => {
+        screenWidth.value = document.body.clientWidth
+    })()
+}
+let showNav = ref(false)
+emitter.on('showMiniNav', () => {
+    showNav.value = !showNav.value
+    //console.log(showNav.value)
+})
+emitter.on('getMyInfo', () => {
+    //console.log('接收到了')
+
+    reqGetUserInfo()
+})
+emitter.off('getMyInfo')
+
+watch(
+    screenWidth,
+    (nv) => {
+        //console.log('屏幕宽度:', nv)
+        if (nv > 800) {
+            showNav.value = false
+        }
+    },
+    {immediate: true, deep: true}
+)
 
 //当前的路由地址
-let currentNav = ref('')
-watch(route, (nv: any, ov: any) => {
-    currentNav.value = nv.name
-})
+function checkNavActive(pathName: string) {
+    return pathName.includes(route.name as string) ? true : false
+}
 
 //跳转路由
-function junpNav(path: string) {
+function pushRoute(path: string) {
+    //console.log(userStore.getToken())
+
     router.push(path)
+    if (screenWidth.value < 800) {
+        showNav.value = false
+    }
 }
 
 //展示登录框
@@ -239,7 +377,14 @@ function goLogout() {
     showLogout.value = false
     storage.remove('token')
     cookie.removeCookie('UID')
-    router.go(0)
+    userStore.myInfo = {
+        token: '',
+        userId: 0,
+        username: '',
+        avatar: '',
+        bio: '',
+        cover: ''
+    }
 }
 //获取登录用户信息
 function reqGetUserInfo() {
@@ -249,6 +394,9 @@ function reqGetUserInfo() {
 onMounted(() => {
     console.log('route:', route)
     reqGetUserInfo()
+})
+onBeforeUnmount(() => {
+    emitter.off('regetCmtyCardMitt')
 })
 </script>
 <style scoped lang="scss">
@@ -264,9 +412,9 @@ onMounted(() => {
     /* background-color: blue; */
 
     .userInfo {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        position: relative;
+        z-index: 2;
+        @extend .flexCentreGSC;
         padding-top: 10px;
         margin-left: 20px;
         width: 100%;
@@ -275,9 +423,7 @@ onMounted(() => {
         /*background-color: purple;*/
         .userInfoWrapper {
             position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            @extend .flexCentreGSC;
             height: 65px;
             width: 260px;
             border-radius: 50px;
@@ -309,9 +455,7 @@ onMounted(() => {
                 /* background-color: #f91880; */
                 .qita {
                     position: absolute;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
+                    @extend .flexCentreGSC;
                     width: 36px;
                     height: 36px;
                     top: 7px;
@@ -374,54 +518,46 @@ onMounted(() => {
                 line-height: 50px;
             }
         }
-    }
-
-    .logoutFn {
-        .mask {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        .logoutWrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: absolute;
-            left: 25px;
-            top: 90px;
-            width: 300px;
-            height: 80px;
-            background-color: white;
-            z-index: 2;
-            border-radius: 15px;
-            box-shadow: 0 0 10px 1px rgb(255, 199, 230);
-
-            .triangle {
-                position: absolute;
-                top: -12px;
-                height: 0;
-                width: 0;
-                border: 6px solid transparent;
-                border-bottom: 6px solid white;
+        .logoutFn {
+            :deep(.mask) {
+                z-index: 2;
             }
 
-            .userLogout {
-                height: 50px;
-                width: 100%;
-                padding-left: 20px;
-                cursor: pointer;
+            .logoutWrapper {
+                @extend .flexCentreGSC;
+                position: absolute;
+                left: 25px;
+                top: 90px;
+                width: 300px;
+                height: 80px;
+                background-color: white;
+                z-index: 2;
+                border-radius: 15px;
+                box-shadow: 0 0 10px 1px rgb(255, 199, 230);
 
-                &:hover {
-                    background-color: $onHover;
+                .triangle {
+                    position: absolute;
+                    top: -12px;
+                    height: 0;
+                    width: 0;
+                    border: 6px solid transparent;
+                    border-bottom: 6px solid white;
                 }
 
-                span {
-                    font-size: 15px;
-                    line-height: 50px;
+                .userLogout {
+                    height: 50px;
+                    width: 100%;
+                    padding-left: 20px;
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: $onHover;
+                    }
+
+                    span {
+                        font-size: 15px;
+                        line-height: 50px;
+                    }
                 }
             }
         }
@@ -429,6 +565,7 @@ onMounted(() => {
 
     .usernav {
         width: 100%;
+        z-index: 1;
 
         .active {
             font-weight: bold;
@@ -486,9 +623,8 @@ onMounted(() => {
     }
 
     .sendpost {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        z-index: 1;
+        @extend .flexCentreGSC;
         margin-top: 20px;
         width: 100%;
         height: 70px;
@@ -497,9 +633,7 @@ onMounted(() => {
         /*background-color: yellow ;*/
         div {
             position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            @extend .flexCentreGSC;
             height: 60px;
             width: 220px;
             background-color: $brandColor;
@@ -541,7 +675,10 @@ onMounted(() => {
 .smallLayout {
     display: none;
 }
-@media (max-width: 1000px) {
+.miniLayout {
+    display: none;
+}
+@media (max-width: 1017px) {
     .regularLayout {
         display: none;
     }
@@ -614,6 +751,20 @@ onMounted(() => {
 @media only screen and (max-width: 817px) {
     .smallLayout {
         display: none;
+    }
+    .miniLayout {
+        border-left: 1px solid #f1f1f1;
+        background-color: white;
+        display: flex;
+        flex-direction: column;
+        right: 0;
+        .userInfo {
+            .logoutFn {
+                .logoutWrapper {
+                    width: 248px;
+                }
+            }
+        }
     }
 }
 </style>

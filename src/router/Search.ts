@@ -1,41 +1,37 @@
-import Search from '@/pages/Search/Search.vue'
-import SearchPost from '@/pages/Search/SearchPost/SearchPost.vue'
-import SearchComment from '@/pages/Search/SearchComment/SearchComment.vue'
-import SearchCmty from '@/pages/Search/SearchCmty/SearchCmty.vue'
-import SearchUser from '@/pages/Search/SearchUser/SearchUser.vue'
+
 
 
 export default {
     name: 'Search',
     path: '/search',
-    component: Search,
+    component: () => import('@/pages/Search/Search.vue'),
     redirect: '/search/post',
     children: [
         {
             name: 'SearchPost',
             path: 'post/:keyWords?',
-            component: SearchPost,
+            component: () => import('@/pages/Search/SearchPost/SearchPost.vue'),
             meta: { keepSearchKeyWords: true }
         },
         {
 
             name: 'SearchComment',
             path: 'comment/:keyWords?',
-            component: SearchComment,
+            component: () => import('@/pages/Search/SearchComment/SearchComment.vue'),
             meta: { keepSearchKeyWords: true }
         },
         {
 
             name: 'SearchCmty',
             path: 'community/:keyWords?',
-            component: SearchCmty,
+            component: () => import('@/pages/Search/SearchCmty/SearchCmty.vue'),
             meta: { keepSearchKeyWords: true }
         },
         {
 
             name: 'SearchUser',
             path: 'user/:keyWords?',
-            component: SearchUser,
+            component: () => import('@/pages/Search/SearchUser/SearchUser.vue'),
             meta: { keepSearchKeyWords: true }
         },
     ],

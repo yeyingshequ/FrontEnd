@@ -1,23 +1,30 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "baseUrl": "./",
-    "paths": {
-      "@/*": ["./src/*","./dist/*"],
-      
+    "compilerOptions": {
+        "target": "ESNext",
+        "baseUrl": "./",
+        "paths": {
+            "@/*": ["./src/*", "./dist/*"]
+        },
+        "useDefineForClassFields": true,
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "strict": true,
+        "jsx": "preserve",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "esModuleInterop": true,
+        "lib": ["ESNext", "DOM"],
+        "skipLibCheck": true,
+        "noEmit": true,
+        "types": ["dompurify"]
     },
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "strict": true,
-    "jsx": "preserve",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "lib": ["ESNext", "DOM"],
-    "skipLibCheck": true,
-    "noEmit": true
-  },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/router/index.js"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.d.ts",
+        "src/**/*.tsx",
+        "src/**/*.vue",
+        "src/router/index.js",
+        "src/tools/cropperjs.js"
+    ],
+    "references": [{"path": "./tsconfig.node.json"}]
 }

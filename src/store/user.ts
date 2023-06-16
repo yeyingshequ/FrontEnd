@@ -2,15 +2,17 @@ import { getMyInfo, getUserCard, getUserCardForV, getUserInfo, getUserInfoForV }
 import storage from '@/tools/storage'
 import { defineStore } from 'pinia'
 
+
 const useUserStore = defineStore('user', {
   state() {
     return {
-      showUpdateInfo: false,
+
       myInfo: {
+        token: storage.get('token'),
         userId: 0,
         username: '',
         avatar: '',
-        boi: '',
+        bio: '',
         cover: ''
       },
       userInfo: {
@@ -56,14 +58,14 @@ const useUserStore = defineStore('user', {
         isFollowing: 0,
         userId: 0,
         username: "",
-      }]
+      }],
     }
   },
   actions: {
     async getMyInfo() {
       //console.log("token:", storage.get('token'));
       let result = await getMyInfo()
-      console.log("myinfo:", result);
+      //console.log("myinfo:", result);
       this.myInfo = result.data
     },
     async getUserInfo(params: Object) {
@@ -79,7 +81,7 @@ const useUserStore = defineStore('user', {
         isFollowing: 0,
         isBlock: 0
       }
-      if (storage.get("token")) {
+      if (this.myInfo.token || storage.get('token')) {
         result = await getUserInfo(params)
       } else {
         result = await getUserInfoForV(params)
@@ -93,43 +95,44 @@ const useUserStore = defineStore('user', {
     },
     async getUserCard(params: { type: string, userId?: number, keyWords?: string }) {
       let result
-
-      switch (params.type) {
-        case 'Followers':
-          this.followers = []
-          break;
-        case 'Following':
-          this.following = []
-          break;
-        case 'search':
-          this.searchUserCardList = []
-          break;
-      }
-      if (storage.get("token")) {
+      if (this.myInfo.token || storage.get('token')) {
         result = await getUserCard(params)
       } else {
         result = await getUserCardForV(params)
       }
       let userCard = result.data
+
       for (let i = 0; i < userCard.length; i++) {
         userCard[i].objUser
           ? (userCard[i].objUser = userCard[i].objUser[0])
           : (userCard[i].objUser = { isFolling: false, isBlock: false })
       }
       if (result.status == 0) {
-        console.log('用户卡片:', userCard);
+        //console.log('用户卡片:', userCard);
         switch (params.type) {
           case 'Followers':
             this.followers = userCard
             break;
+          case 'moreFollowers':
+            this.followers.push(...userCard)
+            break;
           case 'Following':
             this.following = userCard
+            break;
+          case 'moreFollowing':
+            this.following.push(...userCard)
             break;
           case 'search':
             this.searchUserCardList = userCard
             break;
+          case 'moreSearch':
+            this.searchUserCardList.push(...userCard)
+            break;
         }
       }
+    },
+    getToken() {
+      return storage.get('token')
     }
 
   },

@@ -27,12 +27,12 @@ export class Interceptors {
         // 响应拦截器
         this.instance.interceptors.response.use(
             (response) => {
-                console.log("response:", response);
+                //console.log("response:", response);
 
                 return response;
             },
             (error) => {
-                console.log("error:", error);
+                //console.log("error:", error);
 
                 return Promise.resolve(error);
             }

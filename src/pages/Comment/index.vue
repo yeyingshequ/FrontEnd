@@ -13,7 +13,6 @@ import {storeToRefs} from 'pinia'
 import {computed, onMounted, onUnmounted, reactive} from 'vue'
 import usePostStore from '@/store/post'
 import emitter from '@/tools/mitt'
-import yyReturn from '@/components/littleComponents/yy-button/yy-return.vue'
 import Top from '@/components/Top/Top.vue'
 const postStore = usePostStore()
 const router = useRouter()
@@ -42,7 +41,7 @@ function reqGetCommentInfo(params: any) {
 
 onMounted(() => {
     reqGetCommentInfo(params)
-    console.log('commentInfo:', commentInfo.value)
+    //console.log('commentInfo:', commentInfo.value)
     emitter.on('regetCommentInfo', () => {
         reqGetCommentInfo(params)
     })

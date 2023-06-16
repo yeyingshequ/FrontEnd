@@ -1,8 +1,13 @@
-<template >
+<template>
     <div class="moreNavContainer" @click="showMoreNav = false">
-        <div class="mask"></div>
+        <Mask />
         <div class="navbox">
-            <div v-for="(nav, index) in navList" :key="nav.id" class="items" @click="junpNav(nav.path)">
+            <div
+                v-for="(nav, index) in navList"
+                :key="nav.id"
+                class="items"
+                @click="pushRoute(nav.path)"
+            >
                 <i :class="nav.icon"></i>
                 <span>{{ nav.name }}</span>
             </div>
@@ -11,28 +16,33 @@
 </template>
 <script setup lang="ts">
 import useMainStore from '@/store/index'
-import { storeToRefs } from 'pinia';
-import { ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import {storeToRefs} from 'pinia'
+import {ref, watch} from 'vue'
+import {RouteLocationRaw, useRoute, useRouter} from 'vue-router'
+import Mask from '@/components/littleComponents/Mask.vue'
+import emitter from '@/tools/mitt'
+
 const router = useRouter()
 const mainStore = useMainStore()
 const route = useRoute()
 
-let { showMoreNav } = storeToRefs(mainStore)
+let {showMoreNav} = storeToRefs(mainStore)
 //当前的路由地址
 let currentNav = ref('')
-
+function pushRoute(path: string) {
+    router.push(path)
+    emitter.emit('showMiniNav')
+}
 watch(route, (nv: any, ov: any) => {
     currentNav.value = nv.name
-
 })
 
 interface list {
-    name: string,
-    id: number,
-    path: string,
-    pathName: string,
-    icon: string,
+    name: string
+    id: number
+    path: string
+    pathName: string
+    icon: string
 }
 const navList: list[] = [
     {
@@ -40,27 +50,23 @@ const navList: list[] = [
         id: 6,
         pathName: 'Saved',
         path: '/saved',
-        icon: 'iconfont icon-saved',
+        icon: 'iconfont icon-saved'
     },
     {
         name: '浏览历史',
         id: 7,
         pathName: 'History',
         path: '/history',
-        icon: 'iconfont icon-bofangjilu',
+        icon: 'iconfont icon-bofangjilu'
     },
     {
         name: '设置',
         id: 8,
         pathName: 'Setting',
         path: '/setting',
-        icon: 'iconfont icon-shezhi',
+        icon: 'iconfont icon-shezhi'
     }
 ]
-
-function junpNav(path: string) {
-    router.push(path)
-}
 </script>
 <style lang="scss" scoped>
 .moreNavContainer {
@@ -72,6 +78,7 @@ function junpNav(path: string) {
         bottom: 0;
         width: 100%;
         height: 100%;
+        z-index: 2;
     }
 
     .navbox {
@@ -109,7 +116,6 @@ function junpNav(path: string) {
                 font-weight: bold;
             }
         }
-
     }
 }
 </style>

@@ -2,9 +2,9 @@
     <div>
         <Top :info="cmtyInfo" parent="community" v-if="message == '获取信息成功'" />
         <div class="cover">
-            <img :src="cmtyInfo.cmtyCover || defaultCover" alt="" />
+            <img :src="cmtyInfo.cmtyCover || mainStore.defaultCover" alt="" />
         </div>
-        <div class="profile" v-if="message !== '获取信息成功'">
+        <div class="profile" v-if="message == '这是一个不存在的社区'">
             <div class="unFind">
                 <div class="iconWrapper">
                     <div class="icon">
@@ -20,8 +20,12 @@
             </div>
         </div>
         <div class="profile" v-if="message == '获取信息成功'">
-            <div class="iconWrapper">
+            <div
+                class="iconWrapper"
+                @click="mainStore.reqDisplayImg(cmtyInfo.cmtyAvatar || defaultAvatar, 'avatar')"
+            >
                 <div class="icon">
+                    <div class="mask"></div>
                     <img :src="cmtyInfo.cmtyAvatar || defaultAvatar" alt="" />
                 </div>
             </div>
@@ -31,15 +35,14 @@
                 </div>
                 <div class="membersAndComments">
                     <div class="members">
-                        <span class="number">{{ cmtyInfo.cmtyJoinedCount }}</span>
+                        <span class="number">{{ formatNumber(cmtyInfo.cmtyJoinedCount) }}</span>
                         <span class="unit"> 成员</span>
                     </div>
                     <div class="comments">
                         <span class="number">{{
-                            cmtyInfo.postCount + cmtyInfo.commentCount + cmtyInfo.cmtyReplyCount ||
-                            0
+                            formatNumber(cmtyInfo.totalPostingCount) || 0
                         }}</span>
-                        <span class="unit"> 发言量</span>
+                        <span class="unit"> 发言</span>
                     </div>
                 </div>
             </div>
@@ -70,13 +73,10 @@
         </ul>
     </div> -->
         <router-view></router-view>
-        <!--        <CmtyCreator v-if="showCmtyCreator" />-->
     </div>
 </template>
 <script setup lang="ts">
 import JoinBtn from '@/components/littleComponents/JoinBtn/JoinBtn.vue'
-import CmtyCreator from '@/components/CmtyCreator/index.vue'
-import {updateUserCmty} from '@/api'
 import {onMounted, onUnmounted, reactive, ref} from 'vue'
 import {useRoute, RouterView, useRouter} from 'vue-router'
 import {storeToRefs} from 'pinia'
@@ -84,9 +84,13 @@ import useMainStore from '@/store/index'
 import useRouterStore from '@/store/community'
 import emitter from '@/tools/mitt'
 import Top from '@/components/Top/Top.vue'
+import Tab from '@/components/Tab/index.vue'
+import useCmtyStore from '@/store/community'
+import {formatNumber} from '@/tools'
 const router = useRouter()
 const routerStore = useRouterStore()
 const mainStore = useMainStore()
+const cmtyStore = useCmtyStore()
 
 const route = useRoute()
 const tabs = reactive([
@@ -119,23 +123,52 @@ onMounted(() => {
 })
 onUnmounted(() => {
     emitter.off('reqGetCmtyInfo')
+    cmtyStore.cmtyInfo = {
+        cmtyAvatar: '' || null,
+        cmtyDescription: '',
+        cmtyCategory: '',
+        cmtyCover: '',
+        cmtyHots: '',
+        cmtyId: 0,
+        cmtyJoinedCount: 0,
+        totalPostingCount: 0,
+        cmtyName: '',
+        postCount: 0,
+        commentCount: 0,
+        cmtyReplyCount: 0,
+        userCmty: {
+            isJoined: false,
+            isFavorite: false,
+            lastVisitTime: false,
+            joinedTime: false,
+            rankTime: false,
+            favoriteTime: false
+        }
+    }
 })
 </script>
 <style scoped lang="scss">
 div {
     .cover {
+        position: relative;
         width: 100%;
-        height: 233px;
+        height: 0;
+        padding-bottom: 33.33%; /* 16:9的比例 */
+        overflow: hidden;
         img {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            object-fit: cover;
         }
     }
 
     .profile {
         position: relative;
         width: 100%;
-        height: 110px;
+        /* height: 110px; */
 
         .unFind {
             position: relative;
@@ -147,9 +180,7 @@ div {
                 top: 0;
                 left: 0;
                 transform: translate(50%, 400%);
-                display: flex;
-                justify-content: center;
-                align-content: center;
+                @extend .flexCentreGSC;
             }
 
             .addCmty {
@@ -159,9 +190,7 @@ div {
                 transform: translateX(-50%);
 
                 button {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
+                    @extend .flexCentreGSC;
                     height: 50px;
                     padding: 20px;
                     font-size: 20px;
@@ -183,23 +212,50 @@ div {
 
         /* background-color: blue; */
         .iconWrapper {
-            display: flex;
-            justify-content: center;
+            @extend .flexCentreGSC;
             position: absolute;
-            align-items: center;
+
             left: 20px;
-            top: -71.5px;
-            width: 143px;
-            height: 143px;
+            top: 0%;
+            width: 20.5%;
+            height: 20.5%;
+            padding-bottom: 20.5%; /* 1:1的比例 */
             background-color: white;
             border-radius: 50%;
             -webkit-user-select: none;
+            overflow: hidden;
+            cursor: pointer;
+            transform: translate(0, -50%);
+            &:hover {
+                .mask {
+                    background-color: rgba(black, 0.1);
+                }
+            }
+            .icon {
+                position: absolute;
+                left: 0;
+                top: 0;
+                margin: 3px;
+                .mask {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    height: 97%;
+                    width: 100%;
+                    border-radius: 50%;
+                    z-index: 2;
+                    transition: 0.1s;
+                    /* &:hover {
+                        background-color: rgba(black, 0.1);
+                    } */
+                }
 
-            img {
-                width: 135px;
-                height: 135px;
-                margin-top: 4px;
-                border-radius: 50%;
+                img {
+                    height: 100%;
+                    width: 100%;
+                    object-fit: cover;
+                    border-radius: 50%;
+                }
             }
         }
 
@@ -209,7 +265,9 @@ div {
             left: 200px;
             width: 560px;
             height: 75px;
-
+            @media (max-width: 717px) {
+                display: none;
+            }
             /* background-color: crimson; */
             .name {
                 display: flex;
@@ -226,6 +284,7 @@ div {
                 align-items: baseline;
                 height: 37px;
                 line-height: 30px;
+                white-space: nowrap;
 
                 /* background-color: crimson; */
                 .members {
@@ -248,14 +307,64 @@ div {
                 .unit {
                     font-size: 16px;
                     color: $regularFont;
+                    white-space: nowrap;
                 }
             }
         }
 
         .introduction {
-            position: absolute;
-            top: 80px;
-            left: 20px;
+            padding-top: 12%;
+            padding-bottom: 1%;
+            padding-left: 20px;
+            min-height: 65px;
+            .aboutBarInIntro {
+                display: none;
+                width: 560px;
+                height: 75px;
+
+                /* background-color: crimson; */
+                .name {
+                    display: flex;
+                    align-items: center;
+                    height: 45px;
+
+                    span {
+                        font-size: 24px;
+                        color: $mainFont;
+                    }
+                }
+
+                .membersAndComments {
+                    display: flex;
+                    align-items: baseline;
+                    height: 37px;
+                    line-height: 30px;
+
+                    /* background-color: crimson; */
+                    .members {
+                        margin-right: 15px;
+                    }
+
+                    .number {
+                        font-weight: 550;
+                        color: $mainFont;
+                    }
+
+                    .members,
+                    .comments {
+                        cursor: pointer;
+
+                        &:hover {
+                            text-decoration: underline;
+                        }
+                    }
+
+                    .unit {
+                        font-size: 16px;
+                        color: $regularFont;
+                    }
+                }
+            }
 
             span {
                 color: $regularFont;
@@ -318,22 +427,6 @@ div {
                 &:hover {
                     background-color: mix($brandColor, white, 10%);
                 }
-            }
-        }
-    }
-
-    .board {
-        width: 100%;
-        height: 25px;
-
-        /* background-color: yellowgreen; */
-        ul {
-            margin-left: 10px;
-
-            li {
-                display: inline;
-                margin-right: 10px;
-                color: $regularFont;
             }
         }
     }

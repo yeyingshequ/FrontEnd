@@ -1,0 +1,47 @@
+.brandColorBtnSC {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    outline: none;
+    padding: 0 20px;
+    margin-left: 20px;
+    font-size: 16px;
+    background-color: $brandColor;
+    color: white;
+    font-weight: bold;
+    vertical-align: middle;
+    text-align: center;
+    transition: 0.1s;
+    border: 0;
+    border-radius: 50px;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+        background-color: mix($brandColor, black, 90%);
+    }
+}
+
+.whiteBtnSC {
+    background-color: white;
+    color: $mainFont;
+    border: 1px solid $placeholderFont;
+
+    &:hover {
+        background-color: $button;
+    }
+}
+.largeSC {
+    padding: 0 20px;
+    height: 40px;
+}
+.defaultSC {
+    padding: 0 15px;
+    height: 35px;
+}
+.smallSC {
+    padding: 0 15px;
+    height: 30px;
+    font-size: 16px;
+}

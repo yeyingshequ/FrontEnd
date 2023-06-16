@@ -1,13 +1,13 @@
 <template>
     <div>
-        <NotiCard parent="reply" :notiCardList="replyNotiCardList" />
+        <NotiCard parent="replyNoti" :notiCardList="replyNotiCardList" />
         <div class="msg" v-if="!replyNotiCardList[0]">
             <h1>还没收到任何通知</h1>
         </div>
     </div>
 </template>
 <script setup lang="ts">
-import NotiCard from '@/components/NotiCard/index.vue'
+import NotiCard from '@/components/Cards/NotiCard/index.vue'
 import {storeToRefs} from 'pinia'
 import usePostStore from '@/store/post'
 import {onMounted} from 'vue'
@@ -18,7 +18,7 @@ async function reqGetReplyNotiCard() {
     postStore.getNotiCard({type: 'reply'})
 }
 onMounted(() => {
-    console.log('加载回复通知')
+    //console.log('加载回复通知')
 
     reqGetReplyNotiCard()
 })

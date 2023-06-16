@@ -1,19 +1,6 @@
 <template>
-    <div class="container">
+    <div class="container" v-if="postInfo.postId">
         <Top parent="post" :info="postInfo" />
-        <!-- <div class="top">
-            <div class="return">
-                <yyReturn />
-            </div>
-            <div class="bar" @click="router.push(`/c/${post.cmtyId}`)">
-                <div class="icon">
-                    <img src="@/images/barIcon.jpg" alt="" />
-                </div>
-                <div class="barName">
-                    <span>{{ cmty.cmtyName }}吧</span>
-                </div>
-            </div>
-        </div> -->
         <Poster :postInfo="postInfo" />
         <Comment :postInfo="postInfo" />
     </div>
@@ -47,17 +34,16 @@ let params: any = reactive({
     postId: route.params.pid
 })
 function reqGetPostInfo(params: any) {
-    postStore.getPostInfo(params)
-}
-onMounted(() => {
-    /* postStore.postInfo = {
+    postStore.postInfo = {
         postId: 0,
         postTitle: '',
         content: '',
         updateTime: '',
         pubTime: '',
         isDeleted: false,
+        images: [],
         cmtyId: 0,
+        cmtyName: '',
         postAuthorId: 0,
         commentCount: 0,
         likeCount: 0,
@@ -76,31 +62,40 @@ onMounted(() => {
                 commentTopFloor: 0,
                 content: '',
                 floor: 0,
+                likeCount: 0,
                 postAuthorId: 0,
                 postId: 0,
                 pubTime: '',
                 replyCount: 0,
-                reply: {
-                    commentAuthorId: 0,
-                    commentId: 0,
-                    content: '',
-                    postAuthorId: 0,
-                    postId: 0,
-                    pubTime: '',
-                    repliedAuthor: {
-                        userId: 0,
-                        username: ''
-                    },
-                    repliedAuthorId: 0,
-                    repliedId: 0,
-                    replyAuthor: {
-                        avatar: '',
-                        userId: 0,
-                        username: ''
-                    },
-                    replyAuthorId: 0,
-                    replyFloor: 0,
-                    replyId: 0
+                reply: [
+                    {
+                        commentAuthorId: 0,
+                        commentId: 0,
+                        content: '',
+                        postAuthorId: 0,
+                        postId: 0,
+                        pubTime: '',
+                        repliedAuthor: {
+                            userId: 0,
+                            username: ''
+                        },
+                        repliedAuthorId: 0,
+                        repliedId: 0,
+                        replyAuthor: {
+                            avatar: '',
+                            userId: 0,
+                            username: ''
+                        },
+                        replyAuthorId: 0,
+                        replyFloor: 0,
+                        replyId: 0
+                    }
+                ],
+                userComment: {
+                    isHidden: false,
+                    isSaved: false,
+                    lastVisitTime: false,
+                    isLiked: false
                 }
             }
         ],
@@ -113,8 +108,17 @@ onMounted(() => {
             cmtyAvatar: '',
             cmtyName: '',
             cmtyId: 0
+        },
+        userPost: {
+            isHidden: false,
+            isLiked: false,
+            isSaved: false,
+            lastVisitTim: false
         }
-    } */
+    }
+    postStore.getPostInfo(params)
+}
+onMounted(() => {
     reqGetPostInfo(params)
 })
 onMounted(() => {
@@ -131,10 +135,7 @@ onUnmounted(() => {
     .top {
         position: sticky;
         top: 60px;
-        display: flex;
-        /* background-color: orangered; */
-        align-items: center;
-        justify-content: center;
+        @extend .flexCentreGSC;
         background-color: white;
         width: 100%;
         height: 50px;
@@ -151,9 +152,7 @@ onUnmounted(() => {
         .bar {
             padding-left: 5px;
             padding-right: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            @extend .flexCentreGSC;
             height: 40px;
             border-radius: 50px;
             cursor: pointer;
@@ -164,9 +163,7 @@ onUnmounted(() => {
             }
 
             .icon {
-                display: flex;
-                justify-content: center;
-                align-items: center;
+                @extend .flexCentreGSC;
                 margin-right: 5px;
                 width: 30px;
                 height: 30px;

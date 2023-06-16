@@ -16,7 +16,7 @@
                 reqFollowUser({
                     objUserId: Number(userInfo.userId),
                     isFollowing: userInfo.objUser?.isFollowing,
-                    userId: Number(route.params.uid)
+                    userId: Number(route.params.userId)
                 })
             "
         >
@@ -30,6 +30,8 @@ import emitter from '@/tools/mitt'
 import {computed, onMounted} from 'vue'
 import {useRoute} from 'vue-router'
 import useUserStore from '@/store/user'
+import useMainStore from '@/store/index'
+const mainStore = useMainStore()
 const userStore = useUserStore()
 const route = useRoute()
 let props = defineProps(['userInfo', 'size', 'parent'])
@@ -46,49 +48,36 @@ let parent = computed(() => {
 async function reqFollowUser(params: {objUserId: number; isFollowing: number; userId: number}) {
     //console.log('params:', params)
     userInfo.value.objUser?.isFollowing
+    let result
     if (!params.isFollowing) {
-        await updateUserUser({request: 'follow', objUserId: params.objUserId})
-        userInfo.value.objUser.isFollowing = true
+        result = await updateUserUser({request: 'follow', objUserId: params.objUserId})
+        if (!result.status) {
+            userInfo.value.objUser.isFollowing = true
+        }
     } else {
-        await updateUserUser({request: 'unFollow', objUserId: params.objUserId})
-        userInfo.value.objUser.isFollowing = false
+        result = await updateUserUser({request: 'unFollow', objUserId: params.objUserId})
+        if (!result.status) {
+            userInfo.value.objUser.isFollowing = false
+        }
     }
-    switch (parent.value) {
+    mainStore.setShowLoginScreen(result)
+    /* switch (parent.value) {
         case 'user':
             emitter.emit('reqGetUserInfo')
         case 'userCard':
             emitter.emit('regetUserCard')
-    }
+    } */
     /* emitter.emit('regetUserInfo') */
 }
 onMounted(() => {
-    console.log('userInfo:', userInfo.value)
+    //console.log('userInfo:', userInfo.value)
 })
 </script>
 <style lang="scss" scoped>
+@import '@/components/littleComponents/Buttons/buttons.scss';
 .followContainer {
     .follow {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 40px;
-        outline: none;
-        padding: 0 20px;
-        margin-left: 20px;
-        font-size: 16px;
-        background-color: $brandColor;
-        color: white;
-        font-weight: bold;
-        vertical-align: middle;
-        text-align: center;
-        transition: 0.1s;
-        border: 0;
-        border-radius: 50px;
-        cursor: pointer;
-        white-space: nowrap;
-        &:hover {
-            background-color: mix($brandColor, black, 90%);
-        }
+        @extend .brandColorBtnSC;
     }
     .unFollow {
         background-color: white;
@@ -117,7 +106,6 @@ onMounted(() => {
         padding: 0 15px;
         height: 30px;
         font-size: 16px;
-        font-weight: normal;
     }
 }
 </style>

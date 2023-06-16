@@ -1,10 +1,14 @@
 <template>
     <div>
-        <CmtyCard :cmtyCardList="favoriteCmtyCardList" @regetCmtyCard="reqGetFavoriteCmty" />
+        <CmtyCard
+            parent="favoriteCmty"
+            :cmtyCardList="favoriteCmtyCardList"
+            @regetCmtyCard="reqGetFavoriteCmty"
+        />
     </div>
 </template>
 <script setup lang="ts">
-import CmtyCard from '@/components/CmtyCard/index.vue'
+import CmtyCard from '@/components/Cards/CmtyCard/index.vue'
 import storage from '@/tools/storage'
 import {onMounted, watch} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
@@ -21,11 +25,7 @@ watch(route, (nv: any, ov: any) => {
     reqGetFavoriteCmty()
 })
 onMounted(() => {
-    if (!storage.get('token')) {
-        router.push('/communities/square/全部')
-    } else {
-        reqGetFavoriteCmty()
-    }
+    reqGetFavoriteCmty()
 })
 </script>
 <style scoped lang="scss"></style>

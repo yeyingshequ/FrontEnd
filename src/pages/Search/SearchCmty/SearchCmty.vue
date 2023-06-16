@@ -1,13 +1,13 @@
 <template>
     <div>
-        <CmtyCard :cmtyCardList="searchCmtyCardList" @regetCmtyCard="reqGetSearchCmty" />
+        <CmtyCard parent="searchCmty" :cmtyCardList="searchCmtyCardList" />
     </div>
 </template>
 <script setup lang="ts">
 import storage from '@/tools/storage'
 import {computed, onMounted, reactive, watch} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import CmtyCard from '@/components/CmtyCard/index.vue'
+import CmtyCard from '@/components/Cards/CmtyCard/index.vue'
 import {storeToRefs} from 'pinia'
 import useRouterStore from '@/store/community'
 import useMainStore from '@/store/index'

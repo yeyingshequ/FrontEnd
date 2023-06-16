@@ -1,5 +1,5 @@
 <template>
-    <div class="topComponent" :style="{top: topScroll}">
+    <div class="topComponent">
         <div class="return">
             <returnBtn />
         </div>
@@ -39,13 +39,20 @@
             enter-active-class="animate__fadeIn"
             leave-active-class="animate__fadeOut"
         >
-            <div v-show="parent == 'user' && showBottoms" class="buttons animate__faster">
-                <SearchBtn size="small" />
+            <div v-show="showBottons" ref="buttons" class="buttons animate__faster">
+                <!-- <SearchBtn size="small" /> -->
                 <FollowBtn
                     :userInfo="info"
                     size="small"
                     parent="U"
-                    v-if="userStore.myInfo.userId != Number(route.params.uid)"
+                    v-if="
+                        route.matched[0].name == 'U' &&
+                        userStore.myInfo.userId != Number(route.params.userId)
+                    "
+                />
+                <EditorShowingBtn
+                    :parent="parent"
+                    v-if="route.matched[0].name == 'P' || route.matched[0].name == 'Comment'"
                 />
             </div>
         </transition>
@@ -66,6 +73,8 @@ import FollowBtn from '../littleComponents/FollowBtn/FollowBtn.vue'
 import SearchBtn from '../littleComponents/searchBtn/SearchBtn.vue'
 import useUserStore from '@/store/user'
 import useMainStore from '@/store/index'
+import emitter from '@/tools/mitt'
+import EditorShowingBtn from '../littleComponents/EditorShowingBtn/EditorShowingBtn.vue'
 const mainStore = useMainStore()
 const userStore = useUserStore()
 const indexStore = useIndexStore()
@@ -77,49 +86,39 @@ let parent = computed(() => {
 let info = computed(() => {
     return props.info
 })
-let topScroll = computed(() => {
-    return mainStore.topScroll
-})
 
 const router = useRouter()
-let showBottoms = ref()
+let showBottons = ref()
+let buttons = ref()
+function showEditor() {
+    console.log(111)
+    emitter.emit('showEditor', 'postMain')
+}
 onMounted(() => {
     //console.log('topInfo:', info)
-    /* window.addEventListener('scroll', function () {
-        indexStore.topBottom == indexStore.tabTop ? console.log('true') : console.log('false')
-        console.log('文档:', document.documentElement.scrollTop)
+    window.addEventListener('scroll', function () {
+        //indexStore.topBottom == indexStore.tabTop ? //console.log('true') : //console.log('false')
+        //console.log('文档:', document.documentElement.scrollTop)
         if (document.documentElement.scrollTop >= 420) {
-            showBottoms.value = true
+            showBottons.value = true
         } else {
-            showBottoms.value = false
+            showBottons.value = false
         }
-    }) */
+    })
 })
 </script>
 <style lang="scss" scoped>
 .topComponent {
     position: sticky;
     top: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @extend .flexCentreGSC;
     background-color: white;
     width: 100%;
     height: 50px;
-    border-bottom: 1px solid #f1f1f1;
+    //border-bottom: 1px solid #f1f1f1;
     cursor: pointer;
     z-index: 1;
-    &::before {
-        content: '';
-        position: absolute;
-        z-index: -1;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        -webkit-backdrop-filter: blur(10px);
-        backdrop-filter: blur(10px);
-    }
+
     .return {
         position: absolute;
         height: 40px;
@@ -130,9 +129,7 @@ onMounted(() => {
     .barOrPostRouter {
         padding-left: 5px;
         padding-right: 10px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        @extend .flexCentreGSC;
         height: 40px;
         border-radius: 50px;
         cursor: pointer;
@@ -143,9 +140,7 @@ onMounted(() => {
         }
 
         .icon {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            @extend .flexCentreGSC;
             margin-right: 5px;
             width: 30px;
             height: 30px;
@@ -159,9 +154,16 @@ onMounted(() => {
         }
 
         .barName {
+            max-width: 150px;
             span {
                 //font-weight: bold;
+                /*单行省略 */
                 line-height: 35px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 1;
+                -webkit-box-orient: vertical;
             }
         }
     }
@@ -174,6 +176,12 @@ onMounted(() => {
             //line-height: 40px;
             font-size: 20px;
             font-weight: bold;
+            line-height: 35px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
         }
     }
     .buttons {

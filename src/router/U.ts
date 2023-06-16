@@ -1,43 +1,44 @@
-import U from '@/pages/U/U.vue'
-import userPost from '@/pages/U/userPost/userPost.vue'
-import userCmty from '@/pages/U/userCmty/userCmty.vue'
-import followers from '@/pages/U/followers/followers.vue';
-import following from '@/pages/U/following/following.vue';
 
 /* 帖子模板 */
 export default {
   name: 'U',
-  path: '/u/:uid',
-  component: U,
+  path: '/u/:userId',
+  component: () => import('@/pages/U/U.vue'),
   meta: { hasTop: true },
   redirect: (to: any) => {
-    console.log("to:", to);
-    return '/u/' + to.params.uid + '/home'
+    //console.log("to:", to);
+    return '/u/' + to.params.userId + '/home'
   },
   children: [
     {
       name: 'UserPost',
       path: 'home',
-      component: userPost,
-      meta: { hasTop: true }
+      component: () => import('@/pages/U/userPost/userPost.vue'),
+      meta: { hasTop: true, parent: 'U' }
     },
     {
       name: 'UserCmty',
       path: 'community',
-      component: userCmty,
-      meta: { hasTop: true }
+      component: () => import('@/pages/U/userCmty/userCmty.vue'),
+      meta: { hasTop: true, parent: 'U' }
     },
     {
       name: 'Followers',
       path: 'followers',
-      component: followers,
-      meta: { hasTop: true }
+      component: () => import('@/pages/U/followers/followers.vue'),
+      meta: { hasTop: true, parent: 'U' }
     },
     {
       name: 'Following',
       path: 'following',
-      component: following,
-      meta: { hasTop: true }
+      component: () => import('@/pages/U/following/following.vue'),
+      meta: { hasTop: true, parent: 'U' }
     },
+    {
+      name: 'UserComment',
+      path: 'comment',
+      component: () => import('@/pages/U/userComment/userComment.vue'),
+      meta: { hasTop: true, parent: 'U' }
+    }
   ]
 }

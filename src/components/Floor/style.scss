@@ -1,0 +1,15 @@
+.imageListSC {
+    width: 100%;
+
+    overflow: hidden;
+    .img {
+        margin-top: 10px;
+        img {
+            width: 100%;
+            max-height: 850px;
+            object-fit: cover;
+            border: 1px solid lightgray;
+            border-radius: 20px;
+        }
+    }
+}

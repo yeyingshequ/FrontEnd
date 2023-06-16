@@ -18,11 +18,13 @@ export const updateUserUser = (params: object) => request({ url: '/updateuseruse
 export const getMyInfo = () => request.get('/myinfo')
 
 //修改密码接口
-export const updatePasswordApi = (params: object) =>
+export const updatePassword = (params: object) =>
   request({ url: '/updatepassword', method: 'post', data: params })
 
 //更新用户信息
 export const updateUserInfo = (params: object) => request({ url: '/updateuserinfo', method: 'post', data: params })
+export const updateUserAvatar = (params: object) => request({ url: '/updateuseravatar', method: 'post', data: params })
+export const updateUserCover = (params: object) => request({ url: '/updateusercover', method: 'post', data: params })
 //获取用户卡片
 export const getUserCard = (params: object) => request({ url: '/usercard', method: 'get', params: params })
 export const getUserCardForV = (params: object) => request({ url: '/usercardforv', method: 'get', params: params })
@@ -32,10 +34,12 @@ export const getUserCardForV = (params: object) => request({ url: '/usercardforv
 export const getCmtyInfo = (params: object) => request({ url: '/cmtyinfo', method: 'get', params })
 export const getCmtyInfoForV = (params: object) => request({ url: '/cmtyinfoforv', method: 'get', params })
 
-//获取用户的帖子卡片
+//获取用户的社区卡片
 export const getCmtyCard = (params: object) => request({ url: '/cmtycard', method: 'get', params })
 export const getCmtyCardForV = (params: object) => request({ url: '/cmtycardforv', method: 'get', params })
 
+//通过名字获取社区id
+export const getCmtyIdByName = (params: object) => request({ url: '/getcmtyidbyname', method: 'get', params })
 //创建社区
 export const createCmty = (params: object) => request({ url: '/createcmty', method: 'post', data: params })
 
@@ -86,22 +90,31 @@ export const getNotiCard = (params: object) => request({ url: '/noticard', metho
 
 //发主题帖
 export const sendPost = (params: object) => request({ url: '/sendpost', method: 'post', data: params })
+export const sendPostForV = (params: object) => request({ url: '/sendpostforv', method: 'post', data: params })
 
 //发评论
 export const sendComment = (params: object) => request({ url: '/sendcomment', method: 'post', data: params })
-
+export const sendCommentForV = (params: object) => request({ url: '/sendcommentforv', method: 'post', data: params })
 //发回复
 export const sendReply = (params: object) => request({ url: '/sendreply', method: 'post', data: params })
-
-//收藏帖子
-export const savePost = (params: object) => request({ url: '/updateuserpost', method: 'post', data: params })
+export const sendReplyForV = (params: object) => request({ url: '/sendreplyforv', method: 'post', data: params })
+/* //收藏帖子
+export const savePost = (params: object) => request({ url: '/updateuserpost', method: 'post', data: params }) */
 
 //屏蔽帖子
 export const hidePost = (params: object) => request({ url: '/hidepost', method: 'post', data: params })
-
+//更新帖子,评论和回复
+export const updatePost = (params: object) => request({ url: '/updatepost', method: 'post', data: params })
+export const updateComment = (params: object) => request({ url: '/updatecomment', method: 'post', data: params })
+export const updateReply = (params: object) => request({ url: '/updatereply', method: 'post', data: params })
 //更新用户帖子关系表
 export const updateUserPost = (params: object) => request({ url: '/updateuserpost', method: 'post', data: params })
 //更新用户帖关系表
 export const updateUserComment = (params: object) => request({ url: '/updateusercomment', method: 'post', data: params })
 //更新用户帖关系表
 export const updateUserReply = (params: object) => request({ url: '/updateuserreply', method: 'post', data: params })
+
+
+
+//特殊指令
+export const specialOrder = () => request({ url: '/specialorder', method: 'post' })

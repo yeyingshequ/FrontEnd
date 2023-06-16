@@ -1,7 +1,7 @@
 const scroll = {
     //禁止滚动
     stop() {
-        const mo = function (e: {preventDefault: () => void}) {
+        const mo = function (e: { preventDefault: () => void }) {
             e.preventDefault()
         }
         document.body.style.overflow = 'hidden'
@@ -9,7 +9,7 @@ const scroll = {
     },
     /***取消滑动限制***/
     move() {
-        const mo = function (e: {preventDefault: () => void}) {
+        const mo = function (e: { preventDefault: () => void }) {
             e.preventDefault()
         }
         document.body.style.overflow = '' //出现滚动条

@@ -1,6 +1,6 @@
 <template>
-    <div class="homeContainer">
-        <postCard :postCardList="cmtyPostCardList" />
+    <div>
+        <postCard parent="cmtyPost" :postCardList="cmtyPostCardList" />
     </div>
 </template>
 <script setup lang="ts">
@@ -8,6 +8,8 @@ import {useRoute} from 'vue-router'
 import {onMounted, reactive} from 'vue'
 import {storeToRefs} from 'pinia'
 import usePostStore from '@/store/post'
+import postCard from '@/components/Cards/PostCard/index.vue'
+import BottomLoading from '@/components/littleComponents/Loading/bottomLoading.vue'
 const postStore = usePostStore()
 const route = useRoute()
 
@@ -18,7 +20,6 @@ let params = reactive({
 
 let {cmtyPostCardList} = storeToRefs(postStore)
 function reqGetCmtyPosts(params: {type: string; cmtyId: number}) {
-    //console.log('cmtyId:', typeof params.cmtyId)
     postStore.getPostCard(params)
 }
 onMounted(() => {

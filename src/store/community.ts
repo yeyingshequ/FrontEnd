@@ -3,6 +3,10 @@ import formatTime from "@/tools/formatTime"
 import storage from "@/tools/storage";
 import { isNumber } from "lodash";
 import { defineStore } from "pinia"
+import { IcmtyCard } from "./types";
+import { formatUserCmty } from "@/tools/postTools";
+import useUserStore from "@/store/user"
+const userStore = useUserStore()
 const useCmtyStore = defineStore('cmtyStore', {
   state() {
     return {
@@ -19,45 +23,36 @@ const useCmtyStore = defineStore('cmtyStore', {
         postCount: 0,
         commentCount: 0,
         cmtyReplyCount: 0,
+        totalPostingCount: 0,
         userCmty: {
           isFavorite: false,
           isJoined: false,
+          lastVisitTime: false,
+          joinedTime: false,
+          rankTime: false,
+          favoriteTime: false
         }
       },
       /** 社区卡片列表数据 **/
-      userCmtyCardList: [
-        {
-          cmtyAvatar: '',
-          cmtyDescription: "",
-          cmtyCategory: "",
-          cmtyCover: "",
-          cmtyHots: 0,
-          cmtyId: 1,
-          cmtyJoinedCount: 0,
-          cmtyName: "",
-          cmtyPostsCount: 0,
-          isFavorite: 0,
-          isJoined: 0,
-          lastVisitTime: "",
-        }
-      ],
-      joinedCmtyCardList: [{ cmtyId: 0, cmtyName: '' }],
-      cmtySquareCardList: [],
-      recentCmtyCardList: [],
-      favoriteCmtyCardList: [],
-      searchCmtyCardList: []
+      userCmtyCardList: [] as IcmtyCard[],
+      joinedCmtyCardList: [] as IcmtyCard[],
+      cmtySquareCardList: [] as IcmtyCard[],
+      recentCmtyCardList: [] as IcmtyCard[],
+      favoriteCmtyCardList: [] as IcmtyCard[],
+      searchCmtyCardList: [] as IcmtyCard[],
+      editorCmtyCardList: [] as IcmtyCard[],
     }
   },
   actions: {
     async formatCmtyCard(cmtyCard: Object, result: { status: number, data: Object }) {
-      console.log('社区卡片:', cmtyCard);
-      console.log('数据:', result);
+      //console.log('社区卡片:', cmtyCard);
+      //console.log('数据:', result);
       if (result.status == 0) {
         cmtyCard = result.data
         //console.log("joinedCmtyCardList:", joinedCmtyCardList);
       }
 
-      console.log('更新后的社区卡片:', cmtyCard);
+      //console.log('更新后的社区卡片:', cmtyCard);
 
     },
     async getCmtyInfo(params: { cmtyId: number }) {
@@ -69,13 +64,18 @@ const useCmtyStore = defineStore('cmtyStore', {
         cmtyHots: "",
         cmtyId: 0,
         cmtyJoinedCount: 0,
+        totalPostingCount: 0,
         cmtyName: "",
         postCount: 0,
         commentCount: 0,
         cmtyReplyCount: 0,
         userCmty: {
-          isFavorite: false,
           isJoined: false,
+          isFavorite: false,
+          lastVisitTime: false,
+          joinedTime: false,
+          rankTime: false,
+          favoriteTime: false
         }
       }
       let result
@@ -90,63 +90,41 @@ const useCmtyStore = defineStore('cmtyStore', {
         ? result.data.userCmty = result.data.userCmty[0]
         : result.data.userCmty = {
           isFavorite: false,
-          isJoined: false
+          isJoined: false,
+          lastVisitTime: false,
+          joinedTime: false,
+          rankTime: false,
+          favoriteTime: false
         }
       this.cmtyInfo = result.data
       return result.message
     },
-    async getCmtyCard(params: { type: string, userId?: number, keyWords?: string }) {
-      //console.log("getCmtyCard");
-      switch (params.type) {
-        case "search":
-          this.searchCmtyCardList = [];
-          break;
-        case "cmtySquare":
-          this.cmtySquareCardList = []
-          break;
-        case "joined":
-          this.joinedCmtyCardList = []
-          break;
-        case "favorite":
-          this.favoriteCmtyCardList = []
-          break;
-        case "recent":
-          this.recentCmtyCardList = []
-          break;
-        case "user":
-          this.userCmtyCardList = []
-          break;
-      }
+    async getCmtyCard(params: { type: string, userId?: number, keyWords?: string, extraCondition?: string }) {
+      //console.log("params:", params);
+
       let result
-      if (storage.get("token")) {
+      if (userStore.myInfo.userId || storage.get('token')) {
         result = await getCmtyCard(params);
       } else {
         result = await getCmtyCardForV(params)
       }
 
       let card = result.data
-      if (params.type == "recent") {
-        for (let i = 0; i < card.length; i++) {
-          card[i].community.userCmty = [{ isJoined: card[i].isJoined, isFavorite: card[i].isFavorite, lastVisitTime: card[i].lastVisitTime }];
-          delete card[i].isJoined;
-          delete card[i].isFavorite;
-          delete card[i].lastVisitTime;
-          card[i] = card[i].community
-        }
-        console.log(card);
 
-
-      }
       for (let i = 0; i < card.length; i++) {
         card[i].userCmty
           ? (card[i].userCmty = card[i].userCmty[0])
           : (card[i].userCmty = {
             isFavorite: false,
-            isJoined: false
+            isJoined: false,
+            lastVisitTime: false,
+            joinedTime: false,
+            rankTime: false,
+            favoriteTime: false
           })
       }
-      console.log("社区卡片:", card);
-      console.log(params.type);
+      //console.log("社区卡片:", card);
+      //console.log(params.type);
 
       switch (params.type) {
         case "search":
@@ -156,20 +134,42 @@ const useCmtyStore = defineStore('cmtyStore', {
           this.cmtySquareCardList = card
           break;
         case "joined":
-          this.joinedCmtyCardList = card
+          this.joinedCmtyCardList = formatUserCmty(card)
           break;
         case "favorite":
-          this.favoriteCmtyCardList = card
+          this.favoriteCmtyCardList = formatUserCmty(card)
           break;
         case "recent":
-          this.recentCmtyCardList = card
+          this.recentCmtyCardList = formatUserCmty(card)
           break;
         case "user":
-          this.userCmtyCardList = card
+          this.userCmtyCardList = formatUserCmty(card)
+          break;
+        case "moreSearch":
+          this.searchCmtyCardList.push(...card);
+          break;
+        case "moreCmtySquare":
+          this.cmtySquareCardList.push(...card)
+          break;
+        case "moreJoined":
+          this.joinedCmtyCardList.push(...formatUserCmty(card))
+          break;
+        case "moreFavorite":
+          this.favoriteCmtyCardList.push(...formatUserCmty(card))
+          break;
+        case "moreRecent":
+          this.recentCmtyCardList.push(...formatUserCmty(card))
+          break;
+        case "moreUser":
+          this.userCmtyCardList.push(...formatUserCmty(card))
+          break;
+        case "editor":
+          this.editorCmtyCardList = formatUserCmty(card)
           break;
       }
+      return card
 
-    },
+    }
   },
 
 

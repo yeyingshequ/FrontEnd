@@ -1,0 +1,1 @@
+import Cropper from 'cropperjs';

@@ -1,10 +1,9 @@
-import C from '@/pages/C/C.vue'
-import CmtyHome from '@/pages/C/CmtyHome/index.vue'
+
 /* 社区模板 */
 export default {
   name: 'C',
   path: '/c/:cmtyId',
-  component: C,
+  component: () => import('@/pages/C/C.vue'),
   redirect: (to: any) => {
     //console.log("to:", to);
     return '/c/' + to.params.cmtyId + '/home'
@@ -13,7 +12,7 @@ export default {
     {
       name: 'CmtyHome',
       path: 'home',
-      component: CmtyHome,
+      component: () => import('@/pages/C/CmtyHome/index.vue'),
       meta: { hasTop: true }
     }
   ]

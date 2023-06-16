@@ -1,6 +1,6 @@
 <template>
     <div>
-        <PostCard v-if="searchPostCardList" :postCardList="searchPostCardList" />
+        <PostCard parent="searchPost" :postCardList="searchPostCardList" />
     </div>
 </template>
 <script setup lang="ts">
@@ -9,6 +9,7 @@ import usePostStore from '@/store/post'
 import {storeToRefs} from 'pinia'
 import {useRoute} from 'vue-router'
 import useMainStore from '@/store/index'
+import PostCard from '@/components/Cards/PostCard/index.vue'
 const mainStore = useMainStore()
 const route = useRoute()
 const postStore = usePostStore()

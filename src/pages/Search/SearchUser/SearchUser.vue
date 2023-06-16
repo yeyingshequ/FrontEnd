@@ -1,6 +1,6 @@
 <template>
     <div>
-        <UserCard :userCardList="searchUserCardList" />
+        <UserCard parent="searchUser" :userCardList="searchUserCardList" />
     </div>
 </template>
 <script setup lang="ts">
@@ -21,7 +21,7 @@ watch(
     searchUserCardList,
     (ov, nv) => {
         nextTick(() => {
-            console.log('搜索用户卡片:', searchUserCardList.value)
+            //console.log('搜索用户卡片:', searchUserCardList.value)
         })
     },
     {immediate: true}

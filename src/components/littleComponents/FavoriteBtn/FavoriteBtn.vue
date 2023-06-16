@@ -31,6 +31,11 @@
 import {updateUserCmty} from '@/api'
 import {computed, ref, toRefs} from 'vue'
 import {useRoute} from 'vue-router'
+import useCmtyStore from '@/store/community'
+import useMainStore from '@/store/index'
+import {main} from '@popperjs/core'
+const mainStore = useMainStore()
+const cmtyStore = useCmtyStore()
 const route = useRoute()
 /**特别关注的图标类型以及颜色**/
 let favoriteClass = ref('icon-favorite')
@@ -53,14 +58,21 @@ async function reqAddToFavoriteCmty(
     cmty: {userCmty: {isFavorite: boolean}},
     params: {cmtyId: number; isFavorite: number}
 ) {
+    let result
     if (!params.isFavorite) {
-        let result = await updateUserCmty({request: 'addToFavorite', ...params})
-        cmtyInfo.value.userCmty.isFavorite = true
+        result = await updateUserCmty({request: 'addToFavorite', ...params})
+        if (!result.status) {
+            cmtyInfo.value.userCmty.isFavorite = true
+        }
     } else {
-        let result = await updateUserCmty({request: 'removeFromFavorite', ...params})
-        cmtyInfo.value.userCmty.isFavorite = false
+        result = await updateUserCmty({request: 'removeFromFavorite', ...params})
+        if (!result.status) {
+            cmtyInfo.value.userCmty.isFavorite = false
+        }
     }
+    //console.log(result.message)
 
+    mainStore.setShowLoginScreen(result)
     /* regetRouteInfo() */
 }
 </script>

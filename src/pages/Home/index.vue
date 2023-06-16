@@ -1,29 +1,29 @@
 <template>
-    <div>
-        <PostCard v-if="homePostCardList" :postCardList="homePostCardList" />
+    <div ref="component">
+        <PostCard parent="homePost" :postCardList="homePostCardList" />
     </div>
 </template>
 <script setup lang="ts">
 import {storeToRefs} from 'pinia'
 import formatTime from '@/tools/formatTime'
-import {onMounted, onUnmounted} from 'vue'
+import PostCard from '@/components/Cards/PostCard/index.vue'
+import {onBeforeUnmount, onMounted, onUnmounted, ref} from 'vue'
+
 import emitter from '@/tools/mitt'
 import usePostStore from '@/store/post'
 const postStore = usePostStore()
 let {homePostCardList} = storeToRefs(postStore)
-console.log('homePostCardList:', homePostCardList.value)
+//console.log('homePostCardList:', homePostCardList.value)
 async function reqGetHomePostCard() {
     postStore.getPostCard({type: 'home'})
 }
 emitter.on('regetHomeInfo', () => {
     reqGetHomePostCard()
 })
+emitter.off('regetHomeInfo')
 
 onMounted(() => {
     reqGetHomePostCard()
-})
-onUnmounted(() => {
-    emitter.off('regetHomeInfo')
 })
 </script>
 
@@ -46,9 +46,7 @@ onUnmounted(() => {
         /* background-color: chartreuse; */
 
         .iconWrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            @extend .flexCentreGSC;
             width: 90px;
             height: 70px;
 

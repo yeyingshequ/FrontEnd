@@ -1,43 +1,56 @@
 <template>
     <div class="avatarComponent">
-        <img :src="Avatar" alt="" @click.stop="pushRouter" />
+        <img :src="avatar" alt="" :style="{width: size, height: size}" @click.stop="pushRouter" />
     </div>
 </template>
 <script setup lang="ts">
-import {computed} from 'vue'
+import {computed, onMounted, ref, toRefs} from 'vue'
 import {useRouter} from 'vue-router'
 const router = useRouter()
 
-const props = defineProps(['Type', 'Info', 'Id', 'Avatar'])
-let Type = computed(() => {
-    return props.Type
+const props = defineProps(['type', 'info', 'id', 'avatar', 'size'])
+let type = computed(() => {
+    return props.type
 })
-let Info = computed(() => {
-    return props.Info
-})
-
-let Id = computed(() => {
-    return props.Id
+let info = computed(() => {
+    return props.info
 })
 
-let Avatar = computed(() => {
-    return props.Avatar
+let id = computed(() => {
+    return props.id
+})
+
+let avatar = computed(() => {
+    return props.avatar
+})
+let size = computed(() => {
+    return props.size ? props.size + 'px' : '50px'
+})
+let avatarSize = ref({
+    width: '30px',
+    height: '30px'
 })
 
 function pushRouter() {
-    switch (Type.value) {
+    switch (type.value) {
         case 'community':
-            router.push(`/c/${Id}`)
+            router.push(`/c/${id.value}`)
             break
 
         case 'user':
-            router.push(`/u/${Id}`)
+            router.push(`/u/${id.value}`)
     }
 }
+onMounted(() => {})
 </script>
 <style lang="scss" scoped>
 .avatarComponent {
+    /* width: 50px;
+    height: 50px; */
     img {
+        border-radius: 50%;
+        width: 100%;
+        height: 100%;
     }
 }
 </style>

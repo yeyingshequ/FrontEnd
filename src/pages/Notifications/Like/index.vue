@@ -1,13 +1,10 @@
 <template>
     <div>
-        <NotiCard v-if="likeNotiCardList[0].id" parent="like" :notiCardList="likeNotiCardList" />
-        <div class="msg" v-if="!likeNotiCardList[0].id">
-            <h1>还没收到任何点赞通知</h1>
-        </div>
+        <NotiCard parent="likeNoti" :notiCardList="likeNotiCardList" />
     </div>
 </template>
 <script setup lang="ts">
-import NotiCard from '@/components/NotiCard/index.vue'
+import NotiCard from '@/components/Cards/NotiCard/index.vue'
 import {storeToRefs} from 'pinia'
 import usePostStore from '@/store/post'
 import {onMounted} from 'vue'
@@ -18,7 +15,7 @@ async function reqGetLikeNotiCard() {
 }
 
 onMounted(() => {
-    console.log('加载点赞通知')
+    //console.log('加载点赞通知')
     reqGetLikeNotiCard()
 })
 </script>

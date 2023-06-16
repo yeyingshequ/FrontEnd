@@ -18,9 +18,9 @@ const useLoginStore = defineStore('login', {
   },
   actions: {
     async login(params: { username: string, password: string }) {
-      console.log('正在提交登录请求')
+      //console.log('正在提交登录请求')
       let result = await loginApi(params)
-      console.log("result:", result)
+      //console.log("result:", result)
       if (result.status === 0) {
         this.token = result.data.token
         this.UID = result.data.userId

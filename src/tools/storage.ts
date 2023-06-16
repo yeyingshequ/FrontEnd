@@ -2,17 +2,17 @@
 
 
 const storage = {
-  set(key:string, value:string) {
+  set(key: string, value: string) {
     localStorage.setItem(key, JSON.stringify(value))
     // localStorage.key = value;
     // localStorage[key] = value;
   },
-  get(key:string) {
-    const result=localStorage.getItem(key)
-    if(result) return JSON.parse(result)
+  get(key: string) {
+    const result = localStorage.getItem(key)
+    if (result) return JSON.parse(result)
   },
 
-  remove(key:string) {
+  remove(key: string) {
     localStorage.removeItem(key)
   },
   /*removeAll() {

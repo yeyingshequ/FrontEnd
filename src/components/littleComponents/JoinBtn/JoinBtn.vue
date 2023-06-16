@@ -25,7 +25,11 @@
 <script setup lang="ts">
 import {updateUserCmty} from '@/api'
 import emitter from '@/tools/mitt'
+import useMainStore from '@/store/index'
 import {computed} from 'vue'
+import useCmtyStore from '@/store/community'
+const mainStore = useMainStore()
+const cmtyStore = useCmtyStore()
 
 let props = defineProps(['cmtyInfo', 'size', 'parent'])
 let cmtyInfo = computed(() => {
@@ -34,31 +38,22 @@ let cmtyInfo = computed(() => {
 let size = computed(() => {
     return props.size
 })
-let parent = computed(() => {
-    return props.parent
-})
-function checkUserCmty(userCmty: {isJoined: boolean}) {
-    return userCmty ? userCmty.isJoined : null
-}
+
 async function reqJoinCmty(params: {cmtyId: number; isJoined: boolean}) {
-    console.log('参数:', params)
-
+    //console.log('参数:', params)
+    let result
     if (!params.isJoined) {
-        await updateUserCmty({request: 'join', ...params})
-        cmtyInfo.value.userCmty.isJoined = true
+        result = await updateUserCmty({request: 'join', ...params})
+        if (!result.status) {
+            cmtyInfo.value.userCmty.isJoined = true
+        }
     } else {
-        await updateUserCmty({request: 'unjoin', ...params})
-        //joinCmtyMsg.value = result.data.message
-        cmtyInfo.value.userCmty.isJoined = false
+        result = await updateUserCmty({request: 'unjoin', ...params})
+        if (!result.status) {
+            cmtyInfo.value.userCmty.isJoined = false
+        }
     }
-    //console.log(parent.value)
-
-    /* switch (parent.value) {
-        case 'C':
-            emitter.emit('reqGetCmtyInfo')
-        case 'CmtyCard':
-            emitter.emit('regetCmtyCard')
-    } */
+    mainStore.setShowLoginScreen(result)
 }
 //console.log('joinBtn:', cmtyInfo.value.userCmty.isJoined as boolean)
 </script>

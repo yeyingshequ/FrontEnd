@@ -8,6 +8,7 @@
                 <input
                     v-model="updateparams.oldPassword"
                     placeholder="旧密码"
+                    autocomplete="off"
                     type="password"
                     name=""
                     id=""
@@ -18,6 +19,7 @@
                 <input
                     v-model="updateparams.newPassword"
                     placeholder="新密码"
+                    autocomplete="off"
                     type="password"
                     name=""
                     id=""
@@ -27,6 +29,7 @@
                 <input
                     v-model="updateparams.confirmPassword"
                     placeholder="确认密码"
+                    autocomplete="off"
                     type="password"
                     name=""
                     id=""
@@ -34,48 +37,38 @@
             </div>
         </div>
         <p>{{ updateMessage }}</p>
-        <button type="submit">提 交</button>
-        <!-- @click="getUpdate(updateparams)" -->
+        <button type="submit" @click="reqUpdatePassword(updateparams)">提 交</button>
     </div>
 </template>
-<script setup lang="ts"></script>
-<script>
-import {updatePasswordApi} from '@/api'
-import {reactive, ref} from 'vue'
+<script setup lang="ts">
+import {updatePassword} from '@/api'
+import {showMessage} from '@/tools'
+import {nextTick, onMounted, reactive, ref} from 'vue'
+import useMainStore from '@/store/index'
+const mainStore = useMainStore()
 let updateMessage = ref('')
 let updateparams = reactive({
     oldPassword: '',
     newPassword: '',
     confirmPassword: ''
 })
-
-export default {
-    name: 'password',
-    data() {
-        return {
-            updateMessage: '',
-            updateparams: {
-                oldPassword: '',
-                newPassword: '',
-                confirmPassword: ''
-            },
-            rule: {
-                oldPassword: [
-                    {require: true, message: '请填写所有的信息(前端)', trigger: 'blur'},
-                    {min: 2, max: 10, message: '用户名长度必须在2-9个字符(前端)'}
-                ],
-                newPassword: [{}, {}]
-            }
-        }
-    },
-    methods: {}
+async function reqUpdatePassword(params: object) {
+    let result = await updatePassword(params)
+    showMessage(result.message, result.status)
+    nextTick(() => {
+        mainStore.topLevelRouteKey++
+    })
 }
+
+onMounted(() => {
+    updateparams.oldPassword = ''
+})
 </script>
 
 <style scoped lang="scss">
 .passwordContainer {
     position: relative;
-    width: 500px;
+    //width: 100%;
     padding: 0 20px;
 
     .topTitle {
@@ -120,6 +113,11 @@ export default {
         outline: none;
         border: 0;
         cursor: pointer;
+        &:hover {
+            background-color: $onHoverDark;
+        }
     }
+}
+@media (max-width: 717px) {
 }
 </style>

@@ -1,6 +1,5 @@
 <template>
-    <div class="tabs" ref="tabScroll">
-        <!--  :class="{hasTop: checkHasTop() == true}" -->
+    <div class="tabs" :class="{hasTop: checkHasTop()}" ref="tabScroll">
         <div v-for="tab in tabs" :key="tab.id" class="router" @click="routeJump(tab.router)">
             <span :class="{actived: tab.routeName == route.name /* || tab.default */}"
                 >{{ tab.Name }}
@@ -29,7 +28,7 @@ let tabs = computed(() => {
 watch(
     props.tabs,
     (nv) => {
-        console.log('tab nv', nv)
+        //console.log('tab nv', nv)
     },
     {deep: true}
 )
@@ -41,7 +40,7 @@ function checkHasTop(): boolean {
     return route.meta.hasTop ? true : false
 }
 function routeJump(link: string) {
-    console.log('路由连接:', link)
+    //console.log('路由连接:', link)
 
     router.push(link)
 }
@@ -52,14 +51,14 @@ onMounted(() => {
     /* if (route.meta.hasTop) {
         window.addEventListener('scroll', function () {
             let distance = tabScroll.value.getBoundingClientRect().top
-            console.log('distance:', distance)
-            console.log('parentTop:', mainStore.parentTop)
+            //console.log('distance:', distance)
+            //console.log('parentTop:', mainStore.parentTop)
             let direct = mainStore.parentTop - lastParentTop.value
              if (direct > 0) {
-                console.log('往上')
+                //console.log('往上')
                 tabStyle.value = {position: 'relative'}
             } else {
-                console.log('往下')
+                //console.log('往下')
                 tabStyle.value = {top: '60px', position: 'stiky'}
             }
             lastParentTop.value = mainStore.parentTop
@@ -72,8 +71,7 @@ onMounted(() => {
             } 
         })
     } */
-
-    console.log('tab:', tabs.value)
+    //console.log('tab:', tabs.value)
 })
 </script>
 <style scoped lang="scss">
@@ -105,6 +103,7 @@ onMounted(() => {
         span {
             position: absolute;
             line-height: 55px;
+            white-space: nowrap;
 
             div {
                 bottom: 0;

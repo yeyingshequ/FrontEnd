@@ -180,7 +180,7 @@ async function setLikeCount() {
             }
         case 'commentMain':
             postStore.commentInfo.likeCount++
-            console.log(postStore.commentInfo.likeCount)
+            //console.log(postStore.commentInfo.likeCount)
     } */
 }
 </script>

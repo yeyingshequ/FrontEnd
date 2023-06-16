@@ -1,15 +1,17 @@
 <template>
-    <div>
-        <PostCard :postCardList="discoverPostCardList" />
+    <div ref="component">
+        <PostCard parent="discoverPost" :postCardList="discoverPostCardList" />
     </div>
 </template>
 <script setup lang="ts">
-import {onMounted, watch} from 'vue'
+import {onBeforeUnmount, onMounted, ref, watch} from 'vue'
 import usePostStore from '@/store/post'
 import {storeToRefs} from 'pinia'
 import {useRoute} from 'vue-router'
-import PostCard from '@/components/PostCard/index.vue'
+import PostCard from '@/components/Cards/PostCard/index.vue'
 import {nextTick} from 'process'
+import BottomLoading from '@/components/littleComponents/Loading/bottomLoading.vue'
+
 const route = useRoute()
 const postStore = usePostStore()
 let {discoverPostCardList} = storeToRefs(postStore)
@@ -17,9 +19,7 @@ watch(
     discoverPostCardList,
     (ov, nv) => {
         nextTick(() => {
-            console.log('更新')
-
-            console.log('discoverPostCardList:', discoverPostCardList.value)
+            //console.log('discoverPostCardList:', discoverPostCardList.value)
         })
     },
     {immediate: true}
@@ -31,6 +31,7 @@ function reqGetDiscoverPostCard() {
         userId: undefined
     })
 }
+
 onMounted(() => {
     reqGetDiscoverPostCard()
 })
@@ -54,9 +55,7 @@ onMounted(() => {
         /* background-color: chartreuse; */
 
         .iconWrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            @extend .flexCentreGSC;
             width: 80px;
             height: 70px;
 

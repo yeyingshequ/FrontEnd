@@ -2,7 +2,7 @@
     <div ref="wrapper">
         <Top :info="userInfo" parent="user" />
         <div class="cover">
-            <img :src="userInfo.cover || ''" alt="" />
+            <img :src="userInfo.cover || mainStore.defaultCover" />
         </div>
         <!-- 当搜索的用户不存在时,展示这个 -->
         <div class="uncreated" v-if="message == '这是一个不存在的用户'">
@@ -14,9 +14,15 @@
             <h1>{{ message }}</h1>
         </div>
         <div class="profile" v-if="status == 0">
-            <div class="iconWrapper">
+            <div
+                class="iconWrapper"
+                @click="
+                    mainStore.reqDisplayImg(userInfo.avatar || mainStore.defaultAvatar, 'avatar')
+                "
+            >
                 <div class="icon">
-                    <img :src="userInfo.avatar || defaultAvatar" alt="" />
+                    <div class="mask"></div>
+                    <img :src="userInfo.avatar || mainStore.defaultAvatar" alt="" />
                 </div>
             </div>
             <div class="aboutUser">
@@ -25,11 +31,17 @@
                 </div>
                 <div class="uid">UID: {{ userInfo.userId }}</div>
                 <div class="followshipCard">
-                    <div class="followers" @click="router.push(`/u/${route.params.uid}/followers`)">
+                    <div
+                        class="followers"
+                        @click="router.push(`/u/${route.params.userId}/followers`)"
+                    >
                         <span class="number">{{ userInfo.followerCount }}</span>
                         <span class="unit"> 关注者</span>
                     </div>
-                    <div class="following" @click="router.push(`/u/${route.params.uid}/following`)">
+                    <div
+                        class="following"
+                        @click="router.push(`/u/${route.params.userId}/following`)"
+                    >
                         <span class="number">{{ userInfo.followingCount }}</span>
                         <span class="unit"> 正在关注 </span>
                     </div>
@@ -38,31 +50,42 @@
                     <span>{{ userInfo.bio }}</span>
                 </div>
             </div>
-            <div
+            <button
                 class="updateInfo"
-                v-if="userStore.myInfo.userId == Number(route.params.uid)"
+                v-if="userStore.myInfo.userId == Number(route.params.userId)"
                 @click="showUpdateInfo = true"
             >
                 <span> 编辑个人信息 </span>
-            </div>
-            <div class="aboutFollow" v-if="userStore.myInfo.userId != Number(route.params.uid)">
-                <SearchBtn size="default" />
+            </button>
+            <button
+                class="updateInfo"
+                v-if="
+                    userStore.myInfo.userId == Number(route.params.userId) &&
+                    userStore.myInfo.userId == 1
+                "
+                @click="reqSpecialOrder()"
+            >
+                <span> 特殊指令 </span>
+            </button>
+
+            <div class="aboutFollow" v-if="userStore.myInfo.userId != Number(route.params.userId)">
+                <!-- <SearchBtn size="default" /> -->
                 <FollowBtn :userInfo="userInfo" size="large" parent="user" />
             </div>
         </div>
         <updateUserInfo v-if="showUpdateInfo" @closeUpdate="closeUpdateInfo" />
         <Tab
             v-if="
-                (status == 0 && route.path == `/u/${route.params.uid}/home`) ||
-                route.path == `/u/${route.params.uid}/community`
+                (status == 0 && route.path == `/u/${route.params.userId}/home`) ||
+                route.path == `/u/${route.params.userId}/community` ||
+                route.path == `/u/${route.params.userId}/comment`
             "
             :tabs="tabs"
         />
         <Tab
-            ref="tab"
             v-if="
-                (status == 0 && route.path == `/u/${route.params.uid}/following`) ||
-                route.path == `/u/${route.params.uid}/followers`
+                (status == 0 && route.path == `/u/${route.params.userId}/following`) ||
+                route.path == `/u/${route.params.userId}/followers`
             "
             :tabs="followTab"
         />
@@ -70,9 +93,9 @@
     </div>
 </template>
 <script setup lang="ts" name="xxx">
-import Post from '../../components/PostCard/index.vue'
+import Post from '../../components/Cards/PostCard/index.vue'
 import updateUserInfo from '@/pages/U/updateUserInfo/index.vue'
-import {getUserInfo, updateUserUser} from '@/api'
+import {getUserInfo, updateUserUser, specialOrder} from '@/api'
 import cookie from '@/tools/cookie'
 import Tab from '@/components/Tab/index.vue'
 import {computed, onMounted, onUnmounted, reactive, ref, watch} from 'vue'
@@ -91,26 +114,25 @@ const router = useRouter()
 const userStore = useUserStore()
 const route = useRoute()
 const wrapper = ref()
-const tab = ref()
-const topStyle = computed(() => {
-    return mainStore.topScroll
-})
 
 const tabs = [
     {
         Name: '帖子',
         id: 1,
         routeName: 'UserPost',
-        router: `/u/${route.params.uid}/home`,
-        default: true
+        router: `/u/${route.params.userId}/home`
     },
-    {Name: '评论和回复', id: 2, router: '/communities/favorite', default: false},
+    {
+        Name: '评论和回复',
+        id: 2,
+        routeName: 'UserComment',
+        router: `/u/${route.params.userId}/comment`
+    },
     {
         Name: '关注的吧',
         id: 3,
         routeName: 'UserCmty',
-        router: `/u/${route.params.uid}/community`,
-        default: false
+        router: `/u/${route.params.userId}/community`
     }
 ]
 
@@ -119,26 +141,31 @@ const followTab = [
         Name: '关注者',
         id: 4,
         routeName: 'Followers',
-        router: `/u/${route.params.uid}/followers`,
+        router: `/u/${route.params.userId}/followers`,
         default: true
     },
     {
         Name: '正在关注',
         id: 5,
         routeName: 'Following',
-        router: `/u/${route.params.uid}/following`,
+        router: `/u/${route.params.userId}/following`,
         default: false
     }
 ]
 let {userInfo} = storeToRefs(userStore)
 
 let params = reactive({
-    userId: Number(route.params.uid)
+    userId: Number(route.params.userId)
 })
+async function reqSpecialOrder() {
+    console.log(111)
+    await specialOrder()
+}
 let message = ref('')
 let status = ref(-1)
-let {showUpdateInfo} = storeToRefs(userStore)
-let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg'
+let {showUpdateInfo} = storeToRefs(mainStore)
+let defaultAvatar = ''
+let defaultCover = ref('https://i.328888.xyz/2023/02/20/XSyxy.jpeg')
 function closeUpdateInfo() {
     showUpdateInfo.value = false
 }
@@ -148,41 +175,22 @@ async function reqGetUserInfo(params: object) {
         message.value = res.message
         status.value = res.status
     })
-    console.log('用户信息:', userInfo.value)
-}
-async function reqFollowUser(params: {objUserId: number; isFollowing: number; userId: number}) {
-    if (!params.isFollowing) {
-        let result = await updateUserUser({request: 'follow', objUserId: params.objUserId})
-        message.value = result.data.message
-    } else {
-        let result = await updateUserUser({request: 'unFollow', objUserId: params.objUserId})
-        message.value = result.data.message
-    }
-    /* if (userStore.userInfo.isFollowing) {
-        userStore.userInfo.isFollowing = 0
-    } else {
-        userStore.userInfo.isFollowing = 1
-    } */
-    reqGetUserInfo({userId: params.userId})
+    //console.log('用户信息:', userInfo.value)
 }
 
 let UID = computed(() => {
     return userStore.myInfo.userId
 })
 /* watch(route, (nv, ov) => {
-    //console.log('nv:', nv.params.uid)
+    //console.log('nv:', nv.params.userId)
     //console.log(params.userId)
-    if (Number(nv.params.uid) != params.userId) {
-        params.userId = Number(nv.params.uid)
+    if (Number(nv.params.userId) != params.userId) {
+        params.userId = Number(nv.params.userId)
         reqGetUserInfo(params)
     }
 }) */
 let parentTop = ref('')
 onMounted(() => {
-    window.addEventListener('scroll', function () {
-        //console.log('wrapper:', wrapper.value.getBoundingClientRect().top)
-        mainStore.parentTop = wrapper.value.getBoundingClientRect().top
-    })
     //console.log('userInfo:', userInfo)
     reqGetUserInfo(params)
     //前端个人主页
@@ -197,11 +205,21 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .wrapper {
-    position: relative;
+    //position: relative;
     .cover {
+        position: relative;
         width: 100%;
-        height: 233px;
-        background-color: mix($brandColor, white, 30%);
+        height: 0;
+        padding-bottom: 33.33%; /* 16:9的比例 */
+        overflow: hidden;
+        img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     }
 
     .profile,
@@ -214,29 +232,56 @@ onUnmounted(() => {
         }
 
         .iconWrapper {
-            display: flex;
-            justify-content: center;
+            @extend .flexCentreGSC;
             position: absolute;
-            align-items: center;
+
             left: 20px;
-            top: -71.5px;
-            width: 143px;
-            height: 143px;
+            top: 0%;
+            width: 20.5%;
+            height: 20.5%;
+            padding-bottom: 20.5%; /* 1:1的比例 */
             background-color: white;
             border-radius: 50%;
             -webkit-user-select: none;
+            overflow: hidden;
+            transform: translate(0, -50%);
+            cursor: pointer;
+            &:hover {
+                .mask {
+                    background-color: rgba(black, 0.1);
+                }
+            }
+            .icon {
+                position: absolute;
+                left: 0;
+                top: 0;
+                margin: 3px;
+                .mask {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    height: 97%;
+                    width: 100%;
+                    border-radius: 50%;
+                    z-index: 2;
+                    transition: 0.1s;
+                    /* &:hover {
+                        background-color: rgba(black, 0.1);
+                    } */
+                }
 
-            img {
-                width: 135px;
-                height: 135px;
-                margin-top: 4px;
-                border-radius: 50%;
+                img {
+                    height: 100%;
+                    width: 100%;
+                    object-fit: cover;
+                    border-radius: 50%;
+                }
             }
         }
 
         .aboutUser {
-            padding: 0 20px;
-            padding-top: 85px;
+            padding-top: 12%;
+            padding-left: 20px;
 
             /* background-color: crimson; */
             .name {
@@ -315,6 +360,7 @@ onUnmounted(() => {
             span {
                 line-height: 40px;
                 font-weight: bold;
+                font-size: medium;
             }
         }
 

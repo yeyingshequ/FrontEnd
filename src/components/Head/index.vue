@@ -4,14 +4,17 @@
             <div class="iconAndSearch">
                 <div class="webicon">
                     <div class="logoWrapper" @click="router.push('/home')">
-                        <img src="https://i.328888.xyz/2023/03/17/LVYgp.png" alt="" />
+                        <img
+                            src="https://yeying-1317878245.cos.ap-nanjing.myqcloud.com/1685677507667_5q6g5346z2v6m1wr5425mu4gf1r"
+                            alt=""
+                        />
                     </div>
                 </div>
                 <div class="searchPart">
                     <div class="search" :class="{searchOnFocus: searchOnFocus === true}">
                         <input
                             type="text"
-                            placeholder="本站官方qq群:123280905"
+                            placeholder="支持游客发帖"
                             v-model="content"
                             ref="searchInput"
                             @focus="searchOnFocus = true"
@@ -24,7 +27,7 @@
                     </div>
                 </div>
                 <div class="navMenu">
-                    <i class="iconfont icon-navMenu"></i>
+                    <i @click="emitter.emit('showMiniNav')" class="iconfont icon-navMenu"></i>
                 </div>
             </div>
         </div>
@@ -36,6 +39,7 @@ import {storeToRefs} from 'pinia'
 import {computed, ref, watch} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import useMainStore from '@/store/index'
+import emitter from '@/tools/mitt'
 let content = ref('')
 const mainStore = useMainStore()
 let keyWords = computed(() => {
@@ -45,6 +49,7 @@ let searchInput = ref()
 const router = useRouter()
 const route = useRoute()
 const cmtyStore = useCmtyStore()
+
 watch(route, () => {
     /* if (route.meta.keepSearchKeyWords) {
 
@@ -67,7 +72,7 @@ let searchOnFocus = ref(false)
     justify-content: center;
     position: fixed;
     top: 0;
-    width: 100%;
+    width: 100vw;
     height: 60px;
     background-color: #ffffff;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
@@ -76,7 +81,7 @@ let searchOnFocus = ref(false)
     .headNav {
         width: 1000px;
         height: 100%;
-        @media (max-width: 1000px) {
+        @media (max-width: 1017px) {
             width: 800px;
         }
 
@@ -90,7 +95,7 @@ let searchOnFocus = ref(false)
                 width: 700px;
             }
             @media (max-width: 717px) {
-                width: 98vw;
+                width: 100%;
             }
             .webicon {
                 display: flex;
@@ -104,9 +109,7 @@ let searchOnFocus = ref(false)
                 transition: 0.5s;
                 flex-shrink: 0;
                 .logoWrapper {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
+                    @extend .flexCentreGSC;
                     height: 50px;
                     width: 50px;
                     transition: 0.1s;
@@ -127,10 +130,9 @@ let searchOnFocus = ref(false)
             }
 
             .searchPart {
-                display: flex;
+                @extend .flexCentreGSC;
                 flex-wrap: wrap;
-                align-items: center;
-                justify-content: center;
+
                 height: 100%;
                 flex-grow: 1;
                 /* background-color: green; */
@@ -148,9 +150,7 @@ let searchOnFocus = ref(false)
                     border: 1px solid white;
 
                     button {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
+                        @extend .flexCentreGSC;
                         height: 50px;
                         width: 65px;
                         font-size: 25px;

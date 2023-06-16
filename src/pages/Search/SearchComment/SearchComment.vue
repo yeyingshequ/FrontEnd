@@ -1,10 +1,10 @@
 <template>
     <div>
-        <CommentCard v-if="searchCommentCardList" />
+        <CommentCard parent="searchComment" :commentCardList="searchCommentCardList" />
     </div>
 </template>
 <script setup lang="ts">
-import CommentCard from '@/components/CommentCard/CommentCard.vue'
+import CommentCard from '@/components/Cards/CommentCard/CommentCard.vue'
 import {storeToRefs} from 'pinia'
 import usePostStore from '@/store/post'
 import useMainStore from '@/store/index'

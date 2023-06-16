@@ -1,85 +1,25 @@
 <template>
     <div class="replyContainer">
-        <div class="replyWrapper" v-for="reply in replies" :key="reply.replyId">
-            <div class="iconPart">
-                <div class="iconWrapper">
-                    <img
-                        @click="$router.push(`/u/${reply.replyAuthorId}`)"
-                        :src="reply.replyAuthor.avatar || defaultAvatar"
-                        alt=""
-                    />
-                </div>
-            </div>
-            <div class="replyPart">
-                <PostMenu
-                    class="postMenu"
-                    :content="reply.content"
-                    father="reply"
-                    :postId="reply.postId"
-                />
-                <div class="replyInfo">
-                    <div class="name">
-                        <span>{{ reply.replyAuthor.username }}</span>
-                    </div>
-                    <div class="timeAndFloor">
-                        <div class="floor">
-                            <span>#{{ reply.replyFloor }}</span>
-                        </div>
-                        <div class="dot">
-                            <span>·</span>
-                        </div>
-                        <span class="pubTime">{{ formatTime(reply.pubTime) }}</span>
-                    </div>
-                </div>
-                <div class="reply">
-                    <span v-if="reply.repliedAuthorId" style="font-weight: bold; color: #606266"
-                        >回复</span
-                    >
-                    <div v-if="reply.repliedAuthorId" class="replyto">
-                        <span @click="router.push(`/u/${reply.repliedAuthor.userId}`)">
-                            {{ reply.repliedAuthor.username }}
-                        </span>
-                    </div>
-                    <span
-                        v-if="reply.repliedAuthorId"
-                        style="
-                            font-weight: bold;
-                            color: #606266;
-                            padding-right: 7px;
-                            word-break: break-all;
-                        "
-                        >:</span
-                    >
-                    <span>{{ reply.content }}</span>
-                </div>
-                <Tools :replyInfo="reply" father="reply" />
-            </div>
-        </div>
+        <SubFloor parent="reply" :SubFloorInfo="commentInfo" />
     </div>
 </template>
 <script setup lang="ts">
-import {computed, onMounted} from 'vue'
+import {onMounted} from 'vue'
 import usePostStore from '@/store/post'
 import {storeToRefs} from 'pinia'
-import Tools from '@/components/Tools/index.vue'
-import formatTime from '@/tools/formatTime'
-import {useRouter} from 'vue-router'
-const router = useRouter()
+import SubFloor from '@/components/Floor/SubFloor.vue'
 const postStore = usePostStore()
 let {commentInfo} = storeToRefs(postStore)
-let replies = computed(() => {
-    return commentInfo.value.reply
-})
-let defaultAvatar = 'https://i.pinimg.com/564x/05/1f/05/051f05110bbcf91b5127f997068f8264.jpg'
+
 onMounted(() => {
-    console.log('回复信息:', replies)
+    //console.log('回复信息:', replies)
 })
 </script>
 <style lang="scss" scoped>
 $iconPartWidth: 90px;
 $containerWidth: 698px;
 .replyContainer {
-    width: $viewPageWidth;
+    width: 100%;
     //border-bottom: 1px solid #f1f1f1;
 
     .replyWrapper {
@@ -91,15 +31,15 @@ $containerWidth: 698px;
         }
 
         .iconPart {
-            width: $iconPartWidth;
+            flex-shrink: 0;
+            width: 90px;
             /* background-color: yellowgreen; */
 
             .iconWrapper {
-                display: flex;
-                justify-content: center;
-                align-items: center;
+                @extend .flexCentreGSC;
                 width: 100%;
                 height: 90px;
+
                 /* background-color: blue; */
 
                 img {
@@ -112,12 +52,12 @@ $containerWidth: 698px;
 
         .replyPart {
             position: relative;
-            width: ($containerWidth - $iconPartWidth);
+            width: 100%;
             border-bottom: 1px solid #f1f1f1;
 
             .postMenu {
                 position: absolute;
-                top: 0;
+                top: 10px;
                 right: 10px;
             }
 

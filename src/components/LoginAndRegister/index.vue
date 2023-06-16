@@ -1,8 +1,10 @@
 <template>
-    <div class="LoginAndRegister" v-if="showLoginScreen">
+    <div class="LoginAndRegister">
         <div class="wrapper" :class="{registerStyle: !isLogin}">
             <i class="iconfont icon-guanbi1" @click="close()"></i>
-            <div class="background" :class="{registerStyle: !isLogin}"></div>
+            <div class="background" :class="{registerStyle: !isLogin}">
+                <img :src="isLogin ? loginCover : registoginCover" alt="" />
+            </div>
             <div class="inputinfo">
                 <!--登录界面-->
                 <div class="login" v-if="isLogin">
@@ -27,7 +29,7 @@
                     </div>
                     <div class="fn">
                         <span @click="isLogin = false"> 注册账号 </span>
-                        <span> 找回密码 </span>
+                        <span> <!-- 找回密码 --> </span>
                     </div>
                 </div>
                 <!--注册界面-->
@@ -72,7 +74,7 @@
                         />
                         <input
                             type="submit"
-                            value="Login"
+                            value="Register"
                             class="submit"
                             @keyup.enter="reqRegister(registerParams)"
                             @click="reqRegister(registerParams)"
@@ -81,7 +83,7 @@
                     </div>
                     <div class="fn">
                         <span @click="isLogin = true"> 登录账号 </span>
-                        <span> 找回密码 </span>
+                        <span> <!-- 找回密码 --> </span>
                     </div>
                 </div>
             </div>
@@ -93,13 +95,14 @@
 import {getMyInfo, registerApi} from '@/api/index.js'
 import scroll from '@/tools/scroll'
 import cookie from '@/tools/cookie'
-import {reactive, ref} from 'vue'
+import {onBeforeUnmount, onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import useLoginStore from '@/store/login'
 import useMainStore from '@/store/index'
 import {storeToRefs} from 'pinia'
 import useUserStore from '@/store/user'
 import {showMessage} from '@/tools'
+import emitter from '@/tools/mitt'
 const userStore = useUserStore()
 const store = useLoginStore()
 const mainStore = useMainStore()
@@ -109,26 +112,33 @@ let loginParams = reactive({
     username: '',
     password: ''
 })
-let loginMessage = ref('')
-let registerMessage = ref('')
-let {showLoginScreen} = storeToRefs(mainStore)
+const loginCover = ref('https://i.328888.xyz/2023/03/31/ilcrSP.jpeg')
+const registoginCover = ref('https://i.328888.xyz/2023/03/10/o63u3.jpeg')
+
 function close() {
-    mainStore.showLoginScreen = false
-    //console.log(this.showLoginScreen)
+    mainStore.close('loginAndRegister')
+    loginParams = {
+        username: '',
+        password: ''
+    }
+    registerParams = {
+        username: '',
+        password: '',
+        confirmPassword: '',
+        email: ''
+    }
 }
 function reqLogin() {
     store.login(loginParams).then(async (result) => {
-        console.log('result:', result)
+        //console.log('result:', result)
         showMessage(result.message, result.status)
         cookie.setCookie('UID', result.userId, 730)
         //关闭登录框
         if (!result.status) {
-            console.log('账号登录成功')
-            setTimeout(() => {
-                close()
-            }, 1000)
-            router.go(0)
-            //mainStore.mainPageKey++
+            //console.log('账号登录成功')
+            close()
+            userStore.myInfo = result.data
+            //console.log(userStore.myInfo)
         }
     })
 }
@@ -141,39 +151,33 @@ let registerParams = reactive({
 })
 
 async function reqRegister(params: any) {
-    console.log('注册的params:', params)
+    //console.log('注册的params:', params)
 
     let result = await registerApi(registerParams)
     //console.log(result.message)
     showMessage(result.message, result.status)
     if (!result.status) {
-        setTimeout(() => {
-            isLogin.value = true
-            for (let key in registerParams) {
-                let newKey = key as unknown as keyof typeof registerParams
-                registerParams[newKey] = ''
-            }
-            registerMessage.value = ''
-        }, 1000)
-        router.go(0)
+        isLogin.value = true
+        for (let key in registerParams) {
+            let newKey = key as unknown as keyof typeof registerParams
+            registerParams[newKey] = ''
+        }
     }
 }
+onMounted(() => {
+    mainStore.isScrollingStopped = true
+})
+onBeforeUnmount(() => {
+    mainStore.isScrollingStopped = false
+})
 </script>
 
 <style scoped lang="scss">
 .LoginAndRegister {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background-color: rgba(mix($brandColor, black, 10%), 0.5);
-    z-index: 999;
+    @extend .darkMaskGSC;
 
     .wrapper {
+        margin: 0 20px;
         position: relative;
         -webkit-user-select: none;
         display: flex;
@@ -196,23 +200,16 @@ async function reqRegister(params: any) {
         .background {
             height: 100%;
             width: 290px;
-            background-image: url('https://p6.itc.cn/images01/20210213/093e7a5bb5034d3496465a66c6f2a5ae.jpeg');
-            background-size: cover;
-        }
-
-        //注册时的背景图片
-        .registerStyle {
-            height: 100%;
-            width: 290px;
-            background-color: #cf3a33;
-            background-image: url('https://i.328888.xyz/2023/03/10/o63u3.jpeg');
-            background-size: cover;
-            background-position: -10px;
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
         }
 
         .inputinfo {
-            width: 510px;
             height: 100%;
+            flex-grow: 1;
 
             //.login和register的共有样式,除了表单的margin-top,其他样式一致
             .login,
@@ -236,11 +233,12 @@ async function reqRegister(params: any) {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
+                    width: 60%;
 
                     input {
                         outline: none;
                         height: 50px;
-                        width: 320px;
+                        width: 100%;
                         font-size: large;
                         border: none;
                         border-bottom: 1px solid $brandColor;
@@ -308,8 +306,25 @@ async function reqRegister(params: any) {
         }
     }
 }
-
-//解决谷歌浏览器记住密码——导致Input组件出现特殊样式的修改
+@media (max-width: 850px) {
+    .LoginAndRegister {
+        .wrapper {
+            max-width: 510px;
+            .background {
+                display: none;
+            }
+            .inputinfo {
+                .login,
+                .register {
+                    .input {
+                        width: 70%;
+                    }
+                }
+            }
+        }
+    }
+}
+/* //解决谷歌浏览器记住密码——导致Input组件出现特殊样式的修改
 input:-webkit-autofill,
 textarea:-webkit-autofill,
 select:-webkit-autofill {
@@ -322,5 +337,5 @@ select:-webkit-autofill {
 
 input {
     background-color: transparent; //设置input输入框的背景颜色为透明色
-}
+} */
 </style>

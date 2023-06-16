@@ -1,14 +1,16 @@
 <template>
     <div class="communitiesPage">
-        <Tab :tabs="tabs" />
+        <Tab v-if="userStore.myInfo.userId" :tabs="tabs" />
         <router-view></router-view>
     </div>
 </template>
 <script setup lang="ts">
 import Tab from '@/components/Tab/index.vue'
-import storage from '@/tools/storage'
 import {onMounted} from 'vue'
 import {useRouter} from 'vue-router'
+import useUserStore from '@/store/user'
+import storage from '@/tools/storage'
+const userStore = useUserStore()
 const router = useRouter()
 const tabs = [
     {

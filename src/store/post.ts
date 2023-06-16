@@ -1,239 +1,27 @@
-import { getCmtyPosts, getCommentCard, getCommentCardForV, getCommentInfo, getDiscoverPostCard, getNotiCard, getPostCard, getPostCardForV, getPostInfo, getPostInfoForV } from "@/api"
+import { getCommentCard, getCommentCardForV, getCommentInfo, getCommentInfoForV, getDiscoverPostCard, getNotiCard, getPostCard, getPostCardForV, getPostInfo, getPostInfoForV } from "@/api"
 import formatTime from "@/tools/formatTime"
+import { formatCommentCard, formatUserPost, setRelationShip } from "@/tools/postTools"
 import storage from "@/tools/storage"
 import { defineStore } from "pinia"
-interface IpostInfo {
-    postId: number,
-    postTitle: string,
-    content: string,
-    updateTime: string,
-    pubTime: string,
-    isDeleted: boolean,
-    cmtyId: number,
-    postAuthorId: number,
-    commentCount: number,
-    likeCount: number,
-    giftCount: number,
-    shareCount: number,
-    topFloor: number,
-    comment: [{
-        commentAuthor: {
-            avatar: string,
-            userId: number,
-            username: string,
-        },
-        commentAuthorId: number,
-        commentId: number,
-        commentTopFloor: number,
-        content: string,
-        floor: number,
-        likeCount: number,
-        postAuthorId: number,
-        postId: number,
-        pubTime: string,
-        replyCount: number,
-        reply: [{
-            commentAuthorId: number,
-            commentId: number,
-            content: string,
-            likeCount: number,
-            postAuthorId: number,
-            postId: number,
-            pubTime: string,
-            repliedAuthor: {
-                userId: number,
-                username: string,
-            },
-            repliedAuthorId: number,
-            repliedId: number,
-            replyAuthor: {
-                avatar: string,
-                userId: number,
-                username: string,
-            },
-            userComment: {
-                isHidden: boolean,
-                isSaved: boolean,
-                lastVisitTime: boolean,
-                isLiked: boolean
-            }
-            replyAuthorId: number,
-            replyFloor: number,
-            replyId: number,
-            userReply: {
-                isHidden: boolean,
-                isSaved: boolean,
-                lastVisitTime: boolean,
-                isLiked: boolean
-            }
-        }],
-        userComment: {
-            isHidden: boolean,
-            isSaved: boolean,
-            lastVisitTime: boolean,
-            isLiked: boolean
-        }
-    }],
-    postAuthor: {
-        avatar: string,
-        userId: number
-        username: string,
-    },
-    community: {
-        cmtyAvatar: string,
-        cmtyName: string,
-        cmtyId: number
-    },
-    userPost: {
-        isHidden: boolean,
-        isLiked: boolean,
-        isSaved: boolean,
-        lastVisitTim: boolean,
-    }
+import { IcommentInfo, InotiCard, IpostCard, IpostInfo, IreplyInfo } from "@/store/types"
+import { log } from "console"
 
-}
-interface IcommentInfo {
-    commentAuthor: {
-        avatar: string,
-        userId: number,
-        username: string,
-    },
-    commentAuthorId: number,
-    commentId: number,
-    commentTopFloor: number,
-    content: string,
-    floor: number,
-    likeCount: number,
-    postAuthorId: number,
-    postId: number,
-    pubTime: string,
-    replyCount: number,
-    reply: {
-        commentAuthorId: number,
-        commentId: number,
-        content: string,
-        postAuthorId: number,
-        postId: number,
-        pubTime: string,
-        repliedAuthor: {
-            userId: number,
-            username: string,
-        },
-        repliedAuthorId: number,
-        repliedId: number,
-        replyAuthor: {
-            avatar: string,
-            userId: number,
-            username: string,
-        },
-        replyAuthorId: number,
-        replyFloor: number,
-        replyId: number
-    }
-}
 
-interface Ireply {
-    commentAuthorId: number,
-    commentId: number,
-    content: string,
-    postAuthorId: number,
-    postId: number,
-    pubTime: string,
-    repliedAuthor: {
-        userId: number,
-        username: string,
-    },
-    repliedAuthorId: number,
-    repliedId: number,
-    replyAuthor: {
-        avatar: string,
-        userId: number,
-        username: string,
-    },
-    replyAuthorId: number,
-    replyFloor: number,
-    replyId: number
-}
-interface IpostCard {
-    postId: number,
-    postTitle: string,
-    content: string,
-    updateTime: string,
-    pubTime: string,
-    isDeleted: number | boolean,
-    cmtyId: number,
-    postAuthorId: number,
-    commentCount: number,
-    likeCount: number,
-    giftCount: number,
-    shareCount: number,
-    topFloor: number,
-    avatar: string,
-    userId: number,
-    username: string,
-    cmtyAvatar: string,
-    cmtyName: string,
-    userPost: {
-        isHidden: boolean,
-        isLiked: boolean,
-        isSaved: boolean,
-        lastVisitTim: boolean,
-    }
-}
-interface InotiCard {
-    commentId: number,
-    id: number,
-    notiType: string,
-    postId: number,
-    receiverId: number,
-    replyId: number,
-    senderId: number,
-    notiComment: {
-        commentId: number,
-        content: string,
-        pubTime: string
-    },
-    notiPost: {
-        content: string,
-        postId: number,
-        pubTime: string,
-        updateTime: string,
-    },
-    notiReply: {
-        content: string,
-        pubTime: string,
-        replyId: number
-    },
-    notiSender: {
-        avatar: string,
-        userId: number,
-        username: string
-    },
-    content: string,
-    notiTime: string,
-    postContent: string,
-    postTitle: string,
-    repliedContent: string,
-    repliedId: number,
-    cmtyName: string,
-    cmtyId: number,
-
-}
 
 const usePostStore = defineStore('postStore', {
     state() {
         return {
             //发现板块的帖子卡片信息
-            discoverPostCardList: [],
-            //c路由的帖子卡片信息
-            cmtyPostCardList: [],
-            userPostCardList: [],
-            homePostCardList: [
-            ],
-            searchPostCardList: [],
-            savedPostCardList: [],
-            searchCommentCardList: [],
-            userCommentCardList: [],
+            homePostCardList: [] as IpostCard[],
+            discoverPostCardList: [] as IpostCard[],
+            cmtyPostCardList: [] as IpostCard[],
+            userPostCardList: [] as IpostCard[],
+            historyPostCardList: [] as IpostCard[],
+            searchPostCardList: [] as IpostCard[],
+            savedPostCardList: [] as IpostCard[],
+            searchCommentCardList: [] as IpostCard[],
+            userCommentCardList: [] as IpostCard[],
+            savedCommentCardList: [] as IpostCard[],
             //p路由中的帖子信息
             postInfo: {
                 postId: 0,
@@ -242,7 +30,9 @@ const usePostStore = defineStore('postStore', {
                 updateTime: "",
                 pubTime: "",
                 isDeleted: false,
+                images: [''],
                 cmtyId: 0,
+                cmtyName: "",
                 postAuthorId: 0,
                 commentCount: 0,
                 likeCount: 0,
@@ -265,7 +55,7 @@ const usePostStore = defineStore('postStore', {
                     postId: 0,
                     pubTime: "",
                     replyCount: 0,
-                    reply: {
+                    reply: [{
                         commentAuthorId: 0,
                         commentId: 0,
                         content: "",
@@ -286,7 +76,7 @@ const usePostStore = defineStore('postStore', {
                         replyAuthorId: 0,
                         replyFloor: 0,
                         replyId: 0
-                    },
+                    }],
                     userComment: {
                         isHidden: false,
                         isSaved: false,
@@ -317,6 +107,8 @@ const usePostStore = defineStore('postStore', {
                     userId: 0,
                     username: "",
                 },
+                cmtyId: 0,
+                cmtyName: '',
                 commentAuthorId: 0,
                 commentId: 0,
                 commentTopFloor: 0,
@@ -331,7 +123,6 @@ const usePostStore = defineStore('postStore', {
                     commentAuthorId: 0,
                     commentId: 0,
                     content: "",
-                    likeCount: 0,
                     postAuthorId: 0,
                     postId: 0,
                     pubTime: "",
@@ -349,26 +140,38 @@ const usePostStore = defineStore('postStore', {
                     replyAuthorId: 0,
                     replyFloor: 0,
                     replyId: 0
-                }]
-            },
+                }],
+                userComment: {
+                    isHidden: false,
+                    isSaved: false,
+                    lastVisitTime: false,
+                    isLiked: false
+                }
+            } as IcommentInfo,
             replyInfo: {
                 commentAuthorId: 0,
                 commentId: 0,
-                content: "",
+                content: '',
                 likeCount: 0,
                 postAuthorId: 0,
                 postId: 0,
-                pubTime: "",
+                pubTime: '',
                 repliedAuthor: {
                     userId: 0,
-                    username: "",
+                    username: '',
                 },
                 repliedAuthorId: 0,
                 repliedId: 0,
                 replyAuthor: {
-                    avatar: "",
+                    avatar: '',
                     userId: 0,
-                    username: "",
+                    username: '',
+                },
+                userComment: {
+                    isHidden: false,
+                    isSaved: false,
+                    lastVisitTime: false,
+                    isLiked: false
                 },
                 replyAuthorId: 0,
                 replyFloor: 0,
@@ -379,179 +182,189 @@ const usePostStore = defineStore('postStore', {
                     lastVisitTime: false,
                     isLiked: false
                 }
-            } as Ireply,
+            } as IreplyInfo,
             //通知
-            replyNotiCardList: [
-                {
-                    commentId: 0,
-                    id: 0,
-                    notiType: "",
-                    postId: 0,
-                    receiverId: 0,
-                    replyId: 0,
-                    senderId: 0,
-                    notiComment: {
-                        commentId: 0,
-                        content: "",
-                        pubTime: ""
-                    },
-                    notiPost: {
-                        content: "",
-                        postId: 0,
-                        pubTime: "",
-                        updateTime: "",
-                    },
-                    notiReply: {
-                        content: "",
-                        pubTime: "",
-                        replyId: 0
-                    },
-                    notiSender: {
-                        avatar: "",
-                        userId: 0,
-                        username: ""
-                    },
-                    content: "",
-                    notiTime: "",
-                    postContent: "",
-                    postTitle: "",
-                    repliedContent: "",
-                    repliedId: 0,
-                    cmtyName: "",
-                    cmtyId: 0,
-                } as InotiCard],
-            likeNotiCardList: [{
-                id: 0,
-                senderId: 0,
-                receiverId: 0,
-                postId: 0,
-                commentId: 0,
-                replyId: 0,
-                repliedId: 0,
-                notiType: '',
-                notiTime: '',
-                notiMessage: '',
-                content: '',
-                postTitle: '',
-                postContent: '',
-                repliedContent: '',
-                cmtyName: '',
-                cmtyId: 0
-            }]
+            replyNotiCardList: [] as InotiCard[],
+            likeNotiCardList: [] as InotiCard[]
 
         }
     },
     actions: {
-        toRichText(content: string) {
-            let lines = content.split('\n')
-            content = lines.map((line: any) => `<p class="postStyle">${line}</p>`).join('')
-            content = content.replace(/\s{1,}/g, ' ')
-            console.log(content)
-            return content
-        },
-        async getCmtyPosts(params: { cmtyId: number }) {
-            let result = await getCmtyPosts(params)
-            this.cmtyPostCardList = result.data
+        async getPostCard(params: { type: string, userId?: number, keyWords?: string, cmtyId?: number, request?: string, extraCondition?: string, reqMorePostCard?: boolean }) {
 
-        },
-        async getPostCard(params: { type: string, userId?: number, keyWords?: string }) {
-            let result
-            if (storage.get("token")) {
 
-                result = await getPostCard(params)
-            } else {
-                result = await getPostCardForV(params)
-            }
+
+            const result = storage.get('token')
+                ? await getPostCard(params)
+                : await getPostCardForV(params);
             let postCard = result.data
-            for (let i = 0; i < postCard.length; i++) {
-                postCard[i].userPost
-                    ? (postCard[i].userPost = postCard[i].userPost[0])
-                    : (postCard[i].userPost = null)
+            if (postCard.length > 0) {
+                for (const card of postCard) {
+                    card.userPost = setRelationShip(card, "userPost");
+                }
             }
-            console.log(postCard);
-
+            //console.log(postCard);
             switch (params.type) {
                 case "home":
                     this.homePostCardList = postCard
                     break;
+                case "moreHome":
+                    this.homePostCardList.push(...postCard)
+                    break;
                 case "user":
                     this.userPostCardList = postCard
+                    break;
+                case "moreUser":
+                    this.userPostCardList.push(...postCard)
                     break;
                 case "discover":
                     this.discoverPostCardList = postCard
                     break;
+                case "moreDiscover":
+                    this.discoverPostCardList.push(...postCard)
+                    break;
                 case "community":
                     this.cmtyPostCardList = postCard
+                    break;
+                case "moreCommunity":
+                    this.cmtyPostCardList.push(...postCard)
                     break;
                 case "search":
                     this.searchPostCardList = postCard
                     break;
+                case "moreSearch":
+                    this.searchPostCardList.push(...postCard)
+                    break;
+                case "history":
+                    postCard = formatUserPost(postCard)
+                    this.historyPostCardList = postCard
+                    break;
+                case "moreHistory":
+                    postCard = formatUserPost(postCard)
+                    this.historyPostCardList.push(...postCard)
+                    break;
+                case "saved":
+                    postCard = formatUserPost(postCard)
+                    this.savedPostCardList = postCard
+                    break
+                case "moreSaved":
+                    postCard = formatUserPost(postCard)
+                    this.savedPostCardList.push(...postCard)
+                    break
             }
+            return postCard
         },
-        async getCommentCard(params: { type: string, userId?: number, keyWords?: string }) {
-            let result
-            if (storage.get("token")) {
-                result = await getCommentCard(params)
-            } else {
-                result = await getCommentCardForV(params)
-            }
+        async getCommentCard(params: { type: string, userId?: number, keyWords?: string, reqMore?: boolean }) {
+            let result = storage.get('token') ? await getCommentCard(params) : getCommentCardForV(params)
             let commentCard = result.data
-            for (let i = 0; i < commentCard.length; i++) {
-                commentCard[i].userPost
-                    ? (commentCard[i].userComment = commentCard[i].userComment[0])
-                    : (commentCard[i].userComment = null)
-            }
+            //console.log("commentCard:", commentCard);
+            if (commentCard.length > 0) {
+                for (const card of commentCard) {
 
+                    if (card.commentCardType == 'comment') {
+                        card.userComment = setRelationShip(card, 'userComment')
+                    } else if (card.commentCardType == 'reply') {
+                        card.userReply = setRelationShip(card, 'userReply')
+                    }
+                }
+            }
             switch (params.type) {
                 case "user":
                     this.userCommentCardList = commentCard
                     break;
+                case "moreUser":
+                    this.userCommentCardList.push(...commentCard)
+                    break;
                 case "search":
                     this.searchCommentCardList = commentCard
                     break;
+                case "moreSearch":
+                    this.searchCommentCardList.push(...commentCard)
+                    break;
+                case "saved":
+                    commentCard = formatCommentCard(commentCard)
+                    this.savedCommentCardList = commentCard
+                    break;
+                case "moreSaved":
+                    commentCard = formatCommentCard(commentCard)
+                    this.savedCommentCardList.push(...commentCard)
+                    break;
             }
+            return commentCard
         },
         async getPostInfo(params: any) {
+            let defaultUserPost = {
+                isHidden: false,
+                isSaved: false,
+                lastVisitTime: false,
+                isLiked: false
+            }
+            let defaultUserReply = {
+                isHidden: false,
+                isLiked: false
+            }
             //console.log('开始发送访问帖子信息的请求');
             let result
-            if (storage.get("token")) {
+            if (storage.get('token')) {
 
                 result = await getPostInfo(params)
             } else {
                 result = await getPostInfoForV(params)
             }
-
             if (result.status == 0) {
                 //console.log('已经请求到帖子信息');
                 result = result.data
                 //console.log(result);
+                result.userPost = setRelationShip(result, 'userPost')/* result.userPost?.[0] ?? defaultUserPost */
+                for (const comment of result.comment) {
+                    comment.userComment = setRelationShip(comment, 'userComment')/* comment.userComment?.[0] ?? defaultUserPost */
+                    for (const reply of comment.reply) {
+                        reply.userReply = setRelationShip(reply, 'userReply') /* reply.userReply?.[0] ?? defaultUserReply */
+                    }
+                }
                 /*****************result赋值到postInfo******************/
-                console.log("帖子信息:", result)
+                //console.log("帖子信息:", result)
                 this.postInfo = result
             }
         },
-        async getCommentInfo(params: { postId: number }) {
-            let result = await getCommentInfo(params)
-            result = result.data
-            //console.log("回复信息:", result);
-            this.commentInfo = result
-
-        },
-        async getNotiCard(params: { type: string }) {
-            console.log("参数", params);
+        async getNotiCard(params: { type: string, extraCondition?: string }) {
+            //console.log("参数", params);
             let result = await getNotiCard(params)
             switch (params.type) {
                 case "reply":
-                    console.log(result.data);
+                    //console.log(result.data);
                     this.replyNotiCardList = result.data
                     break;
+                case "moreReply":
+                    //console.log(result.data);
+                    this.replyNotiCardList.push(...result.data)
+                    break;
                 case "like":
-                    console.log(result.data);
+                    //console.log(result.data);
                     this.likeNotiCardList = result.data
                     break;
+                case "moreLike":
+                    //console.log(result.data);
+                    this.likeNotiCardList.push(...result.data)
+                    break;
             }
+            return result.data
 
         },
+        async getCommentInfo(params: { postId: number }) {
+            let result = storage.get('token') ? await getCommentInfo(params) : await getCommentInfoForV(params)
+            result = result.data
+            //console.log("回复信息:", result);
+            result.userComment = setRelationShip(result, 'userComment')
+            if (result.reply) {
+                for (const reply of result.reply) {
+                    reply.userReply = setRelationShip(reply, 'userReply')
+                }
+            }
+            this.commentInfo = result
+
+        },
+
     },
     getters: {
 
